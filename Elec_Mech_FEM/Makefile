@@ -18,7 +18,7 @@ output_files=*.mod *.exe *.csv *.out *.txt fort.* *.vtu *.pdf *.eps *.gnu .\gnup
 library_files=c:\lapack\liblapack.a c:\lapack\librefblas.a
 gnu_plot_command_file=src\gnu_plotter.txt
 #flags=-O1 -Wall -g -fcheck=all
-flags=-O3
+flags=-O3   
 
 all: 
 	del $(output_files) $(exec_file)
