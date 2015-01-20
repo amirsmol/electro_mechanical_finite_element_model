@@ -77,6 +77,10 @@ implicit none
        neldirectional(3)=1
 
       call truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
+
+call show_matrix(coords,"coords")
+call show_matrix_int(nod,"nod")
+
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================

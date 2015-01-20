@@ -117,17 +117,20 @@ subroutine truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
 
 
 
-nx=5
-ny=2
-nz=1
+nx=13
+ny=7
+nz=23
+
 nnm=nx*ny*nz
 
 allocate(coords(nnm,dimen))
 
         coords=0.0d0
+        do iz=0,nz-1
         do iy=0,ny-1
         do ix=0,nx-1
-        coords(1+ix+iy*nx,:)=[length(1)*ix,length(1)*iy,0.0d0]
+        coords(1+ix+iy*(nx)+iz*(ny*nx),:)=[length(1)*ix,length(1)*iy,length(1)*iz]
+        end do
         end do
         end do
 
@@ -172,16 +175,6 @@ ALLOCATE(mask(numcols))
 mask = .TRUE.
 
 
-do ix =1,nem
-do iy=1,ix
-!if .not.( any( arrayb(:,1)== nod(ix,1) ).and. any( arrayb(:,2)== nod(ix,2) ) ) then
-!arrayb(ix,:)=nod(ix,:)
-!endif
-
-end do
-end do
-
-
 arrayb=nod
 arrayb=0
 arrayb(1,:)=nod(1,:)
@@ -201,7 +194,6 @@ k = 1
   outer: do i=2,nem
      do j=1,k
         if ( arrayb(j,1) == nod(i,1).and.arrayb(j,2) == nod(i,2)) then
-           ! Found a match so start looking again
            cycle outer
         end if
      end do
@@ -213,10 +205,6 @@ k = 1
 deallocate(nod)
 allocate(nod(k,npe))
 nod=arrayb(1:k,:)
-
-call show_matrix(coords,"coords")
-call show_matrix_int(nod,"nod")
-call show_matrix_int(arrayb,"arrayb")
 
 end subroutine truss_tetrahedral_space_filler
 
