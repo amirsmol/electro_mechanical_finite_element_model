@@ -117,9 +117,9 @@ subroutine truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
 
 
 
-nx=13
-ny=7
-nz=23
+nx=7
+ny=5
+nz=3
 
 nnm=nx*ny*nz
 
@@ -129,16 +129,30 @@ allocate(coords(nnm,dimen))
         do iz=0,nz-1
         do iy=0,ny-1
         do ix=0,nx-1
-        coords(1+ix+iy*(nx)+iz*(ny*nx),:)=[length(1)*ix,length(1)*iy,length(1)*iz]
+        coords(1+ix+iy*(nx)+iz*(ny*nx),:)=[length(1)*ix,length(1)*2.0d0*sqrt(3.0d0/4.0d0)*iy,length(1)*iz]
         end do
         end do
         end do
 
+
+!!>fomring the total coordinate array
+
+allocate( total_coords(nnm*2,dimen) )
+
+total_coords(1:nnm,:)=coords(:,:)
+
+FORALL(i=nnm+1:2*nnm) total_coords(i,:)=coords(i-nnm,:)+[length(1)*0.5d0,length(1)*sqrt(3.0d0/4.0d0),0.0d0]
+
+deallocate(coords)
+coords=total_coords
+call show_matrix(total_coords,"total_coords")
+
+nnm=2*nnm
 
 nem=0
 do i_firstnode=1,nnm
 do i_secondnode=1,nnm
-if ( sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))==length(1) ) then
+if ( (sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))-length(1) ).le.length(1)*default_smallest_pivot) then
 nem=nem+1
 endif
 end do
@@ -153,7 +167,7 @@ allocate(nod(nem,npe))
 ine=0
 do i_firstnode=1,nnm
     do i_secondnode=1,nnm
-        if ( sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))==length(1) ) then
+        if ( (sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))-length(1) ).le.length(1)*default_smallest_pivot) then
             ine=ine+1
             nod(ine,:)=[i_firstnode,i_secondnode]
         endif
@@ -179,9 +193,9 @@ arrayb=nod
 arrayb=0
 arrayb(1,:)=nod(1,:)
 
-mask=( arrayb(:,1)== nod(:,1) )
+!mask=( arrayb(:,1)== nod(:,1) )
 
-write(*,*)mask
+
 !write(*,*)
   ! make an index vector
 !  allocate(index_vector, ountmask))
