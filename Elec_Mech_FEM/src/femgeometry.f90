@@ -1,5 +1,22 @@
+ !!  \brief     Electro Mechanical Finite Element Model
+ !!  \author    Amir Sohrabi Mollayousef
+ !!  \version   0.1a
+ !!  \date      2011 - 2014
+ !!  \copyright     This program is free software: you can redistribute it and/or modify
+ !!    it under the terms of the GNU General Public License as published by
+ !!    the Free Software Foundation, either version 3 of the License, or
+ !!    (at your option) any later version.
+ !!
+ !!    This program is distributed in the hope that it will be useful,
+ !!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ !!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ !!    GNU General Public License for more details.
+ !!
+ !!    You should have received a copy of the GNU General Public License
+ !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 module fem_geometry
- use linearsolvers
+ use fem_functions_and_parameters
     implicit none
     integer::npe !<number of nodes in each element
     integer::nem !<number of elements in the domain
@@ -47,6 +64,161 @@ module fem_geometry
 
 contains
 
+subroutine truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
+        implicit none
+        !     ================================================================
+        !                           the variables
+        !     ================================================================
+        integer,parameter:: one=1,two=2,three=3 !number of points in the element
+        real(iwp),parameter::  pi = 3.14159265 !the pie number
+        !     ================================================================
+        real(iwp)  ::length(dimen)
+        integer::neldirectional(dimen)
+
+
+        !     ============================geometrical variables
+        real(iwp)::side_lenght
+        real(iwp),dimension(3)::v1,v2,v3,vhnormal,planecenterpont, nextpoint
+
+        real(iwp),dimension(3)::basecoodinate_1,basecoodinate_2 ,basecoodinate_3
+        integer::base_node_num(4)
+        integer,dimension(3)::base_elem,side_elem
+        integer,dimension(4,3)::surface_nodes
+        integer,dimension(6,2)::vertex_nodes
+        integer::num_tetra_units,index_tetra_units
+
+        !     =========================first and last node
+        real(iwp),dimension(3)::firspoint,lastpoint
+        real(iwp)::lenght_beam
+        real(iwp),allocatable::coords_refed(:,:),total_coords(:,:),qtran(:,:)
+        integer::ix,iy,iz
+        integer::nx,ny,nz
+        integer::i,j,k
+
+        integer::ine
+        integer::i_firstnode,i_secondnode
+
+  integer :: numrows
+  integer :: numcols
+
+  integer, dimension(:,:), allocatable :: arraya
+  logical, dimension(:) ,  allocatable ::  mask
+  integer, dimension(:,:), allocatable :: arrayb
+!  integer :: ix
+  integer, dimension(:), allocatable :: index_vector
+
+
+        !     ================================================================
+        common/geometry_beam/firspoint,lastpoint
+        !     ================================================================
+       nem=3
+       nnm=3
+       npe=2
+
+
+
+nx=5
+ny=2
+nz=1
+nnm=nx*ny*nz
+
+allocate(coords(nnm,dimen))
+
+        coords=0.0d0
+        do iy=0,ny-1
+        do ix=0,nx-1
+        coords(1+ix+iy*nx,:)=[length(1)*ix,length(1)*iy,0.0d0]
+        end do
+        end do
+
+
+nem=0
+do i_firstnode=1,nnm
+do i_secondnode=1,nnm
+if ( sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))==length(1) ) then
+nem=nem+1
+endif
+end do
+end do
+
+write(*,*)nem
+
+!nem=nem/2
+allocate(nod(nem,npe))
+
+
+ine=0
+do i_firstnode=1,nnm
+    do i_secondnode=1,nnm
+        if ( sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))==length(1) ) then
+            ine=ine+1
+            nod(ine,:)=[i_firstnode,i_secondnode]
+        endif
+    end do
+end do
+
+
+do ine=1,nem
+    call sort(nod(ine,:))
+end do
+
+
+arraya=nod
+
+numcols=size(arraya,dim=1)
+numrows=size(arraya,dim=2)
+
+ALLOCATE(mask(numcols))
+mask = .TRUE.
+
+
+do ix =1,nem
+do iy=1,ix
+!if .not.( any( arrayb(:,1)== nod(ix,1) ).and. any( arrayb(:,2)== nod(ix,2) ) ) then
+!arrayb(ix,:)=nod(ix,:)
+!endif
+
+end do
+end do
+
+
+arrayb=nod
+arrayb=0
+arrayb(1,:)=nod(1,:)
+
+mask=( arrayb(:,1)== nod(:,1) )
+
+write(*,*)mask
+!write(*,*)
+  ! make an index vector
+!  allocate(index_vector, ountmask))
+!
+!  ! now copy the unique elements of a into b
+!  allocate(arrayb, source=arraya(:,index_vector))
+
+arrayb(1,:) = nod(1,:)
+k = 1
+  outer: do i=2,nem
+     do j=1,k
+        if ( arrayb(j,1) == nod(i,1).and.arrayb(j,2) == nod(i,2)) then
+           ! Found a match so start looking again
+           cycle outer
+        end if
+     end do
+     ! No match found so add it to the output
+     k = k + 1
+     arrayb(k,:) = nod(i,:)
+  end do outer
+
+deallocate(nod)
+allocate(nod(k,npe))
+nod=arrayb(1:k,:)
+
+call show_matrix(coords,"coords")
+call show_matrix_int(nod,"nod")
+call show_matrix_int(arrayb,"arrayb")
+
+end subroutine truss_tetrahedral_space_filler
 
 
 
@@ -198,7 +370,7 @@ do i=1,dimen; coords(:,i)=coords(:,i)-corner_point(i);enddo
 do i=1,dimen; length_1(i)=maxval(coords(:,i))-minval(coords(:,i)); enddo
 do i=1,dimen; coords(:,i)= coords(:,i)-0.5*length_1(i);  enddo
 
-     end subroutine truss_3d_space_filler_connectivity
+end subroutine truss_3d_space_filler_connectivity
 
 
 
@@ -223,18 +395,19 @@ corner_node=0
 
 nspv=count(coords(:,1)==-0.5*length(1))+ &
      count(coords(:,2)==-0.5*length(2)) + &
-     count((coords(:,1)==-0.5*length(1)).and.(coords(:,3)==-0.5*length(3))) +&
+     count((coords(:,1)==-0.5*length(1)).and.(coords(:,3)==-0.5*length(3))) + &
      nnm
 
-!write(*,*)nspv
+!! write(*,*) nspv
 
 
 
-!!<manually forming the bounrary condition index arrays
-!! this will rotate trhough all the nodes and if the nodes
-!! matches the bounday condition
-!! it will add it to the index arrays and assigns values to the
-!! boundary condition
+!!< Manually forming the bounrary condition index arrays
+!!  this will rotate trhough all the nodes and if the nodes
+!!  matches the bounday condition
+!!  it will add it to the index arrays and assigns values to the
+!!  boundary condition
+
 nssv=1
 
 allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
@@ -536,7 +709,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 !      forall(i=1:nnm) coords_deformed([1,2,3],i)=coordst([1,2,3],i)+glu((i-1)*ndf+[1,2,3])
 
-      filename='outpar'//trim(x1)//'.vtu'
+      filename='vtu/outpar'//trim(x1)//'.vtu'
       write(*,*)filename
       !write(*,*)nnm
       open (vtu,file=filename)
@@ -2768,4 +2941,5 @@ do np=1,nssv
 enddo
 
 end subroutine afc_boundary_full_electrode
+
 end module fem_geometry
