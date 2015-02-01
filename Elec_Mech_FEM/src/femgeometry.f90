@@ -779,7 +779,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 subroutine truss_tetra_hedral_bounday()
 
-nspv=6; !number of nodes, number of elements
+nspv=7; !number of nodes, number of elements
 nssv=2
 
 allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
@@ -789,6 +789,8 @@ ispv(1:3,2)=3
 ispv(4,2)=1
 ispv(5,2)=2
 ispv(6,2)=1
+
+ispv(7,:)=[nnm,3]
 
 issv(1,:)=[nnm,2]
 issv(2,:)=[nnm,1]
@@ -820,8 +822,109 @@ vssvt=vssv
 end subroutine truss_tetra_hedral_bounday
 
 
+subroutine linear_truss_bending_boundary()
+integer::i
+
+nspv=nnm+3; !number of nodes, number of elements
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+ispv(1:nnm,1)=(/(i, i=1, nnm)/)
+ispv(1:nnm,2)=2
+
+ispv(nnm+1,:)=[1,1]
+ispv(nnm+2,:)=[1,3]
+ispv(nnm+3,:)=[nnm,3]
 
 
+
+issv(1,:)=[1,1]
+
+vspv=0.0d0
+vssv=0.0d0
+
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+    enddo
+
+!write(*,*)bnd_va_pr_vec
+!write(*,*)vssv
+
+end subroutine linear_truss_bending_boundary
+
+
+
+subroutine linear_truss_bending_boundary_2()
+integer::i
+
+nspv=10; !number of nodes, number of elements
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+
+ispv(1,:)=[1,1]
+ispv(2,:)=[1,2]
+ispv(3,:)=[1,3]
+ispv(4,:)=[2,1]
+ispv(5,:)=[2,2]
+ispv(6,:)=[2,3]
+
+
+ispv(7,:)=[nnm,2]
+ispv(8,:)=[nnm,3]
+
+ispv(9,:)=[nnm-1,2]
+ispv(10,:)=[nnm-1,3]
+
+
+
+
+
+issv(1,:)=[1,1]
+
+vspv=0.0d0
+vssv=0.0d0
+
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+    enddo
+
+!write(*,*)bnd_va_pr_vec
+!write(*,*)vssv
+
+end subroutine linear_truss_bending_boundary_2
 
 subroutine truss_tetra_hedral_displacement_control()
 integer::i

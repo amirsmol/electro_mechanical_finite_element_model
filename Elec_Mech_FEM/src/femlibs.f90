@@ -83,7 +83,8 @@ elb=glb(el_dof_vec)
 !     ===============================================================
 !     forming the coefficitne matrix and source vector for each element
 !     ===============================================================
-call elmatrcs_3d(elu,elp,elb,elk,elq)
+    if(npe.eq.20.or.npe.eq.8) call elmatrcs_3d(elu,elp,elb,elk,elq)
+    if(npe.eq.2)  call truss_elmatrcs_3d(elu,elp,elb,elk,elq)
 !     ===============================================================
 !     assembling the global source vector and coefficient matrix
 !     ===============================================================
@@ -95,6 +96,7 @@ glk(el_dof_vec,el_dof_vec)=glk(el_dof_vec,el_dof_vec)+elk
 enddo ! noelem=1,nem
 
 deallocate(el_nod_vec,el_dof_vec,elcrds)
+
 end subroutine glbmatrcs
 
 
@@ -167,7 +169,177 @@ end subroutine glbmatrcs
 40    res_vect(k)=res_vect(k)+sigma(i,j)*bepsiloni(i,j,k)
 
       end subroutine truss_residual3d
+!     ===============================================================
+!                       the element coefficient matrix
+!     ===============================================================
+subroutine truss_elmatrcs_3d(elu,elp,elb,elk,elq) !(elcrds,elu,elk,elq)
+!     ================================================================
+!     element  calculations based on  linear and quadratic rectangular
+!     relements with isoparametric  formulation.
+!     ================================================================
+      implicit none
+!     ================================================================
+!                          input variables
+!     ================================================================
+      real(iwp),intent(in):: elu(:),elp(:),elb(:) !dof vectors
+!      real(iwp),intent(in):: elcrds(npe,dimen)
+!     ================================================================
+!                          otput variables
+!     ================================================================
+      real(iwp),intent(out):: elq(:) !element source vector
+      real(iwp),intent(out):: elk(:,:) !the element coefficient matrix
+!     ================================================================
+      integer::ni,ii,jj,li,lj,idof
+      integer::inode,jnode
+!     ================================================================
+      real(iwp):: elu_tense(npe,ndf) !dof current time
+      real(iwp):: elp_tense(npe,ndf) !dof current time
+      real(iwp):: elb_tense(npe,ndf) !dof current time
+      real(iwp)::coord(dimen) !the global coordinate of each node
+      real(iwp)::xi(dimen)! transformed coordinates
+      real(iwp)::sf(npe),gdsf(dimen,npe),ur(ndf,dimen)
+      real(iwp)::k_coef(ndf,ndf) ! the auxilary matrix for cuefficitne matr
+      real(iwp)::res_vect(ndf)
+      real(iwp)::cnst,det
+      real(iwp)::der(dimen) !electric displacement
+      real(iwp)::sigma(dimen,dimen) !stress
+!     ================================================================
+      real(iwp):: gauspt(5,5),gauswt(5,5) ! gauss points and gauss weights
+!     =========================element center point and transformation variables
+      real(iwp):: el_center_coord(dimen)
+      real(iwp):: qtran(dimen,dimen)
+!     ================================================================
+      real(iwp),dimension(dimen,dimen) ::sigma_shape
+      real(iwp),dimension(dimen,dimen) ::R_rotation_tensor
 
+
+ !     ================================================================
+       data gauspt/5*0.0d0, -0.57735027d0, 0.57735027d0, 3*0.0d0,            &
+       -0.77459667d0, 0.0d0, 0.77459667d0, 2*0.0d0, -0.86113631d0,           &
+       -0.33998104d0, 0.33998104d0, 0.86113631d0, 0.0d0, -0.90617984d0,      &
+       -0.53846931d0,0.0d0,0.53846931d0,0.90617984d0/
+!
+      data gauswt/2.0d0, 4*0.0d0, 2*1.0d0, 3*0.0d0, 0.55555555d0,        &
+        0.88888888d0, 0.55555555d0, 2*0.0d0, 0.34785485d0,               &
+      2*0.65214515d0, 0.34785485d0, 0.0d0, 0.23692688d0,                 &
+        0.47862867d0, 0.56888888d0, 0.47862867d0, 0.23692688d0/
+!     ===============================================================
+      elq=0.0d0
+      elk=0.0d0
+
+!     ================================================================
+    do ni=1,npe
+        elu_tense(ni,:)=elu(1+(ni-1)*ndf:ni*ndf)
+        elp_tense(ni,:)=elp(1+(ni-1)*ndf:ni*ndf)
+        elb_tense(ni,:)=elb(1+(ni-1)*ndf:ni*ndf)
+    enddo !i=1,npe
+
+!     ================================================================
+      call generate_trans_tensor(elcrds,qtran)
+!      call make_element_direction_normal(elcrds)
+!     ================================================================
+!     finding stress due to shape change
+!     ================================================================
+          el_center_coord=sum(elcrds(:,:), dim = 1)/DBLE(npe)
+          element_direction_normal=unit_vect(elcrds(2,:)-elcrds(1,:))
+          call truss_material_properties()
+
+
+  !     ===============================================================
+do 200 ni = 1,ipdf
+          xi(1) = gauspt(ni,ipdf)
+          call truss_3d_shape_3d_linea(elcrds,xi,det,sf,gdsf)
+          cnst = det*gauswt(ni,ipdf)
+          coord=0
+!     ===============================================================
+!                       coordinate in refrence and element frame
+!     ===============================================================
+          coord=matmul(sf,elcrds)
+!     ===============================================================
+!                       post process
+!     ===============================================================
+          ur       =transpose(       matmul( gdsf,elu_tense     ) )
+          call truss_shape_change_stress(el_center_coord,ur,sigma_shape)
+          call truss_stress_elect_displacement(ur,der,sigma)
+
+!    call show_matrix(sigma_shape,'sigma_shape')
+der=0.0d0;
+!     ===============================================================
+!                       filling the elemt matrixes
+!     ===============================================================
+
+do inode=1,npe
+    ii = ndf*(inode-1)+1
+    li=(ii+ndf-1)
+    call truss_residual3d(inode,gdsf,ur,der,sigma-sigma_shape,res_vect)
+
+    elq(ii:li)=elq(ii:li)+res_vect*cnst
+    do  jnode=1,npe
+  call  truss_k_gen3d(jnode,inode,gdsf,ur,k_coef)
+  jj = ndf*(jnode-1)+1
+  lj=(jj+ndf-1)
+    elk(ii:li,jj:lj)=elk(ii:li,jj:lj)+k_coef*cnst
+    enddo;
+enddo
+
+
+
+200 continue
+
+!call show_vector(elq,'elq')
+!call show_matrix(elk,'elk')
+
+end subroutine truss_elmatrcs_3d
+
+!     ===============================================================
+!                       THE SHAPE FUNCTION SUBROUTINE
+!     ===============================================================
+subroutine truss_3d_shape_3d_linea(elcrds,xi,det,sf,gdsf_3d)
+      real(iwp)::elcrds(:,:)
+      real(iwp)::det ! the jacobian determinant
+      real(iwp),intent(out) ::sf(:),gdsf_3d(:,:) ! shape function sf(npe),gdsf(dimen,npe)
+
+      real(iwp)::dsf(dimen,npe) !(dimen,npe) ! the differentiatian of shape function{
+
+
+      real(iwp)::xnode(2) ! coordinate of nodes in refrence
+      real(iwp)::xi(dimen) !locad coordinate in element
+      integer::i
+      real(iwp)::delXi_delzeta(dimen) ! local coordinate derivitives
+      real(iwp)::delzeta_delXi(dimen) ! local coordinate derivitives
+!     ================================================================
+      data xnode/ -1,1 /!master element coordinates
+!     ================================================================
+
+      do 10 i=1,npe
+      sf(i)=0.5d0*( 1+xi(1)*xnode(i) )
+      dsf(1,i)=0.5d0*xnode(i)
+10    continue
+
+!     ===================================================================
+!         compute the jacobian matrix [gj] and its inverse [gjinv]
+!     ===================================================================
+      det=norm_vect(elcrds(1,:)-elcrds(2,:))/abs(xnode(2)-xnode(1))
+
+      delXi_delzeta=0.0d0
+
+      do i=1,npe
+      delXi_delzeta(:)=delXi_delzeta(:)+dsf(1,i)*elcrds(i,:)
+      enddo
+
+      delzeta_delXi=1/delXi_delzeta
+
+      do i=1,dimen
+      if(   (  abs(elcrds(1,i)-elcrds(2,i) ) .lt. default_smallest_pivot ) ) then
+      delzeta_delXi(i)=0.0d0;
+      endif
+      enddo
+
+      do i=1,npe
+      gdsf_3d(:,i)=dsf(1,i)*delzeta_delXi(:)
+      enddo
+
+end subroutine truss_3d_shape_3d_linea
 !     ===============================================================
 !                       coefficient matrix subroutine
 !     ===============================================================
@@ -320,8 +492,8 @@ elk=0.0d0
 
     gauss_point_number=gauss_point_number+1
 
-    if(npe.eq.20)call shap_3d_quad(elcrds,xi,det,sf,gdsf)
-    if(npe.eq.8) call shapefuncs_3d(xi,det,sf,gdsf)
+    if(npe.eq.20) call shap_3d_quad(elcrds,xi,det,sf,gdsf)
+    if(npe.eq.8)  call shapefuncs_3d(xi,det,sf,gdsf)
 
 
     cnst = det*gauswt(ni,ipdf)
