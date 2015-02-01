@@ -1760,22 +1760,18 @@ integer,save::counter
 !  ===============================================================
 integer :: i,cell_types
 character(len=5)::x1
-character(len=20) :: fmt,filename ! format descriptor
+character(len=52) :: fmt,filename ! format descriptor
 integer::inode,inem
 real(iwp)::scale
+
 !  ===============================================================
 fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 !  ===============================================================
 
-
-
-
 allocate(coords_deformed(nnm,dimen),coordst(nnm,dimen))
-
 
 if(npe.eq.20)cell_types= 25
 if(npe.eq.8)cell_types= 12
-
 
 counter=counter+1
 write(x1,fmt)counter
@@ -1785,12 +1781,13 @@ scale=1.0
 
 coordst=coords
 coords_deformed=coords
+
 !do j=1,dimen
 !forall(i=1:nnm) coords_deformed(i,j)=coordst(i,j)+glu((i-1)*ndf+j)
 !enddo
 
 
-filename='outpar'//trim(x1)//'.vtu'
+filename='./vtu/paraview_output_'//trim(x1)//'.vtu'
 write(*,*)filename
 open (vtu,file=filename)
 
