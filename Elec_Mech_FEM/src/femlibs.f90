@@ -938,7 +938,7 @@ integer::i,j,pdf,k;
 integer,parameter::gnuplot=5
 integer,save::counter
 character(len=5)::x1
-character(len=20) :: fmt,filename ! format descriptor
+character(len=30) :: fmt,filename ! format descriptor
 fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 
 ! write(*,*)dimen
@@ -953,11 +953,13 @@ if (time(2).eq.0)then
 
 open (out,file='out_data_outpu.txt')
 
-filename='gnuplot/afc'//trim(x1)//'.gnu'
+filename='gnuplot'//trim(x1)//'.gnu'
 open (gnuplot,file=filename)
 
-filename='excel/afc'//trim(x1)//'.csv'
+filename='./excel/results_'//trim(x1)//'.csv'
 open (csv,file=filename)
+
+
 
 endif
 
@@ -976,11 +978,11 @@ enddo
 !write(*,*)'curved_node',curved_node
 pdf=(curved_node-1)*ndf
 
-write(csv,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+write(csv,951)iter,time(2),loadfactor,glu(pdf+ndf-1),curn_polarization_function(3,:)
+!
+!write(gnuplot,951)iter,time(2),loadfactor,100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
-
-write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+!write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 !write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
 write(out,*)
 !     ===============================================================

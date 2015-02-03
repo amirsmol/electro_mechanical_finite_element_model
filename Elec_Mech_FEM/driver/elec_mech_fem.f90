@@ -87,7 +87,8 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-      call afc_mesh_file_reader()
+      length=1.0d0;neldirectional=1.0d0
+      call linear_c3d8_3d_fem_geometry(neldirectional,length)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -104,18 +105,9 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq),glu_ref(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;glu_ref=0.0d0
 !!     ===============================================================
-      call afc_boundary_full_electrode(length)
+      call crawley_boundary(length)
 
       write(*,*)'length',length
-
-      call afc_form_constraint()
-      allocate( glk_constrain( size(constraint,dim=2), size(constraint,dim=2) ) )
-      allocate( glr_constrain( size(constraint,dim=2) ) )
-!
-      allocate(transpose_constrain(   size(constraint,dim=2), size(constraint,dim=1)  )      )
-      allocate(aux_glk_constrain_t(   size(transpose_constrain,dim=1), size(glk,dim=2)  )      )
-!     write(*,*)'check======================='
-      transpose_constrain=transpose(constraint)
 !     ===============================================================
 !                        time increment starts here
 !     ===============================================================
@@ -130,18 +122,15 @@ implicit none
 !     reading time increment varibales
 !     ===============================================================
       dtime=0.01;      freq=1.0d0;
-      max_time_numb= int(2.0e0/dtime)
+      max_time_numb= int(1.0e0/dtime)
 !     ===============================================================
     write(*,*)'number of time steps',max_time_numb
-     do time_step_number=1, 1 ! max_time_numb
+     do time_step_number=0,max_time_numb
      call cpu_time(timer_begin)
          time(1)=dtime;time(2)=time_step_number*dtime
          loadfactor=-sin(2*3.14515*freq*time(2))*375
-!        loadfactor=375 !175.0d0
-!        loadfactor=time(2)
          vspv=loadfactor*vspvt
          glu(bnd_no_pr_vec)=0.0d0;
-!         glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
@@ -167,23 +156,14 @@ implicit none
 !     ===============================================================
 !                        solving constraint
 !     ===============================================================
-!     call cpu_time(timer_begin)
-
-      aux_glk_constrain_t=lapack_matmul(transpose_constrain,glk)
-      glk_constrain=lapack_matmul (aux_glk_constrain_t, constraint)
-      glr_constrain=matmul(transpose_constrain,glr)
-
-!     call cpu_time(timer_end); write(*,*)'apply the constrain',timer_end- timer_begin
-
-     call lapack_gesv(glk_constrain,glr_constrain)
-     glr=matmul (constraint,glr_constrain)
+     call lapack_gesv(glk,glr)
 !!     ===============================================================
 !!                        updating the solution
 !!     ===============================================================
       glu=glu+glr
 
       write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+!      write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
 
       if (error.le.tolerance*(normalforce))then;
           converged=.true.;exit;
@@ -196,17 +176,12 @@ implicit none
      stop
     endif
 
-if(updated_lagrangian)then
-glu_ref=glu+glu_ref
-do j=1,dimen;forall(i=1:nnm) coords(i,j)=coords(i,j)+glu((i-1)*ndf+j);enddo
-endif
-
     call update_history()
     glb=glp;glp=glu
 
-!    call result_printer(iter,glu,loadfactor)
+    call result_printer(iter,glu,loadfactor)
 !    call paraview_3d_vtu_xml_writer(glu)
-    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
+!    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
 !    write(*,*)'max_time_iteration',max_time_numb
     enddo !itime=0,ntime
 

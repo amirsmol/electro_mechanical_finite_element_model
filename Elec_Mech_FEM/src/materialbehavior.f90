@@ -32,12 +32,12 @@ real(iwp),parameter::k01_pzt=0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.6d0
+real(iwp),parameter::k_elec_01_pzt=-0.0d0
 real(iwp),parameter::lambda_elec_01_pzt=1.5
 
 ! =============================epoxy
 real(iwp),parameter::k00_epx=1.0d0
-real(iwp),parameter::k01_epx=0.6d0
+real(iwp),parameter::k01_epx=0.0d0
 real(iwp),parameter::lambda_01_epx=0.8
 
 real(iwp),parameter::k_elec_00_epx=1.0d0
@@ -51,7 +51,6 @@ real(iwp),parameter::c=1.0;
 real(iwp),parameter::eta=10e-2;
 real(iwp),parameter::m=2;
 ! ================================================================ pzt
-
 
 real(iwp),parameter::e33 = -14.52*1.3d0;
 real(iwp),parameter::e15 = -7.56*1.3d0;
@@ -207,7 +206,7 @@ d_electric_field_p=electric_field_p-electric_field_b
 curn_electric_field(gauss_point_number,:)=electric_field
 ! ================================================================
 curn_polarization_function=0.0d0
-!call remanent_polarization(d_electric_field,electric_field)
+call remanent_polarization(d_electric_field,electric_field)
 !pr= curn_polarization_function(gauss_point_number,:)
 pr=0.0d0
 pr(3)=pr_sat
@@ -505,16 +504,13 @@ implicit none
 !  material variables
 ! ================================================================
 
-! ================================================================
 integer::eye(dimen,dimen)
 integer::i,j,k,l ! ,m,n
 real(iwp)::ey,nu
-! ================================================================
-! ================================================================
+
 ! ================================================================
 
 eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
-!
 
 direc_a=direction_of_vector(pr)
 
@@ -533,27 +529,6 @@ k_elec_00=k_elec_00_epx
 k_elec_01=k_elec_01_epx
 lambda_elec_01=lambda_elec_01_epx
 !
-! ================================================================
-!   E poxy
-! ================================================================
-mu=ey_epoxy/(1+nu_epoxy)/2.0
-lambda=ey_epoxy*nu_epoxy/(1+nu_epoxy)/(1-2.0*nu_epoxy)
-do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
-ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
-   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
-enddo;enddo;enddo;enddo;
-epz=0.0d0;
-b_tilt=0.0d0;
-
-ktense=eps_epoxy*eye
-partial_sigma_to_partial_elec_t=0
-partial_sigma_to_partial_elec_p=0
-
-! ================================================================
-!   pzt
-! ================================================================
-if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336>noelem>127
-
 beta1   =-e31;
 beta2   =-e33+2.0d0*e15+e31;
 beta3   =-2.0d0*e15;
@@ -592,11 +567,6 @@ ktense(3,3)=eps_33 ;
 
 
 b_tilt=0.0d0
-b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
-
-!b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
-!b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
-
 
 partial_sigma_to_partial_elec_t=0.0
 partial_sigma_to_partial_elec_p=0.0
@@ -611,38 +581,6 @@ partial_sigma_to_partial_elec_t(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
 
 partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
         +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
-endif !if(noelem.ge.127.and.le.336)then !it is pzt if 336>noelem>127
-
-
-! ================================================================
-!   aluminum
-! ================================================================
-if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
-
-k00=k_00_aluminum
-k01=k_01_aluminum
-lambda_01=lambda_01_aluminum
-
-ey=ey_aluminum
-nu=nu_aluminum
-
-mu=ey/(1+nu)/2.0
-lambda=ey*nu/(1+nu)/(1-2.0*nu)
-
-do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
-ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
-   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
-enddo;enddo;enddo;enddo;
-
-epz=0.0d0;
-b_tilt=0.0d0;
-ktense=eye
-
-
-partial_sigma_to_partial_elec_t=0
-partial_sigma_to_partial_elec_p=0
-
-endif ! (noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
 
 end subroutine material_properties
 
