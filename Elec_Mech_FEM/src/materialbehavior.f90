@@ -44,21 +44,22 @@ real(iwp),parameter::k_elec_00_epx=1.0d0
 real(iwp),parameter::k_elec_01_epx=0.0d0
 real(iwp),parameter::lambda_elec_01_epx=1.0
 ! ================================================================
-real(iwp),parameter::ec=1;
-real(iwp),parameter::pr_sat=26e-2;
+real(iwp),parameter::ec=1.2e6;
+real(iwp),parameter::pr_sat=0.25;
+real(iwp),parameter::m=4.0;
+
+real(iwp),parameter::eta=0.1e0;
+real(iwp),parameter::h0=1.0e0! 100.0;
+
+
 real(iwp),parameter::eps_s_r=1e-3;
-real(iwp),parameter::c=1.0;
-real(iwp),parameter::eta=10e-2;
-real(iwp),parameter::m=2;
+real(iwp),parameter::poarization_speed=5 !1/s
 ! ================================================================ pzt
+
 
 real(iwp),parameter::e33 = -14.52*1.3d0;
 real(iwp),parameter::e15 = -7.56*1.3d0;
 real(iwp),parameter::e31 = 6.15*1.3d0;
-
-!real(iwp),parameter::e33 = -20.92*1.3d0;
-!real(iwp),parameter::e31 =  6.15*1.3d0;
-!real(iwp),parameter::e15 = -45.74*1.3d0;
 
 real(iwp),parameter::eps_11 = 4.0e-9;
 real(iwp),parameter::eps_33 = 2.0e-9;
@@ -156,6 +157,8 @@ real(iwp),allocatable::elements_electric_field(:,:) !(nem,dimen)
 real(iwp),allocatable::elements_electric_polar(:,:) !(nem,dimen)
 
 
+real(iwp),allocatable::hist_back_electric_field(:,:)
+real(iwp),allocatable::curn_back_electric_field(:,:)
 
 real(iwp)::electric_field(dimen),electric_field_p(dimen),electric_field_b(dimen);
 
@@ -204,14 +207,10 @@ d_electric_field=electric_field-electric_field_p
 d_electric_field_p=electric_field_p-electric_field_b
 ! ================================================================
 curn_electric_field(gauss_point_number,:)=electric_field
+hist_electric_field(gauss_point_number,:)=electric_field_p
 ! ================================================================
-curn_polarization_function=0.0d0
-call remanent_polarization(d_electric_field,electric_field)
-!pr= curn_polarization_function(gauss_point_number,:)
-pr=0.0d0
-pr(3)=pr_sat
-call direction_polarization(pr,direc_a)
-call material_properties()
+!curn_polarization_function=0.0d0
+call material_properties_afc()
 
 
 ! ===================================remanent strain
@@ -297,63 +296,114 @@ end do;
 
 end subroutine stress_elect_displacement
 
+
 ! ================================================================
 !   polarization swithing function
 !this will find the polarization with the given state of material
 ! ================================================================
-subroutine remanent_polarization(d_electric_field,electric_field)
+subroutine remanent_polarization()
 implicit none
 real(iwp)::d_electric_field(3)
 real(iwp)::electric_field(3)
-real(iwp)::delta_time
-
-real(iwp)::remanent_polarization_vector_1(dimen)
 real(iwp)::electric_drive(dimen)
-real(iwp)::elect_force
+real(iwp)::electric_field_t(3)
+real(iwp)::electric_field_p(3)
+real(iwp)::back_electric_field_t(dimen)
+real(iwp)::back_electric_field_p(dimen)
+real(iwp)::normalized_polarization(dimen)
 
-delta_time=time(1)
+!>newton raphson parameters
+real(iwp)::ktan_pol(6,6),del_u_n_pol(6)
+real(iwp)::r_n_pol(6),u_n_pol(6),force_n_pol(6)
+real(iwp)::u_n_r_pol(6),u_n_0_pol(6)
+real(iwp)::ktan_inv_pol(6,6)
+!!<Iteration parameters
+integer::polarization_iteration_number
+integer,parameter::max_iteration=50
+integer::required_number_of_iteration
+real(iwp),parameter::tolerance=1.0e-2
+logical::converged
+real(iwp):: polarization_error
 
-remanent_polarization_vector_1=0.0d0
-
-electric_drive=electric_field-3*ec*direction_of_vector(d_electric_field)
-elect_force=norm_vect(electric_field)-3.0d0*ec
-
-remanent_polarization_vector_1=tanh( elect_force ) * &
-direction_of_vector(electric_field) * pr_sat
+!>polarization parameters
+real(iwp):: electric_polarization_t(dimen)
+real(iwp):: electric_polarization_p(dimen)
 
 
-if(norm_vect(electric_field).gt.8*ec)then
-is_polarized=.true.
+electric_field=curn_electric_field(gauss_point_number,:)
+electric_field_p=hist_electric_field(gauss_point_number,:)
+
+
+electric_field_t=electric_field
+electric_field_p=electric_field-d_electric_field
+
+electric_polarization_p=hist_polarization_function(gauss_point_number,:)
+electric_polarization_t=curn_polarization_function(gauss_point_number,:)
+
+back_electric_field_p=hist_back_electric_field(gauss_point_number,:)
+back_electric_field_t=curn_back_electric_field(gauss_point_number,:)
+
+u_n_pol=[electric_polarization_p/pr_sat,back_electric_field_p]
+
+
+do polarization_iteration_number=1,max_iteration
+
+back_electric_field_t=u_n_pol(4:6)
+normalized_polarization=u_n_pol(1:3)
+electric_drive=electric_field_t/ec-back_electric_field_t
+
+r_n_pol(1:3)=normalized_polarization- electric_polarization_p/pr_sat &
+-( dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m ) * &
+                                      unit_vect( electric_drive )
+r_n_pol(4:6)=back_electric_field_t &
+- h0*atanh( norm_vect( normalized_polarization ) )*unit_vect( normalized_polarization )
+
+
+polarization_error=norm_vect(r_n_pol)
+
+ktan_pol=identity_matrix(6)
+ktan_pol(1:3,4:6)=  &
+(m*dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 ) ) ** (m-1) ) &
+*dyad_of_two_vector( unit_vect( electric_drive ), &
+                     unit_vect( electric_drive ) ) &
++(dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m )  &
+* derivative_of_direction(electric_drive )
+
+ktan_pol(4:6,1:3)=( h0 /(norm_vect( normalized_polarization )**2.0-1 ) ) &
+*dyad_of_two_vector( unit_vect( normalized_polarization ), &
+                     unit_vect( normalized_polarization ) ) &
++h0*atanh( norm_vect( normalized_polarization )) &
+*derivative_of_direction(normalized_polarization)
+
+
+call Gaussian_Elimination_Solver(ktan_pol,r_n_pol);del_u_n_pol=r_n_pol
+u_n_pol=u_n_pol-del_u_n_pol
+
+
+write(23,951)polarization_iteration_number,time(2),electric_field_t
+write(22,951)polarization_iteration_number,time(2),u_n_pol,polarization_error
+
+         if (polarization_error.le.tolerance*ec)then
+             converged=.true.
+             exit
+         endif
+enddo ! iteration_number=1,max_iteration
+
+
+
+if(.not.converged)then
+write(*,*)'********************************************'
+write(*,*)'iteration did not converge at time',time(2)
+stop
 endif
 
-if(.not.is_polarized)then
-remanent_polarization_vector_1=0.5d0*pr_sat*(tanh(elect_force)+1)*direction_of_vector(electric_field)
-endif
 
+curn_polarization_function(gauss_point_number,:)=u_n_pol(1:3)*pr_sat
+curn_back_electric_field(gauss_point_number,:)=u_n_pol(4:6)
 
-
-if(is_polarized)then
-if(norm_vect(electric_field).lt.8*ec)then
-
-if( dot_product(electric_field,d_electric_field).lt.0 )then
-remanent_polarization_vector_1=hist_polarization_function(gauss_point_number,:)
-endif
-
-endif
-endif
-
-
-
-!if(norm_vect(electric_field).lt.ec)then
-!remanent_polarization_vector_1=hist_polarization_function(gauss_point_number,:)
-!endif
-
-
-
-curn_polarization_function(gauss_point_number,:)=remanent_polarization_vector_1
-curn_electric_field(gauss_point_number,:)=electric_field
-
+951   format(5x,i5,' , ',10 (e14.5,' , ') )
 end subroutine remanent_polarization
+
 
 
 ! ===============================================================
@@ -467,6 +517,12 @@ hist_electric_displ=0.0d0
 curn_electric_displ=0.0d0
 is_polarized=.false.
 
+allocate(hist_back_electric_field(ngauss,dimen) , &
+         curn_back_electric_field(ngauss,dimen)   )
+
+hist_back_electric_field=0.0d0
+curn_back_electric_field=0.0d0
+
 
 end subroutine  form_history
 
@@ -493,6 +549,8 @@ displ_el_hist_previus=displ_el_hist_curentt
 mechanical_strain_beforep=mechanical_strain_previus
 mechanical_strain_previus=mechanical_strain_curentt
 
+hist_back_electric_field=curn_back_electric_field
+
 end subroutine  update_history
 
 ! ===============================================================
@@ -511,8 +569,9 @@ real(iwp)::ey,nu
 ! ================================================================
 
 eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
+!
 
-direc_a=direction_of_vector(pr)
+direc_a=unit_vect(pr)
 
 !3D formulation
 ctens=0;
@@ -520,15 +579,6 @@ epz=0.0d0;
 b_tilt=0.0d0;
 ktense=0.0d0
 
-! ================================================================
-k00=k00_epx
-k01=k01_epx
-lambda_01=lambda_01_epx
-
-k_elec_00=k_elec_00_epx
-k_elec_01=k_elec_01_epx
-lambda_elec_01=lambda_elec_01_epx
-!
 beta1   =-e31;
 beta2   =-e33+2.0d0*e15+e31;
 beta3   =-2.0d0*e15;
@@ -568,60 +618,11 @@ ktense(3,3)=eps_33 ;
 
 b_tilt=0.0d0
 
-partial_sigma_to_partial_elec_t=0.0
-partial_sigma_to_partial_elec_p=0.0
-
 partial_sigma_to_partial_elec_t=epz
 partial_sigma_to_partial_elec_p=epz
 
 
-
-partial_sigma_to_partial_elec_t(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
-        +b_tilt(3,3,3,3)*( abs(  electric_field(3) ) )
-
-partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
-        +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
-
 end subroutine material_properties
-
-! ================================================================
-!   polarization swithing function
-!this will find the polarization with the given state of material
-! ================================================================
-subroutine direction_polarization(pr_vec,a_direc)
-real(iwp)::a_direc(dimen),normed,pr_vec(dimen)
-a_direc=0.0d0
-normed=norm_vect(pr_vec)
-if (normed.gt.0.0d0)then
-a_direc=pr_vec/normed
-endif
-
-
-
-end subroutine direction_polarization
-
-
-! ================================================================
-!   polarization swithing function
-!this will find the polarization with the given state of material
-! ================================================================
-function direction_of_vector(a)
-real(iwp)::a(:)
-real(iwp),allocatable::direction_of_vector(:)
-real(iwp)::normed
-allocate( direction_of_vector( size(a) ) );
-
-
-direction_of_vector=0.0d0
-normed=norm_vect(a)
-
-if (normed.gt.0.0d0)then
-direction_of_vector=a/normed
-endif
-
-end function direction_of_vector
-
-
 
 !     ================================================================
 !     finding stress due to shape change
@@ -699,6 +700,8 @@ strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+      &
 
 electric_feild(1:dimen)=-ur(dimen+1,:)
 volumetric_stress=strain(1,1)+strain(2,2)+strain(3,3)
+
+!call show_matrix(strain,'strain')
 !write(1,*)volumetric_stress
 !     ================================================================
       pi=datan(1.0d0)*4.0
@@ -713,42 +716,41 @@ volumetric_stress=strain(1,1)+strain(2,2)+strain(3,3)
       x2=x(2)
       x3=x(3)
       R=radius_of_curvature
-
-
-
-       e=0.0d0
-!      e(1,1) = cos(X1 / R) ** 2 * X2 / R
-!      e(1,2) = -cos(X1 / R) * X2 / R * sin(X1 / R)
-!      e(2,1) = -cos(X1 / R) * X2 / R * sin(X1 / R)
-!      e(2,2) = sin(X1 / R) ** 2 * X2 / R
-
-!      e(2,2)=0.3
-!      e(2,2)=0.3
-
-!       e(3,2)=R
-!       e(2,3)=-e(3,2)
-
+      e=0.0d0
       curvature_in_time=time(2)/r
       kappa=curvature_in_time
       epsilon=time(2)*1.0d0
 
 e=0.0d0
 e(1,1)=x3*time(2)
-!e(2,2)=kappa
-!e(3,3)=kappa
+e=e-identity_matrix(dimen)*time(2)/12.0
+!lagrange_strain_global=e
 
-lagrange_strain_global=e
+
+call truss_material_properties()
+
+!write(10,*)'time',time
+!call show_matrix(e,'e')
 
 sigma_shape=0.0d0
 do i=1,dimen;
 do j=1,dimen;
 do k=1,dimen;
 do l=1,dimen;
-sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*lagrange_strain_global(k,l)
-
+sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*e(k,l)
 enddo;enddo;enddo;enddo;
 
-!each_truss_strain(noelem)=sigma_shape(1,1)
+!
+!volumetric_stress=sigma_shape(1,1)+sigma_shape(2,2)+sigma_shape(3,3)
+!!call show_matrix(sigma_shape,'sigma_shape_before')
+!
+!!sigma_shape(3,:)=0.0d0
+!!sigma_shape(:,3)=0.0d0
+!
+!sigma_shape=sigma_shape-identity_matrix(dimen)*volumetric_stress/3.0
+
+!sigma_shape=sigma_shape-identity_matrix(dimen)*volumetric_stress*0.0001
+!call show_matrix(sigma_shape,'sigma_shape')
 
 end subroutine truss_shape_change_stress
 
@@ -767,7 +769,8 @@ end subroutine truss_shape_change_stress
 
 
 eye = 0; do i = 1,dimen; eye(i,i) = 1;enddo
-
+mu=ey_epoxy/(1+nu_epoxy)/2.0
+lambda=ey_epoxy*nu_epoxy/(1+nu_epoxy)/(1-2.0*nu_epoxy)
 ktense=0.0d0  ;ktense(1,1)=1;
 
       ctens=0.0d0
@@ -782,9 +785,166 @@ ktense=0.0d0  ;ktense(1,1)=1;
                           element_direction_normal(l)* 1.0d0
                   enddo;enddo;enddo;enddo;
 
+
+!do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+!ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+!   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+!enddo;enddo;enddo;enddo;
+
+!ctens(1,1,1,1)  =ey_pzt/100.0
+
 epz=0.0d0
 
       end subroutine truss_material_properties
+
+! ===============================================================
+!   Material properties
+! ===============================================================
+subroutine material_properties_afc()
+implicit none
+! ================================================================
+!  material variables
+! ================================================================
+
+integer::eye(dimen,dimen)
+integer::i,j,k,l ! ,m,n
+real(iwp)::ey,nu
+
+! ================================================================
+
+eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
+!
+!3D formulation
+ctens=0;
+epz=0.0d0;
+b_tilt=0.0d0;
+ktense=0.0d0
+
+! ================================================================
+k00=k00_epx
+k01=k01_epx
+lambda_01=lambda_01_epx
+
+k_elec_00=k_elec_00_epx
+k_elec_01=k_elec_01_epx
+lambda_elec_01=lambda_elec_01_epx
+!
+! ================================================================
+!   E poxy
+! ================================================================
+mu=ey_epoxy/(1+nu_epoxy)/2.0
+lambda=ey_epoxy*nu_epoxy/(1+nu_epoxy)/(1-2.0*nu_epoxy)
+do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+enddo;enddo;enddo;enddo;
+epz=0.0d0;
+b_tilt=0.0d0;
+
+ktense=eps_epoxy*eye
+partial_sigma_to_partial_elec_t=0
+partial_sigma_to_partial_elec_p=0
+
+! ================================================================
+!   pzt
+! ================================================================
+if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336>noelem>127
+
+call remanent_polarization()
+pr= curn_polarization_function(gauss_point_number,:)
+direc_a=unit_vect(pr)
+
+beta1   =-e31;
+beta2   =-e33+2.0d0*e15+e31;
+beta3   =-2.0d0*e15;
+gamma1  =-eps_11/2.0d0;
+gamma2  =(eps_11-eps_33)/2.0d0;
+
+
+k00=k00_pzt
+k01=k01_pzt
+lambda_01=lambda_01_pzt
+
+k_elec_00=k_elec_00_pzt
+k_elec_01=k_elec_01_pzt
+lambda_elec_01=lambda_elec_01_pzt
+
+ey=ey_pzt;
+nu=nu_pzt;
+
+mu=ey/(1+nu)/2.0
+lambda=ey*nu/(1+nu)/(1-2.0*nu)
+
+do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+enddo;enddo;enddo;enddo;
+
+do i = 1,dimen; do k = 1,dimen; do l = 1,dimen;
+epz(i,k,l)=( beta1*direc_a(i)*eye(k,l) &
+            + beta2*direc_a(i)*direc_a(k)*direc_a(l) &
+            + beta3*0.5d0*( eye(i,l)*direc_a(k) + eye(i,k)*direc_a(l) )  ) *norm_vect(pr)/pr_sat
+enddo;enddo;enddo;
+
+ktense(1,1)=eps_11
+ktense(2,2)=eps_11 ;
+ktense(3,3)=eps_33 ;
+
+
+b_tilt=0.0d0
+b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
+
+!b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
+!b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
+
+
+partial_sigma_to_partial_elec_t=0.0
+partial_sigma_to_partial_elec_p=0.0
+
+partial_sigma_to_partial_elec_t=epz
+partial_sigma_to_partial_elec_p=epz
+
+
+
+partial_sigma_to_partial_elec_t(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
+        +b_tilt(3,3,3,3)*( abs(  electric_field(3) ) )
+
+partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
+        +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
+endif !if(noelem.ge.127.and.le.336)then !it is pzt if 336>noelem>127
+
+
+! ================================================================
+!   aluminum
+! ================================================================
+if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
+
+k00=k_00_aluminum
+k01=k_01_aluminum
+lambda_01=lambda_01_aluminum
+
+ey=ey_aluminum
+nu=nu_aluminum
+
+mu=ey/(1+nu)/2.0
+lambda=ey*nu/(1+nu)/(1-2.0*nu)
+
+do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+enddo;enddo;enddo;enddo;
+
+epz=0.0d0;
+b_tilt=0.0d0;
+ktense=eye
+
+
+partial_sigma_to_partial_elec_t=0
+partial_sigma_to_partial_elec_p=0
+
+endif ! (noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
+
+end subroutine material_properties_afc
 
 
 

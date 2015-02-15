@@ -1657,7 +1657,7 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !  ===============================================================
         integer :: i,cell_types
         character(len=5)::x1
-        character(len=20) :: fmt,filename ! format descriptor
+        character(len=40) :: fmt,filename ! format descriptor
         integer::inode,inem
         real(iwp)::scale
         !  ===============================================================
@@ -1687,7 +1687,7 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !enddo
 
 
-        filename='geom_test'//trim(x1)//'.vtu'
+        filename='vtu/geom_test'//trim(x1)//'.vtu'
         write(*,*)filename
         open (vtu,file=filename)
 

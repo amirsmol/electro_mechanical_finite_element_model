@@ -60,7 +60,7 @@ elu=0.0d0;elq=0.0d0;elk=0.0d0;
 
 gauss_point_number=0
 
-!     starting the element (i,:)
+!>     starting the element (i,:)
 
 allocate(el_nod_vec(npe),el_dof_vec(elneq),elcrds(npe,dimen))
 
@@ -80,11 +80,12 @@ enddo !inpe=1,npe
 elu=glu(el_dof_vec)
 elp=glp(el_dof_vec)
 elb=glb(el_dof_vec)
+
 !     ===============================================================
 !     forming the coefficitne matrix and source vector for each element
 !     ===============================================================
     if(npe.eq.20.or.npe.eq.8) call elmatrcs_3d(elu,elp,elb,elk,elq)
-    if(npe.eq.2)  call truss_elmatrcs_3d(elu,elp,elb,elk,elq)
+    if(npe.eq.2)              call truss_elmatrcs_3d(elu,elp,elb,elk,elq)
 !     ===============================================================
 !     assembling the global source vector and coefficient matrix
 !     ===============================================================
@@ -233,19 +234,11 @@ subroutine truss_elmatrcs_3d(elu,elp,elb,elk,elq) !(elcrds,elu,elk,elq)
         elp_tense(ni,:)=elp(1+(ni-1)*ndf:ni*ndf)
         elb_tense(ni,:)=elb(1+(ni-1)*ndf:ni*ndf)
     enddo !i=1,npe
-
-!     ================================================================
-      call generate_trans_tensor(elcrds,qtran)
-!      call make_element_direction_normal(elcrds)
 !     ================================================================
 !     finding stress due to shape change
 !     ================================================================
-          el_center_coord=sum(elcrds(:,:), dim = 1)/DBLE(npe)
           element_direction_normal=unit_vect(elcrds(2,:)-elcrds(1,:))
-          call truss_material_properties()
-
-
-  !     ===============================================================
+!     ===============================================================
 do 200 ni = 1,ipdf
           xi(1) = gauspt(ni,ipdf)
           call truss_3d_shape_3d_linea(elcrds,xi,det,sf,gdsf)
@@ -259,7 +252,8 @@ do 200 ni = 1,ipdf
 !                       post process
 !     ===============================================================
           ur       =transpose(       matmul( gdsf,elu_tense     ) )
-          call truss_shape_change_stress(el_center_coord,ur,sigma_shape)
+          call truss_material_properties()
+          call truss_shape_change_stress(coord,ur,sigma_shape)
           call truss_stress_elect_displacement(ur,der,sigma)
 
 !    call show_matrix(sigma_shape,'sigma_shape')
@@ -271,7 +265,7 @@ der=0.0d0;
 do inode=1,npe
     ii = ndf*(inode-1)+1
     li=(ii+ndf-1)
-    call truss_residual3d(inode,gdsf,ur,der,sigma-sigma_shape,res_vect)
+    call truss_residual3d(inode,gdsf,ur,der,sigma+sigma_shape,res_vect)
 
     elq(ii:li)=elq(ii:li)+res_vect*cnst
     do  jnode=1,npe
@@ -479,6 +473,9 @@ elk=0.0d0
     elb_tense(i,:)=elb(1+(i-1)*ndf:i*ndf)
     enddo !i=1,npe
 
+
+
+
      elec_element=0.0d0  !electric field in the element
      pola_element=0.0d0
 
@@ -507,6 +504,9 @@ elk=0.0d0
     ur=transpose(matmul(gdsf,elu_tense))
     up=transpose(matmul(gdsf,elp_tense))
     ub=transpose(matmul(gdsf,elb_tense))
+
+
+
 
 call stress_elect_displacement(ur,up,ub,der,sigma)
 !     ===============================================================
@@ -964,8 +964,7 @@ open (csv,file=filename)
 endif
 
 if(counter.eq.1)then
-
-write(csv,672)
+!write(csv,672)
 endif
 
 write(out,910);write(out,*)'time',time

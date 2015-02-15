@@ -10,13 +10,13 @@
 
 # Change this line if you are using a different Fortran compiler
 FORTRAN_COMPILER = gfortran
-exec_file=    bin\run.exeMakefile
+exec_file=    bin\run.exe 
 module_files= src\fem_functions_and_parameters.f90 src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90   
 driver_file = driver\elec_mech_fem.f90
 compiled_module_files=fem_functions_and_parameters.mod fem_geometry.mod
 output_files=*.mod *.exe *.csv *.out *.txt fort.* *.vtu *.pdf *.eps *.gnu .\gnuplot\*.gnu .\excel\*.csv .\vtu\*.vtu
 library_files=c:\lapack\liblapack.a c:\lapack\librefblas.a
-gnu_plot_command_file=src\gnu_plotter.txt
+gnu_plot_command_file=excel\gnu_plotter.txt
 #flags=-O1 -Wall -g -fcheck=all
 flags=-malign-double 
 
