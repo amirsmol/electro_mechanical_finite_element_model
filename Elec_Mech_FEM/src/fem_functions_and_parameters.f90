@@ -775,4 +775,16 @@ end function direction_of_vector
 
       end function unit_vect
 
+! ================================================================
+!   polarization swithing function
+!this will find the polarization with the given state of material
+! ================================================================
+!subroutine direction_polarization(pr_vec,a_direc)
+!real(iwp)::a_direc(dimen),normed,pr_vec(dimen)
+!a_direc=0.0d0
+!normed=norm_vect(pr_vec)
+!if (normed.gt.0.0d0)then
+!a_direc=pr_vec/normed
+!endif
+
 end module fem_functions_and_parameters

@@ -57,9 +57,9 @@ real(iwp),parameter::poarization_speed=5 !1/s
 ! ================================================================ pzt
 
 
-real(iwp),parameter::e33 = -14.52*1.3d0;
-real(iwp),parameter::e15 = -7.56*1.3d0;
-real(iwp),parameter::e31 = 6.15*1.3d0;
+!real(iwp),parameter::e33 = -14.52*1.3d0;
+!real(iwp),parameter::e15 = -7.56*1.3d0;
+!real(iwp),parameter::e31 = 6.15*1.3d0;
 
 real(iwp),parameter::eps_11 = 4.0e-9;
 real(iwp),parameter::eps_33 = 2.0e-9;
@@ -78,7 +78,23 @@ real(iwp),parameter::nu_aluminum = 0.33;
 real(iwp),parameter::k_00_aluminum=1.0d0
 real(iwp),parameter::k_01_aluminum=0.0d0
 real(iwp),parameter::lambda_01_aluminum=4.0
-! ================================================================ aluminum
+! ================================================================ pvdf
+real(iwp),parameter::e31 = -0.046;
+real(iwp),parameter::e33 = 0;
+real(iwp),parameter::e15 = 0;
+
+real(iwp),parameter::ey_pvdf =2.0e9 !Pa
+real(iwp),parameter::nu_pvdf = 0.0;
+real(iwp),parameter::eps_pvdf = 0.1062e-9 !mC/(kV.m)
+
+real(iwp),parameter::k00_pvdf=1.0d0
+real(iwp),parameter::k01_pvdf=0.0d0
+real(iwp),parameter::lambda_01_pvdf=0.8
+
+real(iwp),parameter::k_elec_00_pvdf=1.0d0
+real(iwp),parameter::k_elec_01_pvdf=0.0d0
+real(iwp),parameter::lambda_elec_01_pvdf=1.0
+
 
 logical::is_polarized
 real(iwp)::a
@@ -210,7 +226,11 @@ curn_electric_field(gauss_point_number,:)=electric_field
 hist_electric_field(gauss_point_number,:)=electric_field_p
 ! ================================================================
 !curn_polarization_function=0.0d0
-call material_properties_afc()
+!call material_properties_afc()
+pr=0.0d0
+pr(3)=pr_sat
+call direction_polarization(pr,direc_a)
+call material_properties_pvdf_beam()
 
 
 ! ===================================remanent strain
@@ -947,6 +967,71 @@ endif ! (noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>1
 end subroutine material_properties_afc
 
 
+! ===============================================================
+!   Material properties
+! ===============================================================
+subroutine material_properties_pvdf_beam()
+implicit none
+! ================================================================
+!  material variables
+! ================================================================
 
+integer::eye(dimen,dimen)
+integer::i,j,k,l ! ,m,n
+real(iwp)::ey,nu
+! ================================================================
+!   pvdf
+! ================================================================
+
+beta1   =-e31;
+beta2   =-e33+2.0d0*e15+e31;
+beta3   =-2.0d0*e15;
+
+eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
+!
+
+direc_a=direction_of_vector(pr)
+
+ey=ey_pvdf
+nu=nu_pvdf
+
+mu=ey_pvdf/(1+nu_pvdf)/2.0
+lambda=ey_pvdf*nu_pvdf/(1+nu_pvdf)/(1-2.0*nu_pvdf)
+
+!3D formulation
+ctens=0;
+epz=0.0d0;
+ktense=0.0d0
+
+
+do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+enddo;enddo;enddo;enddo;
+
+do i = 1,dimen; do k = 1,dimen; do l = 1,dimen;
+epz(i,k,l)=(- beta1*direc_a(i)*eye(k,l) &
+            - beta2*direc_a(i)*direc_a(k)*direc_a(l) &
+            - beta3*0.5d0*( eye(i,l)*direc_a(k) + eye(i,k)*direc_a(l) )  ) *norm_vect(pr)/pr_sat
+enddo;enddo;enddo;
+
+ktense=eps_pvdf*eye
+
+
+partial_sigma_to_partial_elec_t=0.0
+partial_sigma_to_partial_elec_p=0.0
+
+partial_sigma_to_partial_elec_t=epz
+partial_sigma_to_partial_elec_p=epz
+
+k00=k00_pvdf
+k01=k01_pvdf
+lambda_01=lambda_01_pvdf
+
+k_elec_00=k_elec_00_pvdf
+k_elec_01=k_elec_01_pvdf
+lambda_elec_01=lambda_elec_01_pvdf
+
+end subroutine material_properties_pvdf_beam
 
 end module material_behavior

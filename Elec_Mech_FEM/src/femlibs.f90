@@ -862,8 +862,8 @@ enddo ! 10 k=1,ndf
 enddo ! 10 i=1,dimen
 enddo ! 10 j=1,dimen
 
-call material_properties()
-
+!call material_properties()
+call material_properties_pvdf_beam()
 !     ================================================================
 
 ctens=(k00+0.5d0*k01)*ctens

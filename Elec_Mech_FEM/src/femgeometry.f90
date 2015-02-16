@@ -63,6 +63,209 @@ module fem_geometry
 
 contains
 
+
+subroutine beam_bimorph_form_constraint()
+
+real(iwp),allocatable::constraint_x(:,:),constraint_y(:,:),constraint_z(:,:) !<the constraint matrix
+real(iwp),allocatable::full_constraint(:,:)
+logical,allocatable::fixed_boundary_mask(:)
+integer::n_constraint !<number of constraintd
+integer::i_const,j_const,const_num,n_fixed_boundary
+integer::i_boundary
+
+
+
+n_fixed_boundary=count(vspv(:)==0)
+
+
+fixed_boundary_mask=vspv(:)==0
+
+!
+!write(*,*)'n_fixed_boundary',n_fixed_boundary
+!write(1,*)'vspv',vspv
+!write(1,*)'fixed_boundary_mask',fixed_boundary_mask
+
+n_constraint=n_fixed_boundary
+
+write(*,*)'n_constraint=',n_constraint
+!! we will add three sets of periodic boundary condistions
+!! so we have to add one to the dimension of constraint for each set
+allocate(constraint(neq,neq-n_constraint),is_constrained(neq))
+allocate(full_constraint(neq,neq))
+
+
+full_constraint=0
+do j_const=1,neq; full_constraint(j_const,j_const)=1; enddo
+
+
+is_constrained=.false.
+
+!write(*,*)afc_boundary_x_periodic
+
+
+
+do i_boundary=1,size(vspv(:))
+    if (vspv(i_boundary)==0) then
+    i_const=(ispv(i_boundary,1)-1)*ndf+ispv(i_boundary,2)
+    full_constraint(i_const,:)=0;
+    endif
+enddo
+
+constraint=0
+i_const=0
+
+do j_const=1,neq
+if (   sum(  full_constraint(:,j_const) ) .gt. 0 ) then
+ i_const=i_const+1
+ constraint(:,i_const)=full_constraint(:,j_const);
+endif
+enddo
+
+end subroutine beam_bimorph_form_constraint
+
+
+
+!  ================================================================
+!!>  This subroutine will apply the  boundary conditions for bimorph beam
+!!   The bimorph beam is clamped at x=0
+!!   The middle section is under 1 volt potential
+!!   The upped and lower surfaces of the beam are under zero potential
+!  ================================================================
+subroutine beam_bimorph_boundary(length)
+!  ================================================================
+! input geormetry variables
+!  ================================================================
+implicit none
+!  ================================================================
+! input geormetry variables
+!  ================================================================
+real*8:: length(:)
+integer::ibond,inode
+! integer::curved_node
+integer::np,nb
+
+integer::ix_periodic !<number of periodic boundary condition nodes on x direction
+integer::iy_periodic !<number of periodic boundary condition nodes on y direction
+integer::iz_periodic !<number of periodic boundary condition nodes on z direction
+
+
+!  ================================================================
+real*8::corner_point(dimen)
+integer::i ! ,j,k
+!  ================================================================
+! body of the subroutine
+!  ================================================================
+coords=coords*1.0;
+
+do i=1,dimen; corner_point(i)=minval(coords(:,i));enddo
+do i=1,dimen; coords(:,i)=coords(:,i)-corner_point(i);enddo
+do i=1,dimen; length(i)=maxval(coords(:,i))-minval(coords(:,i));
+enddo
+do i=1,dimen; coords(:,i)= coords(:,i)-0.5*length(i);  enddo
+
+!! At x_1=0 we will have u_1=0,
+!! At x_2=0 we will have u_2=0;
+!! At x_3=0 and x_1= we will have u_3=0
+
+write(*,*)'length=',length
+nspv=count( coords(:,1) ==- 0.5*length(1) )+ &
+     nnm+ &
+     count( (coords(:,3) ==- 0.5*length(3) ).and.( coords(:,1)==-0.5*length(1) )  )+ &
+     count( coords(:,3) == -0.5*length(3) )+ &
+     count( coords(:,3) == +0.5*length(3) )+ &
+     count( coords(:,3) ==  0.0 )
+
+nssv=1
+!
+write(*,*)'nspv',nspv
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+vssv=0.0d0
+issv(1,1)=1
+issv(1,2)=1
+!
+!!manually forming the bounrary condition
+!
+vspv=0.0d0
+
+ix_periodic=0
+iy_periodic=0
+iz_periodic=0
+
+ibond=0
+do inode=1,nnm
+
+if(coords(inode,1)==-0.5*length(1))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+ vspv(ibond)=0.0d0;
+ endif
+!
+!if(coords(inode,2)==-0.5*length(2))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=2;
+ vspv(ibond)=0.0d0;
+! endif
+!
+if( (coords(inode,3) ==-0.5*length(3) ).and.( coords(inode,1)==-0.5*length(1) )  )then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=3;
+ vspv(ibond)=0.0d0;
+endif
+!
+if(coords(inode,3)==0.5*length(3))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=4;
+ vspv(ibond)=0.0;
+endif
+
+if(coords(inode,3)==-0.5*length(3))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=4;
+ vspv(ibond)=0.0;
+endif
+
+if(coords(inode,3)==-0.0d0*length(3))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=4;
+ vspv(ibond)=1.0;
+endif
+
+if(coords(inode,1)==0.5*length(1).and.coords(inode,2)==0.0*length(2).and.coords(inode,3)==0.0*length(3))then
+curved_node=inode
+endif
+enddo
+
+! ispv(nspv,1)=curved_node;
+! ispv(nspv,2)=4;
+! vspv(nspv)=1.0;
+
+
+allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+do np=1,nspv
+nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+bnd_va_pr_vec(np)=vspv(np)
+bnd_no_pr_vec(np)=nb
+enddo
+
+do np=1,nssv
+  nb=(issv(np,1)-1)*ndf+issv(np,2)
+  bnd_va_se_vec(np)=vssv(np)
+  bnd_no_se_vec(np)=nb
+enddo
+write(1,*)'vspv',vspv
+end subroutine beam_bimorph_boundary
+
+
+
 subroutine truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
         implicit none
         !     ================================================================
