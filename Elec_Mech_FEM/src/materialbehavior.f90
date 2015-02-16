@@ -786,12 +786,14 @@ ktense=0.0d0  ;ktense(1,1)=1;
                   enddo;enddo;enddo;enddo;
 
 
-!do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
-!ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
-!   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
-!enddo;enddo;enddo;enddo;
+k00=1.0
+k01=0.0
+lambda_01=1.0
 
-!ctens(1,1,1,1)  =ey_pzt/100.0
+k_elec_00=1.0
+k_elec_01=0.0
+lambda_elec_01=1.0
+
 
 epz=0.0d0
 

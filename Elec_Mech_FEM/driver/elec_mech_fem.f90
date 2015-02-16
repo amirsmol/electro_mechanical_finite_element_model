@@ -129,8 +129,8 @@ implicit none
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      ! freq=1.0d0;
-      max_time_numb= int(10.0e0/dtime)
+      dtime=0.1;      ! freq=1.0d0;
+      max_time_numb= int(40.0e0/dtime)
 !     ===============================================================
 do time_step_number=0, max_time_numb
      call cpu_time(timer_begin)
@@ -175,7 +175,7 @@ do time_step_number=0, max_time_numb
 !!     ===============================================================
       glu=glu+glr
 
-      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+!      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
 
       if (error.le.tolerance*(normalforce))then;
@@ -192,7 +192,10 @@ do time_step_number=0, max_time_numb
 
     glb=glp;glp=glu
    call truss_paraview_3d_vtu_xml_writer(glu)
-    write(*,*)'max_time_iteration',max_time_numb
+
+!    write(*,*)'max_time_iteration',max_time_numb
+
+
     enddo !itime=0,ntime
 
       call system_clock ( clck_counts_end, clck_rate )
