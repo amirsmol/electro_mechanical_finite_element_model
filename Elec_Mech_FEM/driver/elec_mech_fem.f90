@@ -40,7 +40,7 @@
  !!    You should have received a copy of the GNU General Public License
  !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-program tetra_hedral_linear_truss
+program space_filler_truss
 use fem_functions_and_parameters
 use fem_geometry
 use material_behavior
@@ -93,10 +93,11 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-       length=1
-       num_tetra_units=150
+    length=1
 
-      call truss_actua_3d_connectivity(length,num_tetra_units)
+
+    num_tetra_units=100
+    call truss_actua_3d_connectivity(length,num_tetra_units)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -112,10 +113,7 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;
 !!     ===============================================================
-
-      call linear_truss_bending_boundary()
-!      call truss_tetra_hedral_bounday()
-!      call linear_truss_bending_boundary_2()
+    call truss_tetra_hedral_bounday()
 !     ===============================================================
 !                        time increment starts here
 !     ===============================================================
@@ -124,13 +122,14 @@ implicit none
 !>
 !!    reading iteration and convergence critria's
 !<
+
       tolerance=1.0e-1
       max_iteration=50;
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.1;      ! freq=1.0d0;
-      max_time_numb= int(40.0e0/dtime)
+      dtime=1.0;      ! freq=1.0d0;
+      max_time_numb= int(100/dtime)
 !     ===============================================================
 do time_step_number=0, max_time_numb
      call cpu_time(timer_begin)
@@ -142,7 +141,8 @@ do time_step_number=0, max_time_numb
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
-     normalforce=norm_vect(vspv)+norm_vect(vssv)+dtime
+     normalforce=norm_vect(vspv)+norm_vect(vssv)
+
      converged=.false.
      do iteration_number=0,max_iteration
 !!     ===============================================================
@@ -150,22 +150,17 @@ do time_step_number=0, max_time_numb
 !!     ===============================================================
       glk=0.0d0;glq=0.0d0;!
       call glbmatrcs(glu,glk,glq,glp,glb)
-
 !!     ===============================================================
 !!                             newton raphson sprocedure
 !!     ===============================================================
-!write(*,*)'check'
-!write(*,*)'check',bnd_no_se_vec
       glt(bnd_no_se_vec) = vssv ;
       glr=glt-glq ;
 !!     ===============================================================
 !!                        solving the linear system of equations
 !!     ===============================================================
-
       call symmetric_primary_bounday(glk,glr)
       error=norm_vect(glr)
       vspv=0.0d0
-
 !     ===============================================================
 !                        solving constraint
 !     ===============================================================
@@ -173,6 +168,8 @@ do time_step_number=0, max_time_numb
 !!     ===============================================================
 !!                        updating the solution
 !!     ===============================================================
+      error=norm_vect(glr)
+      normalforce=norm_vect(glp); if(normalforce==0) normalforce=1
       glu=glu+glr
 
 !      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
@@ -191,7 +188,7 @@ do time_step_number=0, max_time_numb
 
 
     glb=glp;glp=glu
-   call truss_paraview_3d_vtu_xml_writer(glu)
+    call truss_paraview_3d_vtu_xml_writer(glu)
 
 !    write(*,*)'max_time_iteration',max_time_numb
 
@@ -206,8 +203,4 @@ do time_step_number=0, max_time_numb
       call timestamp ()
       close (csv)
 
-end program tetra_hedral_linear_truss
-
-
-
-
+end program space_filler_truss

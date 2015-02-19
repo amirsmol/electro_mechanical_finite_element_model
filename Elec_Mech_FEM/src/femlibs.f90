@@ -253,7 +253,9 @@ do 200 ni = 1,ipdf
 !     ===============================================================
           ur       =transpose(       matmul( gdsf,elu_tense     ) )
           call truss_material_properties()
-          call truss_shape_change_stress(coord,ur,sigma_shape)
+          call shape_change_stress_beam_folding(coord,sigma_shape)
+
+!          call truss_shape_change_stress_z_eq_xy(coord,ur,sigma_shape)
           call truss_stress_elect_displacement(ur,der,sigma)
 
 !    call show_matrix(sigma_shape,'sigma_shape')
@@ -265,7 +267,7 @@ der=0.0d0;
 do inode=1,npe
     ii = ndf*(inode-1)+1
     li=(ii+ndf-1)
-    call truss_residual3d(inode,gdsf,ur,der,sigma+sigma_shape,res_vect)
+    call truss_residual3d(inode,gdsf,ur,der,sigma-sigma_shape,res_vect)
 
     elq(ii:li)=elq(ii:li)+res_vect*cnst
     do  jnode=1,npe

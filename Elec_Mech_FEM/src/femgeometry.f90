@@ -382,6 +382,121 @@ end subroutine truss_3d_space_filler_connectivity
 !!        i boundary the number of boundary conditions and ispv(i boundady,1) is the node number
 !!        i boundary the number of boundary conditions and ispv(i boundady,2) is the degree of freedom number
 !! @todo apply the periodic boundary conditions
+subroutine truss_3d_space_filler_boundary_z_eq_xy(length)
+real(iwp)::length(dimen)
+integer::corner_node
+integer::inode,ibond
+
+corner_node=0
+!!< the space filler truss is going to be bounded
+!! if x_1=0,x_2=0,x_3=-L_3/2 then u_1=0, u_2=0, u_3=0, this will restrain it from movment in x_1, x_2, x_3
+!! if x_1=0,x_2=0,x_3=+L_3/2 then u_1=0, u_2=0,  this will restrain it from rotation around x_1, x_2 axis
+!! if x_1=0,x_2=L_2/2,x_3=+L_3/2 then u_1=0, this will restrain it from rotation around x_3 axis
+
+
+nspv=6
+
+! write(*,*) nspv
+!
+!write(*,*)'nspv'
+!write(*,*)nspv
+!
+!write(*,*)'ispv'
+!write(*,*)ispv
+
+!!< Manually forming the bounrary condition index arrays
+!!  this will rotate trhough all the nodes and if the nodes
+!!  matches the bounday condition
+!!  it will add it to the index arrays and assigns values to the
+!!  boundary condition
+
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+vspv=0.0d0
+vssv=0.0d0
+
+ibond=0
+do inode=1,nnm
+
+!! pinning the x_1=-l/2 direction
+
+if(coords(inode,1)==0 .and. coords(inode,2)==0 .and.coords(inode,3)==-0.5*length(3) )then
+ ibond=ibond+1;
+
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+
+ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=2;
+
+ ibond=ibond+1;
+
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=3;
+
+endif
+
+
+if(coords(inode,1)==0 .and. coords(inode,2)==0 .and.coords(inode,3)==0.5*length(3) )then
+
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=2;
+
+endif
+
+
+if(coords(inode,1)==0.and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==-0.5*length(3))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+endif
+
+if(coords(inode,1)==0.5*length(1).and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==0.5*length(3))then
+corner_node=inode
+endif
+
+enddo
+
+call show_matrix_int((ispv),'ispv')
+
+!! // issv(1,:)=[node number , degree of freedom number];
+
+issv(1,:)=[corner_node,3];
+vssv(1)=0.0e0
+
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+
+    enddo
+
+
+
+end subroutine truss_3d_space_filler_boundary_z_eq_xy
+
+
 subroutine truss_3d_space_filler_boundary(length)
 real(iwp)::length(dimen)
 integer::corner_node
@@ -399,9 +514,13 @@ nspv=count(coords(:,1)==-0.5*length(1))+ &
      count((coords(:,1)==-0.5*length(1)).and.(coords(:,3)==-0.5*length(3))) + &
      nnm
 
-!! write(*,*) nspv
-
-
+! write(*,*) nspv
+!
+!write(*,*)'nspv'
+!write(*,*)nspv
+!
+!write(*,*)'ispv'
+!write(*,*)ispv
 
 !!< Manually forming the bounrary condition index arrays
 !!  this will rotate trhough all the nodes and if the nodes
@@ -462,6 +581,7 @@ corner_node=inode
 endif
 
 enddo
+
 
 
 
@@ -778,8 +898,8 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 subroutine truss_tetra_hedral_bounday()
 
-nspv=7; !number of nodes, number of elements
-nssv=2
+nspv=6; !number of nodes, number of elements
+nssv=0
 
 allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
 allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
@@ -789,14 +909,11 @@ ispv(4,2)=1
 ispv(5,2)=2
 ispv(6,2)=1
 
-ispv(7,:)=[nnm,3]
 
-issv(1,:)=[nnm,2]
-issv(2,:)=[nnm,1]
+
 
 vspv=0.0d0
 vssv=0.0d0
-
 vspvt=vspv
 vssvt=vssv
 

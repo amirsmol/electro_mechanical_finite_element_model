@@ -653,6 +653,7 @@ electric_feild(1:dimen)=-ur(dimen+1,:)
 sigma =  0.0d0 ;
 der   =  0.0d0 ;
 
+call truss_material_properties()
 
 do i=1,dimen; do j=1,dimen;
 der(i)=der(i)+ktense(i,j)*electric_feild(j)
@@ -668,7 +669,7 @@ der=0.0d0
 end subroutine truss_stress_elect_displacement
 
 
-      subroutine truss_shape_change_stress(el_center_coord,ur,sigma_shape)
+      subroutine truss_shape_change_stress_bending(el_center_coord,ur,sigma_shape)
       implicit none
 !     ================================================================
 !     input variables
@@ -752,7 +753,178 @@ enddo;enddo;enddo;enddo;
 !sigma_shape=sigma_shape-identity_matrix(dimen)*volumetric_stress*0.0001
 !call show_matrix(sigma_shape,'sigma_shape')
 
-end subroutine truss_shape_change_stress
+end subroutine truss_shape_change_stress_bending
+
+
+!     ================================================================
+!     finding stress due to shape change
+!     ================================================================
+      subroutine shape_change_stress_beam_folding(el_center_coord,sigma_shape)
+      implicit none
+!     ================================================================
+!     input variables
+!     ================================================================
+      real(iwp), intent(in) :: el_center_coord(:)
+!     ================================================================
+!     output variables
+!     ================================================================
+      real(iwp),intent(out)::sigma_shape(dimen,dimen)
+!     ================================================================
+!     trivial variables
+!     =========================element center point
+      real(iwp)::x(dimen)
+!     =========================the stress field in the point
+      real(iwp)::lagrange_strain_global(dimen,dimen),e(dimen,dimen)
+      integer::i,j,k,l
+!     =========================geometrical variables
+      real(iwp)::lenght_beam
+      real(iwp)::pi
+      real(iwp)::radius_of_curvature,curvature_in_time
+      real(iwp)::x1,x2,x3,r,kappa,epsilon
+!     ================================================================
+      pi=datan(1.0d0)*4.0
+!     =========================lagrange green strain tensor
+      x=el_center_coord
+      lenght_beam=1.0d0
+
+
+      radius_of_curvature=lenght_beam /pi/2.0d0
+
+      x1=x(1)
+      x2=x(2)
+      x3=x(3)
+      R=radius_of_curvature
+
+
+
+       e=0.0d0
+!      e(1,1) = cos(X1 / R) ** 2 * X2 / R
+!      e(1,2) = -cos(X1 / R) * X2 / R * sin(X1 / R)
+!      e(2,1) = -cos(X1 / R) * X2 / R * sin(X1 / R)
+!      e(2,2) = sin(X1 / R) ** 2 * X2 / R
+
+!      e(2,2)=0.3
+!      e(2,2)=0.3
+
+!       e(3,2)=R
+!       e(2,3)=-e(3,2)
+
+      curvature_in_time=time(2)/r
+      kappa=curvature_in_time
+      epsilon=time(2)*1.0d0
+
+!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
+
+!if(abs(x3**2).lt.height_of_beam*0.01)then
+!e(1,1)=0
+!endif
+
+
+!e(1,1)=kappa*0.5
+!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
+!e(3,3)=epsilon
+
+!e(1,1) =epsilon+0.5d0*epsilon**2.0d0-x3*kappa-2*x3*kappa*epsilon-x3*kappa*epsilon**2.0d0+ &
+!        0.5d0*x3**2.0d0*kappa**2.0d0+x3**2.0d0*kappa**2.0d0*epsilon+ &
+!        0.5d0*x3**2.0d0*kappa**2.0d0*epsilon**2.0d0
+!e(2,2)=-e(1,1)
+!e(3,3)=-e(1,1)
+
+
+e(1,1)=x3*kappa*0.01
+!e(2,2)=kappa
+!e(3,3)=kappa
+
+!each_truss_strain(noelem)=e(1,1)
+
+!e=e+identity_matrix(dimen)*time(2)/100.0
+
+      lagrange_strain_global=e
+
+
+
+!      lagrange_strain_global=time(2)* &
+!      matmul( matmul( R_rotation_tensor ,e ), transpose(R_rotation_tensor))
+!!     =========================test for extension
+
+! call show_matrix(lagrange_strain_global,'lagrange_strain_global')
+
+sigma_shape=0.0d0
+do i=1,dimen;
+do j=1,dimen;
+do k=1,dimen;
+do l=1,dimen;
+sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*lagrange_strain_global(k,l)
+
+enddo;enddo;enddo;enddo;
+
+!each_truss_strain(noelem)=sigma_shape(1,1)
+
+
+
+end subroutine shape_change_stress_beam_folding
+
+
+      subroutine truss_shape_change_stress_z_eq_xy(el_center_coord,ur,sigma_shape)
+      implicit none
+!     ================================================================
+!     input variables
+!     ================================================================
+      real(iwp), intent(in) :: el_center_coord(:),ur(:,:)
+!     ================================================================
+!     output variables
+!     ================================================================
+      real(iwp),intent(out)::sigma_shape(dimen,dimen)
+!     ================================================================
+!     trivial variables
+!     =========================element center point
+      real(iwp)::x(dimen)
+!     =========================the stress field in the point
+      real(iwp)::lagrange_strain_global(dimen,dimen),e(dimen,dimen)
+      integer::i,j,k,l
+!     =========================geometrical variables
+      real(iwp)::lenght_beam
+      real(iwp)::pi
+      real(iwp)::radius_of_curvature,curvature_in_time
+      real(iwp)::x1,x2,x3,r,kappa,epsilon
+real(iwp)::strain(3,3);
+real(iwp)::electric_feild(3);
+real(iwp)::volumetric_stress
+!     ================================================================
+
+!     ================================================================
+      pi=datan(1.0d0)*4.0
+!     =========================lagrange green strain tensor
+      x=el_center_coord
+
+      e=0.0d0
+
+      e(1,1) = x(2) ** 2 / 0.2d1
+      e(1,2) = x(1) * x(2) / 0.2d1
+      e(1,3) = x(2) / 0.2d1
+      e(2,1) = x(1) * x(2) / 0.2d1
+      e(2,2) = x(1) ** 2 / 0.2d1
+      e(2,3) = x(1) / 0.2d1
+      e(3,1) = x(2) / 0.2d1
+      e(3,2) = x(1) / 0.2d1
+
+
+e=e*time(2)
+e=e-identity_matrix(dimen)*time(2)*0
+
+call truss_material_properties()
+
+sigma_shape=0.0d0
+do i=1,dimen;
+do j=1,dimen;
+do k=1,dimen;
+do l=1,dimen;
+sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*e(k,l)
+enddo;enddo;enddo;enddo;
+
+
+
+end subroutine truss_shape_change_stress_z_eq_xy
 
 
       subroutine truss_material_properties()
