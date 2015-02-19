@@ -93,11 +93,15 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-    length=1
+    length(1)=1
+    length(2)=1
+    length(3)=0.1
 
+    neldirectional(1)=18
+    neldirectional(2)=18
+    neldirectional(3)=1
 
-    num_tetra_units=100
-    call truss_actua_3d_connectivity(length,num_tetra_units)
+    call truss_3d_space_filler_connectivity(length,neldirectional)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -113,7 +117,7 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;
 !!     ===============================================================
-    call truss_tetra_hedral_bounday()
+      call truss_3d_space_filler_boundary_z_eq_xy(length)
 !     ===============================================================
 !                        time increment starts here
 !     ===============================================================
@@ -124,11 +128,11 @@ implicit none
 !<
 
       tolerance=1.0e-1
-      max_iteration=50;
+      max_iteration=0;
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=1.0;      ! freq=1.0d0;
+      dtime=0.01;      ! freq=1.0d0;
       max_time_numb= int(100/dtime)
 !     ===============================================================
 do time_step_number=0, max_time_numb
@@ -137,7 +141,7 @@ do time_step_number=0, max_time_numb
 
          vspv=time(2)*vspvt
          glu(bnd_no_pr_vec)=0.0d0;
-!         glu=0.0d0;
+         glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
@@ -169,22 +173,22 @@ do time_step_number=0, max_time_numb
 !!                        updating the solution
 !!     ===============================================================
       error=norm_vect(glr)
-      normalforce=norm_vect(glp); if(normalforce==0) normalforce=1
+      normalforce=norm_vect(glu); if(normalforce==0) normalforce=1
       glu=glu+glr
 
 !      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
 
-      if (error.le.tolerance*(normalforce))then;
-          converged=.true.;exit;
-      endif
+!      if (error.le.tolerance*(normalforce))then;
+!          converged=.true.;exit;
+!      endif
 
      enddo ! time_step_number=0,max_time_numb
 !     ======================updatng coordinates  updated lagrangian
-    if(.not.converged)then
-     write(*,*)"iteration did not converge"
-     stop
-    endif
+!    if(.not.converged)then
+!     write(*,*)"iteration did not converge"
+!     stop
+!    endif
 
 
     glb=glp;glp=glu

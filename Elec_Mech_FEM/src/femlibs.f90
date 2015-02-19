@@ -253,9 +253,9 @@ do 200 ni = 1,ipdf
 !     ===============================================================
           ur       =transpose(       matmul( gdsf,elu_tense     ) )
           call truss_material_properties()
-          call shape_change_stress_beam_folding(coord,sigma_shape)
+!          call shape_change_stress_beam_folding(coord,sigma_shape)
 
-!          call truss_shape_change_stress_z_eq_xy(coord,ur,sigma_shape)
+          call truss_shape_change_stress_z_eq_xy(coord,sigma_shape)
           call truss_stress_elect_displacement(ur,der,sigma)
 
 !    call show_matrix(sigma_shape,'sigma_shape')

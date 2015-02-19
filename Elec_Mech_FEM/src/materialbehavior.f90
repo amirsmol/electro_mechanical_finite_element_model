@@ -865,12 +865,12 @@ enddo;enddo;enddo;enddo;
 end subroutine shape_change_stress_beam_folding
 
 
-      subroutine truss_shape_change_stress_z_eq_xy(el_center_coord,ur,sigma_shape)
+      subroutine truss_shape_change_stress_z_eq_xy(el_center_coord,sigma_shape)
       implicit none
 !     ================================================================
 !     input variables
 !     ================================================================
-      real(iwp), intent(in) :: el_center_coord(:),ur(:,:)
+      real(iwp), intent(in) :: el_center_coord(:)
 !     ================================================================
 !     output variables
 !     ================================================================
@@ -910,7 +910,8 @@ real(iwp)::volumetric_stress
 
 
 e=e*time(2)
-e=e-identity_matrix(dimen)*time(2)*0
+
+!e=e+identity_matrix(dimen)*time(2)*0.001
 
 call truss_material_properties()
 
@@ -922,7 +923,7 @@ do l=1,dimen;
 sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*e(k,l)
 enddo;enddo;enddo;enddo;
 
-
+!if (abs(x(3)).le.0.001)sigma_shape=0.0d0
 
 end subroutine truss_shape_change_stress_z_eq_xy
 
@@ -954,7 +955,7 @@ ktense=0.0d0  ;ktense(1,1)=1;
                           element_direction_normal(i)*          &
                           element_direction_normal(j)*          &
                           element_direction_normal(k)*          &
-                          element_direction_normal(l)* 1.0d0
+                          element_direction_normal(l)* ey_epoxy
                   enddo;enddo;enddo;enddo;
 
 
