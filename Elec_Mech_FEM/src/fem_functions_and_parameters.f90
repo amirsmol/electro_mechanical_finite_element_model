@@ -17,6 +17,9 @@
 
 module fem_functions_and_parameters
     implicit none
+
+
+
       logical,parameter::updated_lagrangian=.false.
       integer:: i_calibration
       integer::gauss_point_number
@@ -35,6 +38,7 @@ module fem_functions_and_parameters
       integer,parameter::OUTPUT_UNIT=7
       real(iwp), parameter :: default_smallest_pivot = 1.0e-6
       integer::iter
+      real(iwp)::loadfactor
 
 contains
 function absh(x)

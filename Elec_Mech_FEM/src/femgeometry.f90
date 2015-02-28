@@ -60,6 +60,8 @@ module fem_geometry
     real(iwp),allocatable::constraint(:,:)
     logical::periodic_on
 
+    real(iwp),allocatable::each_truss_strain(:)
+
 
 contains
 
@@ -801,7 +803,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
       if(npe.eq.2)then;cell_types= 3 ;ipdf=1;endif
 
       per_element_gauss =ipdf**dimen
-!      each_truss_voltage=each_truss_strain/0.9e-6;
+      each_truss_voltage=each_truss_strain/0.340E-9;
 
 !      write(*,*)'maximum voltage=',MAXVAL(each_truss_voltage),MAXLOC(each_truss_voltage)
 !      write(*,*)'minumum voltage=',minval(each_truss_voltage),minloc(each_truss_voltage)
@@ -838,17 +840,17 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
       write(vtu,*)'<UnstructuredGrid>'
       write(vtu,*)'<Piece NumberOfPoints="',nnm,'" NumberOfCells="',nem,'">'
 
-!    WRITE(vtu,*)('<CellData Scalars="strain">')
+    WRITE(vtu,*)('<CellData Scalars="strain">')
+
+        WRITE(vtu,*)'<DataArray type="Float32" Name="strain" NumberOfComponents="1" format="ascii">'
+        WRITE(vtu,105)each_truss_strain;
+        WRITE(vtu,*)'</DataArray>'
 !
-!!    WRITE(vtu,*)'<DataArray type="Float32" Name="strain" NumberOfComponents="1" format="ascii">'
-!!    WRITE(vtu,105)each_truss_strain;
-!!    WRITE(vtu,*)'</DataArray>'
+      WRITE(vtu,*)'<DataArray type="Float32" Name="Electric Field (M V/m)" NumberOfComponents="1" format="ascii">'
+      WRITE(vtu,105)(each_truss_voltage/1e9);
+      WRITE(vtu,*)'</DataArray>'
 !
-!!    WRITE(vtu,*)'<DataArray type="Float32" Name="voltage(MFC)" NumberOfComponents="1" format="ascii">'
-!!    WRITE(vtu,105)abs(each_truss_voltage);
-!!    WRITE(vtu,*)'</DataArray>'
-!
-!    WRITE(vtu,*)('</CellData>')
+    WRITE(vtu,*)('</CellData>')
 
 
     write(vtu,*)'<PointData Scalars="elec_pot" Vectors="displacement">'
@@ -897,6 +899,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 
 subroutine truss_tetra_hedral_bounday()
+
 
 nspv=6; !number of nodes, number of elements
 nssv=0
@@ -981,6 +984,8 @@ vssvt=vssv
 
 !write(*,*)bnd_va_pr_vec
 !write(*,*)vssv
+
+
 
 end subroutine linear_truss_bending_boundary
 

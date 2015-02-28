@@ -8,7 +8,7 @@
 !!> ============================================================================
 
 
-!>  \mainpage tetra_hedral_space_filler_truss
+!>  \mainpage tetra_hedral_tetra_hedral_beam
  !!
  !! \section intro_sec Introduction
  !!
@@ -40,7 +40,7 @@
  !!    You should have received a copy of the GNU General Public License
  !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-program space_filler_truss
+program tetra_hedral_beam
 use fem_functions_and_parameters
 use fem_geometry
 use material_behavior
@@ -86,6 +86,11 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
+
+      real(iwp)::freq
+
+
+
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -93,15 +98,11 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-    length(1)=1
-    length(2)=1
-    length(3)=0.1
+    length=1
 
-    neldirectional(1)=18
-    neldirectional(2)=18
-    neldirectional(3)=1
 
-    call truss_3d_space_filler_connectivity(length,neldirectional)
+    num_tetra_units=150
+    call truss_actua_3d_connectivity(length,num_tetra_units)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -114,10 +115,11 @@ implicit none
 !     ===============================================================
 !     reading the boundary conditions
 !     ===============================================================
+      call form_history(ngauss,nem)
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;
 !!     ===============================================================
-      call truss_3d_space_filler_boundary_z_eq_xy(length)
+    call linear_truss_bending_boundary()
 !     ===============================================================
 !                        time increment starts here
 !     ===============================================================
@@ -128,20 +130,24 @@ implicit none
 !<
 
       tolerance=1.0e-1
-      max_iteration=0;
+      max_iteration=50;
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      ! freq=1.0d0;
-      max_time_numb= int(100/dtime)
+      dtime=0.01;     freq=1.0d0;
+      max_time_numb= int(2.0/dtime)
 !     ===============================================================
 do time_step_number=0, max_time_numb
+
      call cpu_time(timer_begin)
          time(1)=dtime;time(2)=time_step_number*dtime
 
-         vspv=time(2)*vspvt
+!        loadfactor=time(2)
+
+        loadfactor=0.5*sin(2*3.14515*freq*time(2))
+!         vspv=time(2)*vspvt
          glu(bnd_no_pr_vec)=0.0d0;
-         glu=0.0d0;
+!         glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
@@ -173,26 +179,32 @@ do time_step_number=0, max_time_numb
 !!                        updating the solution
 !!     ===============================================================
       error=norm_vect(glr)
-      normalforce=norm_vect(glu); if(normalforce==0) normalforce=1
+      normalforce=norm_vect(glu); if(normalforce.lt.1e-8) normalforce=1.0
       glu=glu+glr
 
-!      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
 
-!      if (error.le.tolerance*(normalforce))then;
-!          converged=.true.;exit;
-!      endif
+      if (error.le.tolerance*(normalforce))then;
+          converged=.true.;exit;
+      endif
 
      enddo ! time_step_number=0,max_time_numb
 !     ======================updatng coordinates  updated lagrangian
-!    if(.not.converged)then
-!     write(*,*)"iteration did not converge"
-!     stop
-!    endif
+    if(.not.converged)then
+     write(*,*)"iteration did not converge"
+     stop
+    endif
 
+!     write(22,*)'curn_truss_actuation',curn_truss_actuation(20,:)
+!     write(22,*)'hist_truss_actuation',hist_truss_actuation(20,:)
+!     write(22,*)
 
+    call update_history()
     glb=glp;glp=glu
     call truss_paraview_3d_vtu_xml_writer(glu)
+     call result_printer(iter,glu)
+
 
 !    write(*,*)'max_time_iteration',max_time_numb
 
@@ -207,4 +219,4 @@ do time_step_number=0, max_time_numb
       call timestamp ()
       close (csv)
 
-end program space_filler_truss
+end program tetra_hedral_beam

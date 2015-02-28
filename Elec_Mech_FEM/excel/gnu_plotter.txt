@@ -1,10 +1,27 @@
  set terminal postscript enhanced 
- set output '| C:\texlive\2014\bin\win32\ps2pdf - electric_field_vs_displacement.pdf'
- set title "electric field vs displacement " font ",20"
- set ylabel "displacement {/mu m}"
- set xlabel "electric field (E)"
+ set output '| C:\texlive\2014\bin\win32\ps2pdf - linear_tetrahedral_time_dependent_efield_vs_displacement_nonlinear.pdf'
+ set title "stimuli vs displacement " font ",20"
+ set ylabel "normalized displacement u_{middle}/ \L_{beam}"
+ set xlabel "normalized electric field"
  set style data lines
  set key left box 
-set datafile separator ","
+ set datafile separator ","
+ set xrange [-1.2:1.2]
+   
+#set label 1 at 0.0,0.01
+#set label 1 'A'
 
- plot "./excel/results_0000.csv" using 3:4 title "electric field vs displacement" 
+#set label 2 at 1.0,0.11
+#set label 2 'B'
+
+#set label 3 at 0.0,0.04
+#set label 3 'C'
+
+#set label 4 at -1.0,-0.11
+#set label 4 'D'  
+
+
+
+
+plot "results_0000.csv" using ($3*2):4 title "stimuli vs displacement"
+
