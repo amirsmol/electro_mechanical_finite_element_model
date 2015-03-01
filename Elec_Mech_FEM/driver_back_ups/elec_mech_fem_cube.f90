@@ -87,7 +87,7 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-      length=1.0d0;neldirectional=[2,2,2]
+      length=1.0d0;neldirectional=1
       call linear_c3d8_3d_fem_geometry(neldirectional,length)
 !     ===============================================================
 !     define the solution parameters
@@ -129,10 +129,10 @@ implicit none
      do time_step_number=0,max_time_numb
      call cpu_time(timer_begin)
          time(1)=dtime;time(2)=time_step_number*dtime
-         loadfactor=-sin(2*3.14515*freq*time(2))*5.0*ec
+         loadfactor=-sin(2*3.14515*freq*time(2))*0.1*ec
          vspv=loadfactor*vspvt
-         glu(bnd_no_pr_vec)=0.0*vspv;
-         glu=0.0d0
+         glu(bnd_no_pr_vec)=vspv;
+!         glu=0.0d0
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================

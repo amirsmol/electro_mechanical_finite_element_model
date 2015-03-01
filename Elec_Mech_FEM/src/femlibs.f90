@@ -974,7 +974,7 @@ fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 !write(*,*)maxval(glu)
 !write(*,*)maxloc(glu)
 
-curved_node=78
+!curved_node=78
 !curved_node=nnm
 counter=counter+1
 

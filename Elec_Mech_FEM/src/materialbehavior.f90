@@ -224,8 +224,10 @@ d_electric_field_p=electric_field_p-electric_field_b
 curn_electric_field(gauss_point_number,:)=electric_field
 hist_electric_field(gauss_point_number,:)=electric_field_p
 ! ================================================================
-!curn_polarization_function=0.0d0
-call material_properties_afc()
+
+!pr=[1.0d0,0.0d0,0.0d0]
+
+call material_properties()
 
 
 ! ===================================remanent strain
@@ -367,8 +369,12 @@ back_electric_field_t=u_n_pol(4:6)
 normalized_polarization=u_n_pol(1:3)
 electric_drive=electric_field_t/ec-back_electric_field_t
 
+!write(25,951)polarization_iteration_number,time(2),electric_drive,back_electric_field_t
+!write(23,951)polarization_iteration_number,time(2),electric_field_t
+
+
 r_n_pol(1:3)=normalized_polarization- electric_polarization_p/pr_sat &
--( dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m ) * &
+-( dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1.0 )  ) ** m ) * &
                                       unit_vect( electric_drive )
 r_n_pol(4:6)=back_electric_field_t &
 - h0*atanh( norm_vect( normalized_polarization ) )*unit_vect( normalized_polarization )
@@ -378,7 +384,7 @@ polarization_error=norm_vect(r_n_pol)
 
 ktan_pol=identity_matrix(6)
 ktan_pol(1:3,4:6)=  &
-(m*dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 ) ) ** (m-1) ) &
+(m*dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1.0 ) ) ** (m-1) ) &
 *dyad_of_two_vector( unit_vect( electric_drive ), &
                      unit_vect( electric_drive ) ) &
 +(dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m )  &
@@ -390,13 +396,17 @@ ktan_pol(4:6,1:3)=( h0 /(norm_vect( normalized_polarization )**2.0-1 ) ) &
 +h0*atanh( norm_vect( normalized_polarization )) &
 *derivative_of_direction(normalized_polarization)
 
+!write(22,951)polarization_iteration_number,time(2),u_n_pol,polarization_error
+
+!write(10,*)'polarization_iteration_number',polarization_iteration_number
+!call show_matrix(ktan_pol,'ktan_pol')
+
+
 
 call Gaussian_Elimination_Solver(ktan_pol,r_n_pol);del_u_n_pol=r_n_pol
 u_n_pol=u_n_pol-del_u_n_pol
 
 
-write(23,951)polarization_iteration_number,time(2),electric_field_t
-write(22,951)polarization_iteration_number,time(2),u_n_pol,polarization_error
 
          if (polarization_error.le.tolerance*ec)then
              converged=.true.
@@ -411,6 +421,8 @@ write(*,*)'********************************************'
 write(*,*)'iteration did not converge at time',time(2)
 stop
 endif
+
+
 
 
 curn_polarization_function(gauss_point_number,:)=u_n_pol(1:3)*pr_sat
@@ -595,8 +607,8 @@ real(iwp)::ey,nu
 ! ================================================================
 
 eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
-!
-
+call remanent_polarization()
+pr= curn_polarization_function(gauss_point_number,:)
 direc_a=unit_vect(pr)
 
 !3D formulation
