@@ -132,7 +132,7 @@ implicit none
          loadfactor=-sin(2*3.14515*freq*time(2))*3.0*ec
          vspv=loadfactor*vspvt
          glu(bnd_no_pr_vec)=vspv;
-!         glu=0.0d0
+         glu=0.0d0
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
