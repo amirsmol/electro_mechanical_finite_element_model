@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Frequenty Asked Questions (FAQ)</title>
+</head>
+<body>
+
+<h1>Eclipse would exceed the available memory do I have to request for more capacity on supercomputer?</h1>
+<p>
+You can be using remote Linux machine to run the code.
+You can use YOUR Windows machine to view the results and pre process and post process with eclipse and paraview.
+</p>
+
+<p>The memory of Linux machine is huge.
+The memory of YOUR machine is limited.</p>
+
+<p>To answer your question:
+If you did not get a memory error from Linux machine your codes will run good.
+If you need to have access to more memory in Linux machine you need to run the code in batch mode and request more memory.
+In order to learn how to do this check your cluster's staff's website.</p>
+
+<p>If the memory error is from Eclipse when you want to open the files, the problem is with YOUR machine.
+You can use another software to open the .inp or .msh files after you copy these files to YOUR machine.</p>
+
+<p>One nice software for opening huge files is sublime text and you can download it from: http://www.sublimetext.com/</p>
+
+<p>Another way to dear with this problem is to open and edit the files in Linux machine itself.
+You can use emacs or vi in Linux machine to view or edit the files.
+Check them out to see how to use them:</p>
+
+<p>https://www.gnu.org/software/emacs/
+en.wikipedia.org/wiki/Vi</p>
+
+<h1>How can we install and use Lapack in visual studio?</h1>
+<p>You definitely can.</p>
+<p>Visual Studio is a proprietary software that cost between 500$ to 5000$ if you have access to it it will be good but there are things that need to know about using VS (Visual Studio)</p>
+<p>As long as I know VS does not support gfortran compiler, this means that you have have to purchase a fortran compiler from a vendor that is supported by VS.</p>
+<p>VS supports intel fortran or ifort. Intel also provides its own version of LAPACK and called MKL LAPACK.</p>
+
+<p>In summary in order to be able to call lapack subroutines and work with VS you should have access to ifort and mkl-lapack on your system (it is not going to be cheap) and you have to like your source code with mkl-lapack.</p>
+
+<p>The linking process inside VS is a little complicated you have to follow the linking advisor of mkl-lapack and set it based on the version of your fortran and mkl and also your machines architecture.
+(https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor)</p>
+
+<p>After finding the correct linking you have to add it to your linking chain in VS.
+I have done it once it was a sub menu in one of the several sub menus of VS (I had problem solving the conflicts between mkl and other packages needed to compile my code in VS).</p>
+
+<p>You can check this website for more information but I am almos sure that you have to have different setting based on the your machine and also the version of your compiler: http://icl.cs.utk.edu/lapack-for-windows/lapack/</p>
+
+<p>In general even thought it will be possible to run the code on VS i do not recommend it since the time that you might spend in setting up the VS for lapack will be more that you expect.</p>
+<p>The other thing about combination VS, ifort and mkl-lapack is that it is not going to be free and it will cost lots of money if you want to install it on your laptop for example.</p>
+
+</body>
+</html>
