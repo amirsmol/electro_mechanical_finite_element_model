@@ -1,0 +1,95 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 15.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kappa:matrix([k_11,0,0],[0,k_22,0],[0,0,k_33])$
+s_complicance:matrix([ 1/e1 , -nu12/e2 , -nu13/e3,0,0,0 ],
+[ -nu12/e2 , 1/e2 , -nu23/e3,0,0,0 ],
+[ -nu13/e3 , -nu23/e3 , 1/e3,0,0,0 ],
+[ 0 , 0 , 0,1/g23,0,0 ],
+[ 0 , 0 , 0,0,1/g13,0 ],
+[ 0 , 0 , 0,0,0,1/g12 ])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e_piezo:matrix([0,0,e113],[0,0,e223],[0,0,e333],[0,e232,0],[e131,0,0],[0,0,0])$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+c_stiffness:factor(invert(s_complicance))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cmate_full_1: map(append,c_stiffness,e_piezo)$
+cmate_full_2: map(append,transpose(e_piezo),kappa)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cmate_full: transpose(map(append,transpose(cmate_full_1),transpose(cmate_full_2)))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e1 : 0.606e-1$ 
+e2 : e1$ 
+e3 : e2$ 
+nu23 : .3$ 
+nu13 : .3$ 
+nu12 : .3$ 
+g23 : e1/(1+nu12)/2$ 
+g13 : g23$ 
+g12 : g23$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e113:-6.15e-6$
+e223:-6.15e-6$
+e333:14.52e-6$
+e232:7.56e-6$
+e131:7.56e-6$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+k_11:4.1e-14$
+k_22:4.1e-14$
+k_33:2.1e-14$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+right_hand_side:matrix([0],[0],[0],[0],[0],[0],[0],[0],[1e-6]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i : 1 thru 9 do
+    cmate_full[9,i]:0$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+cmate_full[9,9]:1$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ev(solution:invert(cmate_full).right_hand_side);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ev(c_stiffness);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(%o28) matrix([0.0014292079207921],[0.0014292079207921],[-0.0030049504950495],[0.0],[0.0],[0.0],[0.0],[0.0],[1000000.0]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+-300.4950495049504/1e6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+0.081576923076923;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

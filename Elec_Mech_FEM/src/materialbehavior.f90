@@ -15,13 +15,13 @@ real(iwp),parameter::k01_pzt=0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.6d0
+real(iwp),parameter::k_elec_01_pzt=-0.0d0
 real(iwp),parameter::lambda_elec_01_pzt=1.5
 
 ! =============================epoxy
 real(iwp),parameter::k00_epx=1.0d0
-real(iwp),parameter::k01_epx=0.6d0
-real(iwp),parameter::lambda_01_epx=0.8
+real(iwp),parameter::k01_epx=0.0d0
+real(iwp),parameter::lambda_01_epx=0.1
 
 real(iwp),parameter::k_elec_00_epx=1.0d0
 real(iwp),parameter::k_elec_01_epx=0.0d0
@@ -36,13 +36,9 @@ real(iwp),parameter::m=2;
 ! ================================================================ pzt
 
 
-real(iwp),parameter::e33 = -14.52*1.3d0;
-real(iwp),parameter::e15 = -7.56*1.3d0;
-real(iwp),parameter::e31 = 6.15*1.3d0;
-
-!real(iwp),parameter::e33 = -20.92*1.3d0;
-!real(iwp),parameter::e31 =  6.15*1.3d0;
-!real(iwp),parameter::e15 = -45.74*1.3d0;
+real(iwp),parameter::e33 = -14.52*1.0d0;
+real(iwp),parameter::e15 = -7.56*1.0d0;
+real(iwp),parameter::e31 = 6.15*1.0d0;
 
 real(iwp),parameter::eps_11 = 4.0e-9;
 real(iwp),parameter::eps_33 = 2.0e-9;
@@ -482,7 +478,7 @@ end subroutine  update_history
 ! ===============================================================
 !   Material properties
 ! ===============================================================
-subroutine material_properties()
+subroutine afc_material_properties()
 implicit none
 ! ================================================================
 !  material variables
@@ -627,6 +623,97 @@ partial_sigma_to_partial_elec_p=0
 
 endif ! (noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
 
+end subroutine afc_material_properties
+
+
+
+! ===============================================================
+!   Material properties
+! ===============================================================
+subroutine material_properties()
+implicit none
+! ================================================================
+!  material variables
+! ================================================================
+
+! ================================================================
+integer::eye(dimen,dimen)
+integer::i,j,k,l ! ,m,n
+real(iwp)::ey,nu
+! ================================================================
+! ================================================================
+! ================================================================
+
+eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
+!
+
+direc_a=direction_of_vector(pr)
+
+!3D formulation
+ctens=0;
+epz=0.0d0;
+b_tilt=0.0d0;
+ktense=0.0d0
+
+
+beta1   =-e31;
+beta2   =-e33+2.0d0*e15+e31;
+beta3   =-2.0d0*e15;
+gamma1  =-eps_11/2.0d0;
+gamma2  =(eps_11-eps_33)/2.0d0;
+
+
+k00=k00_pzt
+k01=k01_pzt
+lambda_01=lambda_01_pzt
+
+k_elec_00=k_elec_00_pzt
+k_elec_01=k_elec_01_pzt
+lambda_elec_01=lambda_elec_01_pzt
+
+ey=ey_pzt;
+nu=nu_pzt;
+
+mu=ey/(1+nu)/2.0
+lambda=ey*nu/(1+nu)/(1-2.0*nu)
+
+do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
+ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
+   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
+enddo;enddo;enddo;enddo;
+
+do i = 1,dimen; do k = 1,dimen; do l = 1,dimen;
+epz(i,k,l)=( beta1*direc_a(i)*eye(k,l) &
+            + beta2*direc_a(i)*direc_a(k)*direc_a(l) &
+            + beta3*0.5d0*( eye(i,l)*direc_a(k) + eye(i,k)*direc_a(l) )  ) *norm_vect(pr)/pr_sat
+enddo;enddo;enddo;
+
+ktense(1,1)=eps_11
+ktense(2,2)=eps_11 ;
+ktense(3,3)=eps_33 ;
+
+
+b_tilt=0.0d0
+b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
+
+!b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
+!b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
+
+
+partial_sigma_to_partial_elec_t=0.0
+partial_sigma_to_partial_elec_p=0.0
+
+partial_sigma_to_partial_elec_t=epz
+partial_sigma_to_partial_elec_p=epz
+
+
+
+partial_sigma_to_partial_elec_t(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
+        +b_tilt(3,3,3,3)*( abs(  electric_field(3) ) )
+
+partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
+        +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
+
 end subroutine material_properties
 
 ! ================================================================
@@ -640,8 +727,6 @@ normed=norm_vect(pr_vec)
 if (normed.gt.0.0d0)then
 a_direc=pr_vec/normed
 endif
-
-
 
 end subroutine direction_polarization
 

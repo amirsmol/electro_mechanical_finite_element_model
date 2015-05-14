@@ -1,7 +1,6 @@
 module linearsolvers
-!use mkl95_lapack
 
-   implicit none
+implicit none
       logical,parameter::updated_lagrangian=.false.
 
       integer:: i_calibration

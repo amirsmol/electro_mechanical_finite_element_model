@@ -12,20 +12,17 @@
  !!
  !! \section intro_sec Introduction
  !!
- !! This is the introduction.
- !!
- !! \section install_sec Installation
- !!
- !! \subsection step1 Step 1: Opening the box
+ !! This file is the driver file for a finite element library. 
+ !! The different subroutines are called to form a model for a active fiber composite.
  !!
  !!
  !!
 !>
  !!  \brief     Electro Mechanical Finite Element Model
- !!  \details   This is the driver file
+ !!  \details   This is the driver file for a single element benchmarch
  !!  \author    Amir Sohrabi Mollayousef
  !!  \version   0.1a
- !!  \date      2011 - 2014
+ !!  \date      2011 - 2015
  !!  \pre       Pay attention to the mesh file.
  !!  \copyright     This program is free software: you can redistribute it and/or modify
  !!    it under the terms of the GNU General Public License as published by
@@ -49,33 +46,30 @@ implicit none
 !     ================================================================
 !                      solution variables
 !     ================================================================
-      real(iwp),allocatable::glk(:,:)
-      real(iwp),allocatable::glu(:) !the global solution
-      real(iwp),allocatable::glp(:) !the previus degrees of freedom vector
+      real(iwp),allocatable::glk(:,:) !>This the main coefficient matrix of the finite element model.
+      real(iwp),allocatable::glu(:) !>The global solution
+      real(iwp),allocatable::glp(:) !>The previos gobal solution vector obrained in the previous time increment
       real(iwp),allocatable::glb(:) !the before previus degrees of freedom
 !     ================================================================
 !                           the variables
 !     ================================================================
       real(iwp),allocatable::glk_constrain(:,:) !< the global constrainted constant matrix
       real(iwp),allocatable::glr_constrain(:) !< the global constraint solution vector
-!      real(iwp),allocatable::aux_glk_constrain(:,:) !< the global constraint solution vector
       real(iwp),allocatable::aux_glk_constrain_t(:,:) !< the global constraint solution vector
       real(iwp),allocatable::transpose_constrain(:,:) !< the global constraint solution vector
 !      real(iwp),allocatable::constraint_real(:,:)
 !     ================================================================
 !                      solver variables
 !     ================================================================
-      real(iwp),allocatable::glq(:) !internal force vector
-      real(iwp),allocatable::glt(:) !external fource vector
-      real(iwp),allocatable::glr(:) !total residual vector
-      real(iwp),allocatable::glu_ref(:) !displacement in refrence coordinate
+      real(iwp),allocatable::glq(:) !>internal force vector
+      real(iwp),allocatable::glt(:) !>external fource vector
+      real(iwp),allocatable::glr(:) !>total residual vector
+      real(iwp),allocatable::glu_ref(:) !>displacement in refrence coordinate
 !     ============================iteration variables
-      real(iwp)::  error ! ,eps!the error tolerance and error
+      real(iwp)::  error !> the and error in the teration
+      logical:: converged !> this is a ligical variable it is true if the iteration is converged and vice versa
 
-!      integer:: itmax !maxumim number of iteration
-      logical:: converged
-
-      integer::iteration_number
+      integer::iteration_number !> this is the iteration number for newton raphson iteration
       integer::time_step_number
 
       integer::max_iteration
@@ -86,7 +80,7 @@ implicit none
 !     ================================================================
 !                      time variables
 !     ================================================================
-      real(iwp)::loadfactor    ! time
+      real(iwp)::loadfactor    
       real(iwp)::freq
       integer :: clck_counts_beg, clck_counts_end, clck_rate
       real(iwp) :: beg_cpu_time, end_cpu_time
@@ -98,7 +92,7 @@ implicit none
 !     =======================trivial meshing arrays the meshing seed parameters
       integer :: neldirectional(dimen)
       real(iwp) :: length(dimen)
-            real(iwp):: load_factors(2)
+      real(iwp):: load_factors(2)
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -107,10 +101,9 @@ implicit none
       call timestamp()
 !     ===============================================================
 !       length=[1.4000001800000002E-004,1.7499999400000000E-004,7.4999988999999980E-004]
-!       length=1
-!       neldirectional=[1,1,1]
-!       call linear_c3d8_3d_fem_geometry(neldirectional,length)
-      call afc_mesh_file_reader()
+      length=1 !< This defines a domain with dimension 1x1x1
+      neldirectional=[1,1,1] !< This defines the number of elements in each direction 
+      call linear_c3d8_3d_fem_geometry(neldirectional,length)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -127,10 +120,10 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq),glu_ref(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;glu_ref=0.0d0
 !!     ===============================================================
-      call afc_boundary_full_electrode(length)
-!      call crawley_boundary(length)
+      ! call afc_boundary_full_electrode(length)
+      call crawley_boundary(length)
 
-      write(*,*)'length',length
+      ! write(*,*)'length',length
 
       call afc_form_constraint()
       allocate( glk_constrain( size(constraint,dim=2), size(constraint,dim=2) ) )
@@ -157,21 +150,23 @@ implicit none
       max_time_numb= int(2.0e0/dtime)
 !     ===============================================================
     write(*,*)'number of time steps',max_time_numb
-    load_factors(1)=83.0
-    load_factors(2)=375.0
-     do i_calibration=1,2
-     do time_step_number=0, max_time_numb
+    load_factors(1)=1.0
+     do i_calibration=1,1
+     do time_step_number=0, 1 ! max_time_numb
      call cpu_time(timer_begin)
 
 
-         time(1)=dtime;time(2)=time_step_number*dtime
-                  loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
-!        loadfactor=-sin(2*3.14515*freq*time(2))*375
-!        loadfactor=375 !175.0d0
-!        loadfactor=time(2)
-         vspv=loadfactor*vspvt
-         glu(bnd_no_pr_vec)=0.0d0;
-!        glu=0.0d0;
+         time(1)=dtime;
+         time(2)=time_step_number*dtime
+         ! loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
+
+      loadfactor=1.0
+
+
+      vspv=loadfactor*vspvt
+
+      glu(bnd_no_pr_vec)=0.0d0;
+      glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
@@ -195,7 +190,7 @@ implicit none
       error=norm_vect(glr)
       vspv=0.0d0
 !     ===============================================================
-!                        solving constraint
+!                        solving constrained system
 !     ===============================================================
 !     call cpu_time(timer_begin)
 
@@ -209,15 +204,15 @@ implicit none
      call lapack_gesv(glk_constrain,glr_constrain)
 
 !     call cpu_time(timer_end); write(*,*)'time to solve linear system',timer_end- timer_begin
-     glr=matmul (constraint,glr_constrain)
+      glr=matmul (constraint,glr_constrain)
 !!     ===============================================================
 !!                        updating the solution
 !!     ===============================================================
       glu=glu+glr
 
-      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      write(*,*)'loadfactor amplitude=',load_factors(i_calibration)
+      ! write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      ! write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      ! write(*,*)'loadfactor amplitude=',load_factors(i_calibration)
       write(*,*)
 
       if (error.le.tolerance*(normalforce))then;
@@ -231,19 +226,16 @@ implicit none
      stop
     endif
 
-if(updated_lagrangian)then
-glu_ref=glu+glu_ref
-do j=1,dimen;forall(i=1:nnm) coords(i,j)=coords(i,j)+glu((i-1)*ndf+j);enddo
-endif
-
     call update_history()
-    glb=glp;glp=glu
+    glb=glp;
+    glp=glu
 
-    call result_printer(iter,glu,loadfactor)
-!    call paraview_3d_vtu_xml_writer(glu)
-!    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
+   call result_printer(iter,glu,loadfactor)
+   call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
 !    write(*,*)'max_time_iteration',max_time_numb
     enddo !itime=0,ntime
+
+
 
     call clear_history()
 

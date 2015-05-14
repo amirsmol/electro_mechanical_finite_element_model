@@ -961,7 +961,7 @@ do np=1,nssv
   bnd_va_se_vec(np)=vssv(np)
   bnd_no_se_vec(np)=nb
 enddo
-write(1,*)'vspv',vspv
+! write(1,*)'vspv',vspv
 end subroutine bimorph_beam_boundary
 
 
@@ -1291,6 +1291,11 @@ write(*,*)'length_1',length_1
 
 end subroutine linder_miehe_boundary
 
+
+!< This subroutine produces a rectangular mesh  using linear elements!>
+!! @param neldirectional numner of elements in each direction
+!! @param length lenght of the domain in each direction
+!! @todo there is noting to do, this is almost complete
 subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
     ! ================================================================
     !the variables
@@ -1578,19 +1583,12 @@ close (vtu)
 
 end subroutine paraview_3d_vtu_xml_writer_vector
 
-
-!  ================================================================
-!   boundary conditions
-!  ================================================================
+!! This subroutine defines a boundary condition for crawley experiment
+!! It is a cube that is under electric field in x3 direction
+!! @param length contains the dimension of domain
 subroutine crawley_boundary(length)
-!  ================================================================
-! input geormetry variables
-!  ================================================================
 implicit none
-!  ================================================================
-! input geormetry variables
-!  ================================================================
-real*8:: length(:)
+real*8:: length(:) !<length contains the dimension of domain
 integer::ibond,inode
 ! integer::curved_node
 integer::np,nb
@@ -1760,8 +1758,8 @@ integer::i_boundary
 n_fixed_boundary=count(vspv(:)==0)
 fixed_boundary_mask=vspv(:)==0
 write(*,*)'n_fixed_boundary',n_fixed_boundary
-write(1,*)'vspv',vspv
-write(1,*)'fixed_boundary_mask',fixed_boundary_mask
+! write(1,*)'vspv',vspv
+! write(1,*)'fixed_boundary_mask',fixed_boundary_mask
 
 n_constraint=size(afc_boundary_x_periodic,dim=1)+  &
              size(afc_boundary_y_periodic,dim=1)+  &
