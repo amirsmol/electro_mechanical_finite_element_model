@@ -10,7 +10,7 @@
 
 # Change this line if you are using a different Fortran compiler
 FORTRAN_COMPILER = gfortran
-exec_file=    bin\run.exeMakefile
+exec_file=    bin\run.exe
 module_files= src\linearsolvers.f90 src\femgeometry.f90 src\materialbehavior.f90 src\femlibs.f90 
 driver_file = driver\elec_mech_fem.f90
 compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
@@ -21,7 +21,7 @@ gnu_plot_command_file=src\gnu_plotter.txt
 flags=-O3   
 
 all: 
-	del $(output_files) $(exec_file)
+# del $(output_files) $(exec_file)
 	$(FORTRAN_COMPILER) $(flags) -o\
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files)
