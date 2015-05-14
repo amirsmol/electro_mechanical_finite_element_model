@@ -106,11 +106,9 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-!       length=[1.4000001800000002E-004,1.7499999400000000E-004,7.4999988999999980E-004]
-!       length=1
-!       neldirectional=[1,1,1]
-!       call linear_c3d8_3d_fem_geometry(neldirectional,length)
-      call afc_mesh_file_reader()
+      length=1
+      neldirectional=[1,1,1]
+      call linear_c3d8_3d_fem_geometry(neldirectional,length)
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -127,12 +125,9 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq),glu_ref(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;glu_ref=0.0d0
 !!     ===============================================================
-      call afc_boundary_full_electrode(length)
-!      call crawley_boundary(length)
+     call crawley_boundary(length)
 
-      write(*,*)'length',length
-
-      call afc_form_constraint()
+      call form_constraint()
       allocate( glk_constrain( size(constraint,dim=2), size(constraint,dim=2) ) )
       allocate( glr_constrain( size(constraint,dim=2) ) )
 !
@@ -154,23 +149,20 @@ implicit none
 !     reading time increment varibales
 !     ===============================================================
       dtime=0.01;      freq=1.0d0;
-      max_time_numb= int(2.0e0/dtime)
+      max_time_numb= int(1.0e0/dtime)
 !     ===============================================================
     write(*,*)'number of time steps',max_time_numb
-    load_factors(1)=83.0
-    load_factors(2)=375.0
-     do i_calibration=1,2
-     do time_step_number=0, max_time_numb
+     do i_calibration=1,1
+     do time_step_number=0,1 !  max_time_numb
      call cpu_time(timer_begin)
 
 
          time(1)=dtime;time(2)=time_step_number*dtime
-                  loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
-!        loadfactor=-sin(2*3.14515*freq*time(2))*375
-!        loadfactor=375 !175.0d0
-!        loadfactor=time(2)
+          ! loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
+
+         loadfactor=1.0
          vspv=loadfactor*vspvt
-         glu(bnd_no_pr_vec)=0.0d0; 
+         glu(bnd_no_pr_vec)=0.0d0;   
 !        glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
@@ -240,9 +232,8 @@ endif
     glb=glp;glp=glu
 
     call result_printer(iter,glu,loadfactor)
-!    call paraview_3d_vtu_xml_writer(glu)
-!    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
-!    write(*,*)'max_time_iteration',max_time_numb
+   call paraview_3d_vtu_xml_writer(glu)
+
     enddo !itime=0,ntime
 
     call clear_history()

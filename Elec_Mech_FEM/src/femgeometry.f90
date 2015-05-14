@@ -961,7 +961,7 @@ do np=1,nssv
   bnd_va_se_vec(np)=vssv(np)
   bnd_no_se_vec(np)=nb
 enddo
-write(1,*)'vspv',vspv
+! write(1,*)'vspv',vspv
 end subroutine bimorph_beam_boundary
 
 
@@ -1746,7 +1746,7 @@ end subroutine crawley_boundary
 !! Number of essential boundary conditions are substracted from number of column
 !! Then rows related to the zero or fixed boundary conditions are put to zero
 
-subroutine afc_form_constraint()
+subroutine form_constraint()
 
 real(iwp),allocatable::constraint_x(:,:),constraint_y(:,:),constraint_z(:,:) !<the constraint matrix
 real(iwp),allocatable::full_constraint(:,:)
@@ -1760,8 +1760,8 @@ integer::i_boundary
 n_fixed_boundary=count(vspv(:)==0)
 fixed_boundary_mask=vspv(:)==0
 write(*,*)'n_fixed_boundary',n_fixed_boundary
-write(1,*)'vspv',vspv
-write(1,*)'fixed_boundary_mask',fixed_boundary_mask
+! write(1,*)'vspv',vspv
+! write(1,*)'fixed_boundary_mask',fixed_boundary_mask
 
 n_constraint=size(afc_boundary_x_periodic,dim=1)+  &
              size(afc_boundary_y_periodic,dim=1)+  &
@@ -1839,7 +1839,7 @@ if (   sum(  full_constraint(:,j_const) ) .gt. 0 ) then
 endif
 enddo
 
-end subroutine afc_form_constraint
+end subroutine form_constraint
 
 
 !  ================================================================

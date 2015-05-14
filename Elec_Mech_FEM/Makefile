@@ -21,7 +21,7 @@ gnu_plot_command_file=src\gnu_plotter.txt
 flags=-O3   
 
 all: 
-# del $(output_files) $(exec_file)
+#   del $(output_files) $(exec_file)
 	$(FORTRAN_COMPILER) $(flags) -o\
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files)
@@ -46,7 +46,7 @@ fullall:
 #	gnuplot $(gnu_pl
 
 clean:
-	del $(output_files) $(exec_file) ;
+	rm $(output_files) $(exec_file) ;
 	
 	
 run: 
