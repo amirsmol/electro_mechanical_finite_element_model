@@ -170,7 +170,7 @@ implicit none
 !        loadfactor=375 !175.0d0
 !        loadfactor=time(2)
          vspv=loadfactor*vspvt
-         glu(bnd_no_pr_vec)=0.0d0;
+         glu(bnd_no_pr_vec)=0.0d0; 
 !        glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
