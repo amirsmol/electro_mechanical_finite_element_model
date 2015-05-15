@@ -738,19 +738,18 @@ end subroutine k_gen
     end subroutine symmetric_primary_bounday
 
 subroutine result_printer(iter,glu,loadfactor)
-real(iwp),INTENT(IN)::glu(:),loadfactor;
-
-integer::iter;
+  real(iwp),INTENT(IN)::glu(:),loadfactor;
+  integer::iter;
 !     ================================================================
 !  trivial variables
 !     ================================================================
-integer::i,j,pdf,k;
+  integer::i,j,pdf,k;
 ! integer::curved_node;
-integer,parameter::gnuplot=5
-integer,save::counter
-character(len=5)::x1
-character(len=20) :: fmt,filename ! format descriptor
-fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
+  integer,parameter::gnuplot=5
+  integer,save::counter
+  character(len=5)::x1
+  character(len=20) :: fmt,filename ! format descriptor
+  fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 
 ! write(*,*)dimen
 
@@ -773,25 +772,26 @@ open (csv,file=filename)
 endif
 
 if(counter.eq.1)then
-
-write(csv,672)
+  write(csv,672)
 endif
 
 write(out,910);write(out,*)'time',time
 write(out,910);write(out,910);write(out,670);write(out,910)
+
 do i=1,nnm
-pdf=(i-1)*ndf
-write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
+  pdf=(i-1)*ndf
+  write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
 enddo
 
-!write(*,*)'curved_node',curved_node
+! write(*,*)'curved_node',curved_node
 pdf=(curved_node-1)*ndf
-
 write(csv,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+! write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+write(gnuplot,951)iter,time(2),loadfactor,glu(pdf+ndf-1)
+
+! write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 !write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
 write(out,*)
 !     ===============================================================

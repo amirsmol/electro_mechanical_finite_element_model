@@ -291,8 +291,6 @@ enddo
 
 
 
-!write(*,*)ispv
-!! // issv(1,:)=[node number , degree of freedom number];
 
 issv(1,:)=[corner_node,3];
 vssv(1)=0.0e0

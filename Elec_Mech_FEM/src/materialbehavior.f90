@@ -15,7 +15,7 @@ real(iwp),parameter::k01_pzt=0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.0d0
+real(iwp),parameter::k_elec_01_pzt=-0.4d0
 real(iwp),parameter::lambda_elec_01_pzt=1.5
 
 ! =============================epoxy
@@ -95,7 +95,7 @@ real(iwp),dimension(dimen,dimen) ::ktense
 ! ================================================================
 !  time variables
 ! ================================================================
-real(iwp)::time(2),dtime
+real(iwp)::time(2),dtime,dtime_scaled
 integer::ntime,itime  ! time
 ! ================================================================
 integer::noelem
@@ -163,6 +163,7 @@ real(iwp)::strain(dimen,dimen),strain_p(dimen,dimen),strain_b(dimen,dimen);
 real(iwp)::d_strain(dimen,dimen),d_strain_p(dimen,dimen)
 real(iwp)::d_electric_field(3),d_electric_field_p(3)
 real(iwp)::strain_r(dimen,dimen),strain_elastic(dimen,dimen);
+real(iwp)::a_electric_shift
 
 ! ================================================================
 eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
@@ -198,55 +199,71 @@ call direction_polarization(pr,direc_a)
 call material_properties()
 
 
-! ===================================remanent strain
+! =================================== remanent strain
 strain_r=0.0d0
 
 
 do i=1,dimen
 do j=1,dimen
-strain_r(i,j)=3.0d0*0.5d0*eps_s_r*(direc_a(i)*direc_a(j)-eye(i,j)/3.0d0)*norm_vect(pr)/pr_sat
+   strain_r(i,j)=3.0d0*0.5d0*eps_s_r*(direc_a(i)*direc_a(j)-eye(i,j)/3.0d0)*norm_vect(pr)/pr_sat
 end do;
 end do;
 
-!write(1,*)strain_r
+! write(1,*)strain_r
+
 strain_r=0.0d0
 
 
 strain_elastic=strain-strain_r
 ! ==============================================increment in strain
+
 mechanical_strain_curentt(gauss_point_number,:,:)=strain_elastic
 d_strain=mechanical_strain_curentt(gauss_point_number,:,:)-mechanical_strain_previus(gauss_point_number,:,:)
 d_strain_p=mechanical_strain_previus(gauss_point_number,:,:)-mechanical_strain_beforep(gauss_point_number,:,:)
 
 !!> derivative of stress with respect to electric field.
 ! ==============================the history variable
+
+
+!>The material can respond faster or slower to change of electric field.
+!! We introduce the concepts of reduced time and time shift factor in analogy to 
+!!   definition of thermo rheologically simple materials definition.
+!! In order to capture the speed that piezoelectric material responds to the electric field
+!! The only difference here is that we assume that speed that material responds is related to the intensity of electric field.
+!! 
+
+dtime_scaled=dtime
+call get_time_scale_factor(electric_field,a_electric_shift)
+dtime_scaled=dtime/a_electric_shift
+
+
 do i=1,dimen
 do j=1,dimen
 do k=1,dimen
 
 sigma_el_hist_curentt(gauss_point_number,i,j,k)= &
-sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
 (k_elec_01*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
+exp(-lambda_elec_01*dtime_scaled)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
                           +d_electric_field(k)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
 
 displ_el_hist_curentt(gauss_point_number,i,j,k)= &
-displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
 (k_elec_01*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
+exp(-lambda_elec_01*dtime_scaled)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
                            d_strain(i,j)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
 
 
 do l=1,dimen
 mechanical_hist_curentt(gauss_point_number,i,j,k,l)= &
-mechanical_hist_previus(gauss_point_number,i,j,k,l)*exp(-lambda_01*dtime)+ &
+mechanical_hist_previus(gauss_point_number,i,j,k,l)*exp(-lambda_01*dtime_scaled)+ &
 ctens(i,j,k,l)*(k01*0.5d0)* &
 (  &
-exp(-lambda_01*dtime)*d_strain_p(k,l)+d_strain(k,l) &
+exp(-lambda_01*dtime_scaled)*d_strain_p(k,l)+d_strain(k,l) &
 )
 end do;
 end do;
@@ -280,6 +297,25 @@ end do;
 end do;
 
 end subroutine stress_elect_displacement
+
+
+!< This subroutine defines the time shift and reduced time factor!>
+!! @param electric_field this is the electric field vector
+!! @param a_electric_shift this is the electric shift vector
+!! @todo noting for now
+        subroutine get_time_scale_factor(electric_field,a_electric_shift)
+        implicit none
+        real(iwp)::electric_field(3),electric_norm
+        real(iwp)::a_electric_shift
+        real(iwp)::gamma_t,electric_field_o
+
+        electric_field_o=0.5
+        gamma_t=1.0
+        electric_norm=norm_vect(electric_field)
+        a_electric_shift=exp(-gamma_t*(electric_norm-electric_field_o)/electric_field_o)
+
+        end subroutine get_time_scale_factor
+
 
 ! ================================================================
 !   polarization swithing function
@@ -325,8 +361,6 @@ endif
 
 endif
 endif
-
-
 
 !if(norm_vect(electric_field).lt.ec)then
 !remanent_polarization_vector_1=hist_polarization_function(gauss_point_number,:)
@@ -554,7 +588,7 @@ ktense(3,3)=eps_33 ;
 
 
 b_tilt=0.0d0
-b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
+b_tilt(3,3,3,3)= 0 !  1.5 ! * 2.0;
 
 !b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
 !b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
@@ -575,16 +609,6 @@ partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
         +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
 
 end subroutine material_properties
-
-
-
-
-
-
-
-
-
-
 
 
 ! ===============================================================
@@ -643,7 +667,7 @@ partial_sigma_to_partial_elec_p=0
 ! ================================================================
 !   pzt
 ! ================================================================
-if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336>noelem>127
+if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336 > noelem > 127
 
 beta1   =-e31;
 beta2   =-e33+2.0d0*e15+e31;
@@ -708,7 +732,7 @@ endif !if(noelem.ge.127.and.le.336)then !it is pzt if 336>noelem>127
 ! ================================================================
 !   aluminum
 ! ================================================================
-if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
+if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126 > noelem > 113
 
 k00=k_00_aluminum
 k01=k_01_aluminum
@@ -741,11 +765,12 @@ end subroutine afc_material_properties
 
 
 ! ================================================================
-!   polarization swithing function
-!this will find the polarization with the given state of material
+!   polarization switching function
+!   this will find the polarization with the given state of material
 ! ================================================================
 subroutine direction_polarization(pr_vec,a_direc)
 real(iwp)::a_direc(dimen),normed,pr_vec(dimen)
+
 a_direc=0.0d0
 normed=norm_vect(pr_vec)
 if (normed.gt.0.0d0)then
@@ -855,7 +880,7 @@ strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+      &
 
 electric_feild(1:dimen)=-ur(dimen+1,:)
 volumetric_stress=strain(1,1)+strain(2,2)+strain(3,3)
-!write(1,*)volumetric_stress
+! write(1,*)volumetric_stress
 !     ================================================================
       pi=datan(1.0d0)*4.0
 !     =========================lagrange green strain tensor
@@ -941,6 +966,8 @@ ktense=0.0d0  ;ktense(1,1)=1;
 epz=0.0d0
 
       end subroutine truss_material_properties
+
+
 
 
 
