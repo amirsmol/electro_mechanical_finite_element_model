@@ -307,12 +307,12 @@ end subroutine stress_elect_displacement
         implicit none
         real(iwp)::electric_field(3),electric_norm
         real(iwp)::a_electric_shift
-        real(iwp)::gamma_t,electric_field_o
+        real(iwp)::gamma_e,electric_field_o
 
-        electric_field_o=0.5
-        gamma_t=1.0
+        electric_field_o=1.0
+        gamma_e=2.0
         electric_norm=norm_vect(electric_field)
-        a_electric_shift=exp(-gamma_t*(electric_norm-electric_field_o)/electric_field_o)
+        a_electric_shift=exp(- gamma_e*(electric_norm-electric_field_o) /electric_field_o)
 
         end subroutine get_time_scale_factor
 
