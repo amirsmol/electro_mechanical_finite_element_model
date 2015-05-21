@@ -1,0 +1,150 @@
+\hypertarget{classfem__libs}{}\section{fem\+\_\+libs Module Reference}
+\label{classfem__libs}\index{fem\+\_\+libs@{fem\+\_\+libs}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{classfem__libs_a23f888b4cf756c6f798b9a2bf2097e3e}{glbmatrcs} (glu, glk, glq, glp, glb)
+\item 
+subroutine \hyperlink{classfem__libs_aee1cd1ef13025b0504e72bc48e786196}{truss\+\_\+residual3d} (inode, gdsf, ur, der, sigma, res\+\_\+vect)
+\item 
+subroutine \hyperlink{classfem__libs_a9cfdea9ee208b35a01aacea03241bf05}{truss\+\_\+k\+\_\+gen3d} (inode, jnode, gdsf, ur, k\+\_\+coef)
+\item 
+subroutine \hyperlink{classfem__libs_ab04d8c5372b45b49e592e69ea70d70bc}{elmatrcs\+\_\+3d} (elu, elp, elb, elk, elq)
+\item 
+subroutine \hyperlink{classfem__libs_a21fe571ae36abdb62cde54771aecf378}{shap\+\_\+3d\+\_\+quad} (\hyperlink{classfem__libs_a04e2b194321b1e0f6b833e4ac94cf8bd}{elcrds}, xi\+\_\+l, det, sf, gdsf)
+\item 
+subroutine \hyperlink{classfem__libs_aabc78d42940aafe6fddc66e23756ebe0}{shapefuncs\+\_\+3d} (xi, det, sf, gdsf)
+\item 
+subroutine \hyperlink{classfem__libs_ab8b19095be05992d83e94b831542c389}{residual} (inode, gdsf, ur, der, sigma, res\+\_\+vect)
+\item 
+subroutine \hyperlink{classfem__libs_a7046c70769df0e41e35774f11968fcb8}{k\+\_\+gen} (jnode, inode, gdsf, ur, k\+\_\+coef)
+\item 
+subroutine \hyperlink{classfem__libs_a231e44a22bcd8adc2c297666fc0771b2}{symmetric\+\_\+primary\+\_\+bounday} (glk, glr)
+\item 
+subroutine \hyperlink{classfem__libs_a3ab10bf4ab2d82ad3864b5dca8b2ce72}{result\+\_\+printer} (iter, glu, loadfactor)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classfem__libs_a04e2b194321b1e0f6b833e4ac94cf8bd}{elcrds}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function/\+Subroutine Documentation}
+\hypertarget{classfem__libs_ab04d8c5372b45b49e592e69ea70d70bc}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!elmatrcs\+\_\+3d@{elmatrcs\+\_\+3d}}
+\index{elmatrcs\+\_\+3d@{elmatrcs\+\_\+3d}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{elmatrcs\+\_\+3d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::elmatrcs\+\_\+3d (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{elu, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{elp, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{elb, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{elk, }
+\item[{real(iwp), dimension(\+:), intent(out)}]{elq}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_ab04d8c5372b45b49e592e69ea70d70bc}
+\hypertarget{classfem__libs_a23f888b4cf756c6f798b9a2bf2097e3e}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!glbmatrcs@{glbmatrcs}}
+\index{glbmatrcs@{glbmatrcs}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{glbmatrcs}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::glbmatrcs (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{glu, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{glk, }
+\item[{real(iwp), dimension(\+:), intent(out)}]{glq, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{glp, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{glb}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a23f888b4cf756c6f798b9a2bf2097e3e}
+\hypertarget{classfem__libs_a7046c70769df0e41e35774f11968fcb8}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!k\+\_\+gen@{k\+\_\+gen}}
+\index{k\+\_\+gen@{k\+\_\+gen}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{k\+\_\+gen}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::k\+\_\+gen (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{jnode, }
+\item[{integer, intent(in)}]{inode, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{gdsf, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ur, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{k\+\_\+coef}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a7046c70769df0e41e35774f11968fcb8}
+\hypertarget{classfem__libs_ab8b19095be05992d83e94b831542c389}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!residual@{residual}}
+\index{residual@{residual}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{residual}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::residual (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{inode, }
+\item[{real(iwp), dimension(dimen,npe), intent(in)}]{gdsf, }
+\item[{real(iwp), dimension(ndf,dimen), intent(in)}]{ur, }
+\item[{real(iwp), dimension(dimen), intent(in)}]{der, }
+\item[{real(iwp), dimension(dimen,dimen), intent(in)}]{sigma, }
+\item[{real(iwp), dimension(ndf), intent(out)}]{res\+\_\+vect}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_ab8b19095be05992d83e94b831542c389}
+\hypertarget{classfem__libs_a3ab10bf4ab2d82ad3864b5dca8b2ce72}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!result\+\_\+printer@{result\+\_\+printer}}
+\index{result\+\_\+printer@{result\+\_\+printer}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{result\+\_\+printer}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::result\+\_\+printer (
+\begin{DoxyParamCaption}
+\item[{integer}]{iter, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{glu, }
+\item[{real(iwp), intent(in)}]{loadfactor}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a3ab10bf4ab2d82ad3864b5dca8b2ce72}
+\hypertarget{classfem__libs_a21fe571ae36abdb62cde54771aecf378}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!shap\+\_\+3d\+\_\+quad@{shap\+\_\+3d\+\_\+quad}}
+\index{shap\+\_\+3d\+\_\+quad@{shap\+\_\+3d\+\_\+quad}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{shap\+\_\+3d\+\_\+quad}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::shap\+\_\+3d\+\_\+quad (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:,\+:), intent(in)}]{elcrds, }
+\item[{real$\ast$8, dimension(\+:), intent(in)}]{xi\+\_\+l, }
+\item[{real(iwp)}]{det, }
+\item[{real(iwp), dimension(\+:), intent(out)}]{sf, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{gdsf}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a21fe571ae36abdb62cde54771aecf378}
+\hypertarget{classfem__libs_aabc78d42940aafe6fddc66e23756ebe0}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!shapefuncs\+\_\+3d@{shapefuncs\+\_\+3d}}
+\index{shapefuncs\+\_\+3d@{shapefuncs\+\_\+3d}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{shapefuncs\+\_\+3d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::shapefuncs\+\_\+3d (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(dimen)}]{xi, }
+\item[{real(iwp)}]{det, }
+\item[{real(iwp), dimension(\+:), intent(out)}]{sf, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{gdsf}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_aabc78d42940aafe6fddc66e23756ebe0}
+\hypertarget{classfem__libs_a231e44a22bcd8adc2c297666fc0771b2}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!symmetric\+\_\+primary\+\_\+bounday@{symmetric\+\_\+primary\+\_\+bounday}}
+\index{symmetric\+\_\+primary\+\_\+bounday@{symmetric\+\_\+primary\+\_\+bounday}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{symmetric\+\_\+primary\+\_\+bounday}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::symmetric\+\_\+primary\+\_\+bounday (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:,\+:), intent(inout)}]{glk, }
+\item[{real(iwp), dimension(\+:), intent(inout)}]{glr}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a231e44a22bcd8adc2c297666fc0771b2}
+\hypertarget{classfem__libs_a9cfdea9ee208b35a01aacea03241bf05}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!truss\+\_\+k\+\_\+gen3d@{truss\+\_\+k\+\_\+gen3d}}
+\index{truss\+\_\+k\+\_\+gen3d@{truss\+\_\+k\+\_\+gen3d}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{truss\+\_\+k\+\_\+gen3d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::truss\+\_\+k\+\_\+gen3d (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{inode, }
+\item[{integer, intent(in)}]{jnode, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{gdsf, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ur, }
+\item[{real(iwp), dimension(\+:,\+:), intent(out)}]{k\+\_\+coef}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_a9cfdea9ee208b35a01aacea03241bf05}
+\hypertarget{classfem__libs_aee1cd1ef13025b0504e72bc48e786196}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!truss\+\_\+residual3d@{truss\+\_\+residual3d}}
+\index{truss\+\_\+residual3d@{truss\+\_\+residual3d}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{truss\+\_\+residual3d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+libs\+::truss\+\_\+residual3d (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{inode, }
+\item[{real(iwp), dimension(dimen,npe), intent(in)}]{gdsf, }
+\item[{real(iwp), dimension(ndf,dimen), intent(in)}]{ur, }
+\item[{real(iwp), dimension(dimen), intent(in)}]{der, }
+\item[{real(iwp), dimension(dimen,dimen), intent(in)}]{sigma, }
+\item[{real(iwp), dimension(ndf), intent(out)}]{res\+\_\+vect}
+\end{DoxyParamCaption}
+)}\label{classfem__libs_aee1cd1ef13025b0504e72bc48e786196}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classfem__libs_a04e2b194321b1e0f6b833e4ac94cf8bd}{}\index{fem\+\_\+libs@{fem\+\_\+libs}!elcrds@{elcrds}}
+\index{elcrds@{elcrds}!fem\+\_\+libs@{fem\+\_\+libs}}
+\subsubsection[{elcrds}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable fem\+\_\+libs\+::elcrds}\label{classfem__libs_a04e2b194321b1e0f6b833e4ac94cf8bd}
+
+
+The documentation for this module was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Elec\+\_\+\+Mech\+\_\+\+F\+E\+M/src/\hyperlink{femlibs_8f90}{femlibs.\+f90}\end{DoxyCompactItemize}

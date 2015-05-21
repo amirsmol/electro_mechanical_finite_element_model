@@ -9,9 +9,11 @@ implicit none
 real(iwp),allocatable:: elcrds(:,:) !the geometries of nodes of the element
 
 contains
+
 !     ================================================================
 !     forming the global martixes and vetors
 !     ================================================================
+
 subroutine glbmatrcs(glu,glk,glq,glp,glb)
 implicit none
 !     ================================================================
@@ -784,15 +786,21 @@ do i=1,nnm
 enddo
 
 ! write(*,*)'curved_node',curved_node
+
 pdf=(curved_node-1)*ndf
+
 write(csv,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+
+
 
 ! write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(gnuplot,951)iter,time(2),loadfactor,glu(pdf+ndf-1)
+! write(gnuplot,951)iter,time(2),-loadfactor/9, glu(pdf+ndf-1)*12e6
 
 ! write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
-!write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
+! write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
+
 write(out,*)
 !     ===============================================================
 !                                 formats

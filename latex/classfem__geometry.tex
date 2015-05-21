@@ -1,0 +1,574 @@
+\hypertarget{classfem__geometry}{}\section{fem\+\_\+geometry Module Reference}
+\label{classfem__geometry}\index{fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{classfem__geometry_af8094703fed5dfd73a98dff89ffb77b3}{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity} (length, neldirectional)
+\item 
+subroutine \hyperlink{classfem__geometry_a5f105e2ba3457cc3f1ae7f8413ae5a33}{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_a760d8de2e9aad779bcdadaa3b44608ea}{truss\+\_\+actua\+\_\+3d\+\_\+connectivity} (length, num\+\_\+tetra\+\_\+units)
+\item 
+subroutine \hyperlink{classfem__geometry_a2ec3a26ed6230e73f10e4dffb4dae3fc}{truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer} (glu)
+\item 
+subroutine \hyperlink{classfem__geometry_a8a8539eb3a148033212513ee3e962433}{truss\+\_\+tetra\+\_\+hedral\+\_\+bounday} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a06792814c93a438d8dfa067b5f80b10c}{truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a0d70cc094a7b9577309b69fb62fbb921}{truss\+\_\+single\+\_\+element\+\_\+boundary} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a53ab8638a8b8ba04606fa18502dd17d8}{form\+\_\+constraint\+\_\+bimorph} ()
+\item 
+subroutine \hyperlink{classfem__geometry_adf88d445acd36865a2000e20f1d0e937}{bimorph\+\_\+beam\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_ac66776952d82e28a62557ad6fb8ebc5f}{beam\+\_\+mesh\+\_\+file\+\_\+reader} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a9c3c144ce7e95bdd72b7264860c8303f}{quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry} (neldirectional, length)
+\item 
+subroutine \hyperlink{classfem__geometry_ae4656919e5f7fed07431e504d7530bb4}{linder\+\_\+miehe\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_ad3842323e2f57450b04bd0d82c32620e}{linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry} (neldirectional, length)
+\item 
+subroutine \hyperlink{classfem__geometry_a7f0f5ce390e6d3c282cf496e4adc8a3a}{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer} (glu)
+\item 
+subroutine \hyperlink{classfem__geometry_ad7d7841e3a698540494f05f533685fd4}{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector} (glu, elements\+\_\+electric\+\_\+field, elements\+\_\+electric\+\_\+polar)
+\item 
+subroutine \hyperlink{classfem__geometry_a60426131ee37ca0abc2c516605a8242b}{crawley\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_a3bfe6eaaa8abccf9b97a20fd0287d398}{afc\+\_\+form\+\_\+constraint} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a635d070c2958ec3dc66476e8f771db69}{wedge\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_ab950de22f663d909af3db42925f71d89}{afc\+\_\+boundary} (length)
+\begin{DoxyCompactList}\small\item\em This subroutine define and producd the boundary conditions for afc unit cell. \end{DoxyCompactList}\item 
+subroutine \hyperlink{classfem__geometry_a5620d9bbf7f3b0e2ffb059fffd4bbb4a}{pull\+\_\+z\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_ad4b3e4030adcde19c84604879a7c3253}{afc\+\_\+mesh\+\_\+file\+\_\+reader} ()
+\item 
+subroutine \hyperlink{classfem__geometry_a2545609597d328caf470a5b1140b3b7e}{dealii\+\_\+test\+\_\+boundary} (length)
+\item 
+subroutine \hyperlink{classfem__geometry_aa24a402524875f30d7ca70c34f681999}{afc\+\_\+boundary\+\_\+full\+\_\+electrode} (length)
+\begin{DoxyCompactList}\small\item\em This subroutine define and producd the boundary conditions for afc unit cell. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+integer \hyperlink{classfem__geometry_a797a070f41b998f78b389259c438b7f1}{npe}
+\begin{DoxyCompactList}\small\item\em number of nodes in each element \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a25c1889eff70cf93eadef0a100d29bd1}{nem}
+\begin{DoxyCompactList}\small\item\em number of elements in the domain \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a4c0e808cd5fe275c9614921b55877bec}{nnm}
+\begin{DoxyCompactList}\small\item\em number of nodes in the domain \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_ac37a04b723d229689bc13db9a32a20c7}{iel}
+\begin{DoxyCompactList}\small\item\em element type tag that can be linear=1 and quadratic=2 \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_affb4f5c597a449d349b7c10cb73c1d12}{ipdf}
+\begin{DoxyCompactList}\small\item\em bumber of gauss pints in each direction \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_abccad0a217818ea3bfb8ae3774704842}{neq}
+\begin{DoxyCompactList}\small\item\em number of equations to be solved \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a4c5fb53d974372ee3cb13d85dbd26800}{nn}
+\begin{DoxyCompactList}\small\item\em number of degrees of freedom in an element \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_ab76fe1edb12c82677b620fdf4202cd58}{nhbw}
+\begin{DoxyCompactList}\small\item\em half band width \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a3210309ce3a4780b35fc7177624fd346}{nw}
+\begin{DoxyCompactList}\small\item\em full band width \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a7015292b75c4849ffe1c158263c47dd9}{nbw}
+\begin{DoxyCompactList}\small\item\em full band width \end{DoxyCompactList}\item 
+real(iwp), parameter \hyperlink{classfem__geometry_ae0111b7a7d03ad788204159aab5ad643}{pi} = 3.\+14159265
+\begin{DoxyCompactList}\small\item\em the pie number \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classfem__geometry_ad74fb946f3d6ddc2d5c295614927ef99}{coords}
+\begin{DoxyCompactList}\small\item\em the nodes geometry array \end{DoxyCompactList}\item 
+integer, dimension(\+:,\+:), allocatable \hyperlink{classfem__geometry_ae04fc7c0625da6808be910120c2ba8f5}{nod}
+\begin{DoxyCompactList}\small\item\em the connectivity matrix \end{DoxyCompactList}\item 
+integer, dimension(\+:,\+:), allocatable \hyperlink{classfem__geometry_af6fe274e6f297c581b171d1b2e03372c}{ispv}
+\begin{DoxyCompactList}\small\item\em the primary boundary condition array \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a4f9dbcb2e6ba0f44baca0b6097aecbf3}{vspv}
+\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a549800c8fc00402740941a8af20e7484}{vspvt}
+\begin{DoxyCompactList}\small\item\em the primary boundary condition array \end{DoxyCompactList}\item 
+integer, dimension(\+:,\+:), allocatable \hyperlink{classfem__geometry_a43cd6cae2958cc6df56cf3eae9128075}{issv}
+\begin{DoxyCompactList}\small\item\em the secondry boundary condition \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a4e7c22284b2c19f02a5b9abe1fd64cb0}{vssv}
+\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a01643bdf277beb80ca579a4f1f45b179}{vssvt}
+\begin{DoxyCompactList}\small\item\em the secondry boundary conditi \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_a4629a0d999e34a1547afb75c9a64bcf5}{bnd\+\_\+no\+\_\+pr\+\_\+vec}
+\begin{DoxyCompactList}\small\item\em the secondry boundary conditif \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a5cf400a0df2f2bbcab52dbfa3918af3a}{bnd\+\_\+va\+\_\+pr\+\_\+vec}
+\begin{DoxyCompactList}\small\item\em the secondry boundary conditi \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_acf0254abaafe358f825a34f402babb1f}{bnd\+\_\+no\+\_\+se\+\_\+vec}
+\begin{DoxyCompactList}\small\item\em the secondry boundary conditi \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:), allocatable \hyperlink{classfem__geometry_a0add746ed85a4361e704a080e0ee5040}{bnd\+\_\+va\+\_\+se\+\_\+vec}
+\begin{DoxyCompactList}\small\item\em the secondry boundary conditi \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a3b8fb7129bee07e65960792aed717c62}{nspv}
+\item 
+integer \hyperlink{classfem__geometry_ab7f36fef3fec78be93a61db40f160efe}{np}
+\item 
+integer \hyperlink{classfem__geometry_aa893111b8f89f4acf9d5a72a2fd4b654}{nb}
+\begin{DoxyCompactList}\small\item\em number of specified primary boundary condition \end{DoxyCompactList}\item 
+integer \hyperlink{classfem__geometry_a8bf4a1e80679f4f0210ae0e043fca048}{nssv}
+\begin{DoxyCompactList}\small\item\em number of specified secondry boundary condition \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_a05ff2f67adfb0c3d1075709011f86a07}{afc\+\_\+boundary\+\_\+x\+\_\+periodic}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in x direction \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_aee47a709c80c5c2f1c97439b877014c5}{afc\+\_\+boundary\+\_\+y\+\_\+periodic}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in y direction \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_ae3a7dff93ccfa3f2c34ddb20b0be1389}{afc\+\_\+boundary\+\_\+z\+\_\+periodic}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in z direction \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_a9a7514f02cd379a92b365cf0ef34b9c6}{afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in y direction \end{DoxyCompactList}\item 
+integer, dimension(\+:), allocatable \hyperlink{classfem__geometry_a7181cf59ccf713bf86aada8c3a7a3901}{afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in z direction \end{DoxyCompactList}\item 
+logical, dimension(\+:), allocatable \hyperlink{classfem__geometry_ab058584f233ff569d79a9b0841bfc589}{is\+\_\+constrained}
+\begin{DoxyCompactList}\small\item\em this holds the nodes on the periodic boundary conditions in z direction \end{DoxyCompactList}\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classfem__geometry_ab72001505f174b162826371649bb9562}{constraint}
+\item 
+logical \hyperlink{classfem__geometry_adf6e7f772d4353d9f16819ddd6d4dd37}{periodic\+\_\+on}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function/\+Subroutine Documentation}
+\hypertarget{classfem__geometry_ab950de22f663d909af3db42925f71d89}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+boundary@{afc\+\_\+boundary}}
+\index{afc\+\_\+boundary@{afc\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::afc\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ab950de22f663d909af3db42925f71d89}
+
+
+This subroutine define and producd the boundary conditions for afc unit cell. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lentgh} & of the domain in each direction \\
+\hline
+{\em curved\+\_\+node} & End point of the domain. This is the node that plots will be bases on \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000003}{Todo}]apply the periodic boundary conditions \end{DoxyRefDesc}
+\hypertarget{classfem__geometry_aa24a402524875f30d7ca70c34f681999}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+boundary\+\_\+full\+\_\+electrode@{afc\+\_\+boundary\+\_\+full\+\_\+electrode}}
+\index{afc\+\_\+boundary\+\_\+full\+\_\+electrode@{afc\+\_\+boundary\+\_\+full\+\_\+electrode}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+boundary\+\_\+full\+\_\+electrode}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::afc\+\_\+boundary\+\_\+full\+\_\+electrode (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_aa24a402524875f30d7ca70c34f681999}
+
+
+This subroutine define and producd the boundary conditions for afc unit cell. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em lentgh} & of the domain in each direction \\
+\hline
+{\em curved\+\_\+node} & End point of the domain. This is the node that plots will be bases on \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000004}{Todo}]apply the periodic boundary conditions \end{DoxyRefDesc}
+\hypertarget{classfem__geometry_a3bfe6eaaa8abccf9b97a20fd0287d398}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+form\+\_\+constraint@{afc\+\_\+form\+\_\+constraint}}
+\index{afc\+\_\+form\+\_\+constraint@{afc\+\_\+form\+\_\+constraint}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+form\+\_\+constraint}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::afc\+\_\+form\+\_\+constraint (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a3bfe6eaaa8abccf9b97a20fd0287d398}
+\hypertarget{classfem__geometry_ad4b3e4030adcde19c84604879a7c3253}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+mesh\+\_\+file\+\_\+reader@{afc\+\_\+mesh\+\_\+file\+\_\+reader}}
+\index{afc\+\_\+mesh\+\_\+file\+\_\+reader@{afc\+\_\+mesh\+\_\+file\+\_\+reader}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+mesh\+\_\+file\+\_\+reader}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::afc\+\_\+mesh\+\_\+file\+\_\+reader (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ad4b3e4030adcde19c84604879a7c3253}
+\hypertarget{classfem__geometry_ac66776952d82e28a62557ad6fb8ebc5f}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!beam\+\_\+mesh\+\_\+file\+\_\+reader@{beam\+\_\+mesh\+\_\+file\+\_\+reader}}
+\index{beam\+\_\+mesh\+\_\+file\+\_\+reader@{beam\+\_\+mesh\+\_\+file\+\_\+reader}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{beam\+\_\+mesh\+\_\+file\+\_\+reader}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::beam\+\_\+mesh\+\_\+file\+\_\+reader (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ac66776952d82e28a62557ad6fb8ebc5f}
+\hypertarget{classfem__geometry_adf88d445acd36865a2000e20f1d0e937}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!bimorph\+\_\+beam\+\_\+boundary@{bimorph\+\_\+beam\+\_\+boundary}}
+\index{bimorph\+\_\+beam\+\_\+boundary@{bimorph\+\_\+beam\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{bimorph\+\_\+beam\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::bimorph\+\_\+beam\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_adf88d445acd36865a2000e20f1d0e937}
+\hypertarget{classfem__geometry_a60426131ee37ca0abc2c516605a8242b}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!crawley\+\_\+boundary@{crawley\+\_\+boundary}}
+\index{crawley\+\_\+boundary@{crawley\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{crawley\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::crawley\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a60426131ee37ca0abc2c516605a8242b}
+
+\begin{DoxyParams}{Parameters}
+{\em length} & length contains the dimension of domain \\
+\hline
+\end{DoxyParams}
+\hypertarget{classfem__geometry_a2545609597d328caf470a5b1140b3b7e}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!dealii\+\_\+test\+\_\+boundary@{dealii\+\_\+test\+\_\+boundary}}
+\index{dealii\+\_\+test\+\_\+boundary@{dealii\+\_\+test\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{dealii\+\_\+test\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::dealii\+\_\+test\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a2545609597d328caf470a5b1140b3b7e}
+\hypertarget{classfem__geometry_a53ab8638a8b8ba04606fa18502dd17d8}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!form\+\_\+constraint\+\_\+bimorph@{form\+\_\+constraint\+\_\+bimorph}}
+\index{form\+\_\+constraint\+\_\+bimorph@{form\+\_\+constraint\+\_\+bimorph}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{form\+\_\+constraint\+\_\+bimorph}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::form\+\_\+constraint\+\_\+bimorph (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a53ab8638a8b8ba04606fa18502dd17d8}
+\hypertarget{classfem__geometry_ae4656919e5f7fed07431e504d7530bb4}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!linder\+\_\+miehe\+\_\+boundary@{linder\+\_\+miehe\+\_\+boundary}}
+\index{linder\+\_\+miehe\+\_\+boundary@{linder\+\_\+miehe\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{linder\+\_\+miehe\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::linder\+\_\+miehe\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ae4656919e5f7fed07431e504d7530bb4}
+\hypertarget{classfem__geometry_ad3842323e2f57450b04bd0d82c32620e}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry@{linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry}}
+\index{linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry@{linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::linear\+\_\+c3d8\+\_\+3d\+\_\+fem\+\_\+geometry (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(\+:), intent(in)}]{neldirectional, }
+\item[{real(iwp), dimension(\+:), intent(in)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ad3842323e2f57450b04bd0d82c32620e}
+
+\begin{DoxyParams}{Parameters}
+{\em neldirectional} & numner of elements in each direction \\
+\hline
+{\em length} & lenght of the domain in each direction \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000002}{Todo}]there is noting to do, this is almost complete \end{DoxyRefDesc}
+\hypertarget{classfem__geometry_a7f0f5ce390e6d3c282cf496e4adc8a3a}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer@{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}}
+\index{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer@{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{glu}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a7f0f5ce390e6d3c282cf496e4adc8a3a}
+\hypertarget{classfem__geometry_ad7d7841e3a698540494f05f533685fd4}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector@{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector}}
+\index{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector@{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer\+\_\+vector (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{glu, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{elements\+\_\+electric\+\_\+field, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{elements\+\_\+electric\+\_\+polar}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_ad7d7841e3a698540494f05f533685fd4}
+\hypertarget{classfem__geometry_a5620d9bbf7f3b0e2ffb059fffd4bbb4a}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!pull\+\_\+z\+\_\+boundary@{pull\+\_\+z\+\_\+boundary}}
+\index{pull\+\_\+z\+\_\+boundary@{pull\+\_\+z\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{pull\+\_\+z\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::pull\+\_\+z\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a5620d9bbf7f3b0e2ffb059fffd4bbb4a}
+\hypertarget{classfem__geometry_a9c3c144ce7e95bdd72b7264860c8303f}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry@{quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry}}
+\index{quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry@{quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::quadratic\+\_\+c3d20\+\_\+3d\+\_\+mesh\+\_\+geometry (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(\+:)}]{neldirectional, }
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a9c3c144ce7e95bdd72b7264860c8303f}
+\hypertarget{classfem__geometry_a5f105e2ba3457cc3f1ae7f8413ae5a33}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary@{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary}}
+\index{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary@{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(dimen)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a5f105e2ba3457cc3f1ae7f8413ae5a33}
+
+\begin{DoxyParams}{Parameters}
+{\em nspv} & number of specified primary bounday conditions \\
+\hline
+{\em nsvv} & number of specified secondry bounday conditions \\
+\hline
+{\em ispv(i} & boundady,2) this array contains the information for the boundary conditions i boundary the number of boundary conditions and ispv(i boundady,1) is the node number i boundary the number of boundary conditions and ispv(i boundady,2) is the degree of freedom number \\
+\hline
+\end{DoxyParams}
+\begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000001}{Todo}]apply the periodic boundary conditions \end{DoxyRefDesc}
+\hypertarget{classfem__geometry_af8094703fed5dfd73a98dff89ffb77b3}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity@{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity}}
+\index{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity@{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+3d\+\_\+space\+\_\+filler\+\_\+connectivity (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(dimen)}]{length, }
+\item[{integer, dimension(dimen)}]{neldirectional}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_af8094703fed5dfd73a98dff89ffb77b3}
+\hypertarget{classfem__geometry_a760d8de2e9aad779bcdadaa3b44608ea}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+actua\+\_\+3d\+\_\+connectivity@{truss\+\_\+actua\+\_\+3d\+\_\+connectivity}}
+\index{truss\+\_\+actua\+\_\+3d\+\_\+connectivity@{truss\+\_\+actua\+\_\+3d\+\_\+connectivity}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+actua\+\_\+3d\+\_\+connectivity}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+actua\+\_\+3d\+\_\+connectivity (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(dimen)}]{length, }
+\item[{integer}]{num\+\_\+tetra\+\_\+units}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a760d8de2e9aad779bcdadaa3b44608ea}
+\hypertarget{classfem__geometry_a2ec3a26ed6230e73f10e4dffb4dae3fc}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer@{truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}}
+\index{truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer@{truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+paraview\+\_\+3d\+\_\+vtu\+\_\+xml\+\_\+writer (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{glu}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a2ec3a26ed6230e73f10e4dffb4dae3fc}
+\hypertarget{classfem__geometry_a0d70cc094a7b9577309b69fb62fbb921}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+single\+\_\+element\+\_\+boundary@{truss\+\_\+single\+\_\+element\+\_\+boundary}}
+\index{truss\+\_\+single\+\_\+element\+\_\+boundary@{truss\+\_\+single\+\_\+element\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+single\+\_\+element\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+single\+\_\+element\+\_\+boundary (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a0d70cc094a7b9577309b69fb62fbb921}
+\hypertarget{classfem__geometry_a8a8539eb3a148033212513ee3e962433}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+tetra\+\_\+hedral\+\_\+bounday@{truss\+\_\+tetra\+\_\+hedral\+\_\+bounday}}
+\index{truss\+\_\+tetra\+\_\+hedral\+\_\+bounday@{truss\+\_\+tetra\+\_\+hedral\+\_\+bounday}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+tetra\+\_\+hedral\+\_\+bounday}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+tetra\+\_\+hedral\+\_\+bounday (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a8a8539eb3a148033212513ee3e962433}
+\hypertarget{classfem__geometry_a06792814c93a438d8dfa067b5f80b10c}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control@{truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control}}
+\index{truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control@{truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::truss\+\_\+tetra\+\_\+hedral\+\_\+displacement\+\_\+control (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a06792814c93a438d8dfa067b5f80b10c}
+\hypertarget{classfem__geometry_a635d070c2958ec3dc66476e8f771db69}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!wedge\+\_\+boundary@{wedge\+\_\+boundary}}
+\index{wedge\+\_\+boundary@{wedge\+\_\+boundary}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{wedge\+\_\+boundary}]{\setlength{\rightskip}{0pt plus 5cm}subroutine fem\+\_\+geometry\+::wedge\+\_\+boundary (
+\begin{DoxyParamCaption}
+\item[{real$\ast$8, dimension(\+:)}]{length}
+\end{DoxyParamCaption}
+)}\label{classfem__geometry_a635d070c2958ec3dc66476e8f771db69}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classfem__geometry_a05ff2f67adfb0c3d1075709011f86a07}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+boundary\+\_\+x\+\_\+periodic@{afc\+\_\+boundary\+\_\+x\+\_\+periodic}}
+\index{afc\+\_\+boundary\+\_\+x\+\_\+periodic@{afc\+\_\+boundary\+\_\+x\+\_\+periodic}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+boundary\+\_\+x\+\_\+periodic}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::afc\+\_\+boundary\+\_\+x\+\_\+periodic}\label{classfem__geometry_a05ff2f67adfb0c3d1075709011f86a07}
+
+
+this holds the nodes on the periodic boundary conditions in x direction 
+
+\hypertarget{classfem__geometry_aee47a709c80c5c2f1c97439b877014c5}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+boundary\+\_\+y\+\_\+periodic@{afc\+\_\+boundary\+\_\+y\+\_\+periodic}}
+\index{afc\+\_\+boundary\+\_\+y\+\_\+periodic@{afc\+\_\+boundary\+\_\+y\+\_\+periodic}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+boundary\+\_\+y\+\_\+periodic}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::afc\+\_\+boundary\+\_\+y\+\_\+periodic}\label{classfem__geometry_aee47a709c80c5c2f1c97439b877014c5}
+
+
+this holds the nodes on the periodic boundary conditions in y direction 
+
+\hypertarget{classfem__geometry_ae3a7dff93ccfa3f2c34ddb20b0be1389}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+boundary\+\_\+z\+\_\+periodic@{afc\+\_\+boundary\+\_\+z\+\_\+periodic}}
+\index{afc\+\_\+boundary\+\_\+z\+\_\+periodic@{afc\+\_\+boundary\+\_\+z\+\_\+periodic}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+boundary\+\_\+z\+\_\+periodic}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::afc\+\_\+boundary\+\_\+z\+\_\+periodic}\label{classfem__geometry_ae3a7dff93ccfa3f2c34ddb20b0be1389}
+
+
+this holds the nodes on the periodic boundary conditions in z direction 
+
+\hypertarget{classfem__geometry_a9a7514f02cd379a92b365cf0ef34b9c6}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic@{afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic}}
+\index{afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic@{afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::afc\+\_\+negative\+\_\+electr\+\_\+z0\+\_\+periodic}\label{classfem__geometry_a9a7514f02cd379a92b365cf0ef34b9c6}
+
+
+this holds the nodes on the periodic boundary conditions in y direction 
+
+\hypertarget{classfem__geometry_a7181cf59ccf713bf86aada8c3a7a3901}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic@{afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic}}
+\index{afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic@{afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::afc\+\_\+negative\+\_\+electr\+\_\+zl\+\_\+periodic}\label{classfem__geometry_a7181cf59ccf713bf86aada8c3a7a3901}
+
+
+this holds the nodes on the periodic boundary conditions in z direction 
+
+\hypertarget{classfem__geometry_a4629a0d999e34a1547afb75c9a64bcf5}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!bnd\+\_\+no\+\_\+pr\+\_\+vec@{bnd\+\_\+no\+\_\+pr\+\_\+vec}}
+\index{bnd\+\_\+no\+\_\+pr\+\_\+vec@{bnd\+\_\+no\+\_\+pr\+\_\+vec}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{bnd\+\_\+no\+\_\+pr\+\_\+vec}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::bnd\+\_\+no\+\_\+pr\+\_\+vec}\label{classfem__geometry_a4629a0d999e34a1547afb75c9a64bcf5}
+
+
+the secondry boundary conditif 
+
+\hypertarget{classfem__geometry_acf0254abaafe358f825a34f402babb1f}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!bnd\+\_\+no\+\_\+se\+\_\+vec@{bnd\+\_\+no\+\_\+se\+\_\+vec}}
+\index{bnd\+\_\+no\+\_\+se\+\_\+vec@{bnd\+\_\+no\+\_\+se\+\_\+vec}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{bnd\+\_\+no\+\_\+se\+\_\+vec}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:), allocatable fem\+\_\+geometry\+::bnd\+\_\+no\+\_\+se\+\_\+vec}\label{classfem__geometry_acf0254abaafe358f825a34f402babb1f}
+
+
+the secondry boundary conditi 
+
+\hypertarget{classfem__geometry_a5cf400a0df2f2bbcab52dbfa3918af3a}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!bnd\+\_\+va\+\_\+pr\+\_\+vec@{bnd\+\_\+va\+\_\+pr\+\_\+vec}}
+\index{bnd\+\_\+va\+\_\+pr\+\_\+vec@{bnd\+\_\+va\+\_\+pr\+\_\+vec}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{bnd\+\_\+va\+\_\+pr\+\_\+vec}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::bnd\+\_\+va\+\_\+pr\+\_\+vec}\label{classfem__geometry_a5cf400a0df2f2bbcab52dbfa3918af3a}
+
+
+the secondry boundary conditi 
+
+\hypertarget{classfem__geometry_a0add746ed85a4361e704a080e0ee5040}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!bnd\+\_\+va\+\_\+se\+\_\+vec@{bnd\+\_\+va\+\_\+se\+\_\+vec}}
+\index{bnd\+\_\+va\+\_\+se\+\_\+vec@{bnd\+\_\+va\+\_\+se\+\_\+vec}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{bnd\+\_\+va\+\_\+se\+\_\+vec}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::bnd\+\_\+va\+\_\+se\+\_\+vec}\label{classfem__geometry_a0add746ed85a4361e704a080e0ee5040}
+
+
+the secondry boundary conditi 
+
+\hypertarget{classfem__geometry_ab72001505f174b162826371649bb9562}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!constraint@{constraint}}
+\index{constraint@{constraint}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{constraint}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable fem\+\_\+geometry\+::constraint}\label{classfem__geometry_ab72001505f174b162826371649bb9562}
+\hypertarget{classfem__geometry_ad74fb946f3d6ddc2d5c295614927ef99}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!coords@{coords}}
+\index{coords@{coords}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{coords}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable fem\+\_\+geometry\+::coords}\label{classfem__geometry_ad74fb946f3d6ddc2d5c295614927ef99}
+
+
+the nodes geometry array 
+
+\hypertarget{classfem__geometry_ac37a04b723d229689bc13db9a32a20c7}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!iel@{iel}}
+\index{iel@{iel}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{iel}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::iel}\label{classfem__geometry_ac37a04b723d229689bc13db9a32a20c7}
+
+
+element type tag that can be linear=1 and quadratic=2 
+
+\hypertarget{classfem__geometry_affb4f5c597a449d349b7c10cb73c1d12}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!ipdf@{ipdf}}
+\index{ipdf@{ipdf}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{ipdf}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::ipdf}\label{classfem__geometry_affb4f5c597a449d349b7c10cb73c1d12}
+
+
+bumber of gauss pints in each direction 
+
+\hypertarget{classfem__geometry_ab058584f233ff569d79a9b0841bfc589}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!is\+\_\+constrained@{is\+\_\+constrained}}
+\index{is\+\_\+constrained@{is\+\_\+constrained}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{is\+\_\+constrained}]{\setlength{\rightskip}{0pt plus 5cm}logical, dimension(\+:), allocatable fem\+\_\+geometry\+::is\+\_\+constrained}\label{classfem__geometry_ab058584f233ff569d79a9b0841bfc589}
+
+
+this holds the nodes on the periodic boundary conditions in z direction 
+
+\hypertarget{classfem__geometry_af6fe274e6f297c581b171d1b2e03372c}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!ispv@{ispv}}
+\index{ispv@{ispv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{ispv}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:,\+:), allocatable fem\+\_\+geometry\+::ispv}\label{classfem__geometry_af6fe274e6f297c581b171d1b2e03372c}
+
+
+the primary boundary condition array 
+
+\hypertarget{classfem__geometry_a43cd6cae2958cc6df56cf3eae9128075}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!issv@{issv}}
+\index{issv@{issv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{issv}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:,\+:), allocatable fem\+\_\+geometry\+::issv}\label{classfem__geometry_a43cd6cae2958cc6df56cf3eae9128075}
+
+
+the secondry boundary condition 
+
+\hypertarget{classfem__geometry_aa893111b8f89f4acf9d5a72a2fd4b654}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nb@{nb}}
+\index{nb@{nb}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nb}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nb}\label{classfem__geometry_aa893111b8f89f4acf9d5a72a2fd4b654}
+
+
+number of specified primary boundary condition 
+
+\hypertarget{classfem__geometry_a7015292b75c4849ffe1c158263c47dd9}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nbw@{nbw}}
+\index{nbw@{nbw}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nbw}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nbw}\label{classfem__geometry_a7015292b75c4849ffe1c158263c47dd9}
+
+
+full band width 
+
+\hypertarget{classfem__geometry_a25c1889eff70cf93eadef0a100d29bd1}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nem@{nem}}
+\index{nem@{nem}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nem}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nem}\label{classfem__geometry_a25c1889eff70cf93eadef0a100d29bd1}
+
+
+number of elements in the domain 
+
+\hypertarget{classfem__geometry_abccad0a217818ea3bfb8ae3774704842}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!neq@{neq}}
+\index{neq@{neq}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{neq}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::neq}\label{classfem__geometry_abccad0a217818ea3bfb8ae3774704842}
+
+
+number of equations to be solved 
+
+\hypertarget{classfem__geometry_ab76fe1edb12c82677b620fdf4202cd58}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nhbw@{nhbw}}
+\index{nhbw@{nhbw}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nhbw}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nhbw}\label{classfem__geometry_ab76fe1edb12c82677b620fdf4202cd58}
+
+
+half band width 
+
+\hypertarget{classfem__geometry_a4c5fb53d974372ee3cb13d85dbd26800}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nn@{nn}}
+\index{nn@{nn}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nn}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nn}\label{classfem__geometry_a4c5fb53d974372ee3cb13d85dbd26800}
+
+
+number of degrees of freedom in an element 
+
+\hypertarget{classfem__geometry_a4c0e808cd5fe275c9614921b55877bec}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nnm@{nnm}}
+\index{nnm@{nnm}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nnm}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nnm}\label{classfem__geometry_a4c0e808cd5fe275c9614921b55877bec}
+
+
+number of nodes in the domain 
+
+\hypertarget{classfem__geometry_ae04fc7c0625da6808be910120c2ba8f5}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nod@{nod}}
+\index{nod@{nod}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nod}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\+:,\+:), allocatable fem\+\_\+geometry\+::nod}\label{classfem__geometry_ae04fc7c0625da6808be910120c2ba8f5}
+
+
+the connectivity matrix 
+
+\hypertarget{classfem__geometry_ab7f36fef3fec78be93a61db40f160efe}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!np@{np}}
+\index{np@{np}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{np}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::np}\label{classfem__geometry_ab7f36fef3fec78be93a61db40f160efe}
+\hypertarget{classfem__geometry_a797a070f41b998f78b389259c438b7f1}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!npe@{npe}}
+\index{npe@{npe}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{npe}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::npe}\label{classfem__geometry_a797a070f41b998f78b389259c438b7f1}
+
+
+number of nodes in each element 
+
+\hypertarget{classfem__geometry_a3b8fb7129bee07e65960792aed717c62}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nspv@{nspv}}
+\index{nspv@{nspv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nspv}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nspv}\label{classfem__geometry_a3b8fb7129bee07e65960792aed717c62}
+\hypertarget{classfem__geometry_a8bf4a1e80679f4f0210ae0e043fca048}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nssv@{nssv}}
+\index{nssv@{nssv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nssv}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nssv}\label{classfem__geometry_a8bf4a1e80679f4f0210ae0e043fca048}
+
+
+number of specified secondry boundary condition 
+
+\hypertarget{classfem__geometry_a3210309ce3a4780b35fc7177624fd346}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!nw@{nw}}
+\index{nw@{nw}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{nw}]{\setlength{\rightskip}{0pt plus 5cm}integer fem\+\_\+geometry\+::nw}\label{classfem__geometry_a3210309ce3a4780b35fc7177624fd346}
+
+
+full band width 
+
+\hypertarget{classfem__geometry_adf6e7f772d4353d9f16819ddd6d4dd37}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!periodic\+\_\+on@{periodic\+\_\+on}}
+\index{periodic\+\_\+on@{periodic\+\_\+on}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{periodic\+\_\+on}]{\setlength{\rightskip}{0pt plus 5cm}logical fem\+\_\+geometry\+::periodic\+\_\+on}\label{classfem__geometry_adf6e7f772d4353d9f16819ddd6d4dd37}
+\hypertarget{classfem__geometry_ae0111b7a7d03ad788204159aab5ad643}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!pi@{pi}}
+\index{pi@{pi}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{pi}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter fem\+\_\+geometry\+::pi = 3.\+14159265}\label{classfem__geometry_ae0111b7a7d03ad788204159aab5ad643}
+
+
+the pie number 
+
+\hypertarget{classfem__geometry_a4f9dbcb2e6ba0f44baca0b6097aecbf3}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!vspv@{vspv}}
+\index{vspv@{vspv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{vspv}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::vspv}\label{classfem__geometry_a4f9dbcb2e6ba0f44baca0b6097aecbf3}
+\hypertarget{classfem__geometry_a549800c8fc00402740941a8af20e7484}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!vspvt@{vspvt}}
+\index{vspvt@{vspvt}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{vspvt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::vspvt}\label{classfem__geometry_a549800c8fc00402740941a8af20e7484}
+
+
+the primary boundary condition array 
+
+\hypertarget{classfem__geometry_a4e7c22284b2c19f02a5b9abe1fd64cb0}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!vssv@{vssv}}
+\index{vssv@{vssv}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{vssv}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::vssv}\label{classfem__geometry_a4e7c22284b2c19f02a5b9abe1fd64cb0}
+\hypertarget{classfem__geometry_a01643bdf277beb80ca579a4f1f45b179}{}\index{fem\+\_\+geometry@{fem\+\_\+geometry}!vssvt@{vssvt}}
+\index{vssvt@{vssvt}!fem\+\_\+geometry@{fem\+\_\+geometry}}
+\subsubsection[{vssvt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:), allocatable fem\+\_\+geometry\+::vssvt}\label{classfem__geometry_a01643bdf277beb80ca579a4f1f45b179}
+
+
+the secondry boundary conditi 
+
+
+
+The documentation for this module was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Elec\+\_\+\+Mech\+\_\+\+F\+E\+M/src/\hyperlink{femgeometry_8f90}{femgeometry.\+f90}\end{DoxyCompactItemize}

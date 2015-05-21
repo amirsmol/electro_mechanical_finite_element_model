@@ -1407,8 +1407,9 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !forall(i=1:nnm) coords_deformed(i,j)=coordst(i,j)+glu((i-1)*ndf+j)
         !enddo
 
+! filename='gnuplot/afc'//trim(x1)//'.gnu'
 
-        filename='geom_test'//trim(x1)//'.vtu'
+        filename='vtu/geom_test'//trim(x1)//'.vtu'
         write(*,*)filename
         open (vtu,file=filename)
 
@@ -2367,7 +2368,6 @@ end subroutine pull_z_boundary
 ! ================================================================
 !! This subroutine reads mesh file containing geometry of unit cell.
 !! @param constraint
-
 subroutine afc_mesh_file_reader()
 
 !the variables

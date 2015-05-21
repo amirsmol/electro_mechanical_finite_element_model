@@ -1,0 +1,603 @@
+\hypertarget{classmaterial__behavior}{}\section{material\+\_\+behavior Module Reference}
+\label{classmaterial__behavior}\index{material\+\_\+behavior@{material\+\_\+behavior}}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{classmaterial__behavior_a5afdfd92d3c4415fb168bc0c7fe1efa3}{stress\+\_\+elect\+\_\+displacement} (ur, up, ub, der, sigma)
+\item 
+subroutine \hyperlink{classmaterial__behavior_abe39c2fed400468bdf0c24cfab63c47e}{remanent\+\_\+polarization} (d\+\_\+electric\+\_\+field, \hyperlink{classmaterial__behavior_a3ade0d21c66ab32510bf21daeb7fc6a8}{electric\+\_\+field})
+\item 
+subroutine \hyperlink{classmaterial__behavior_aeb0d82a9f31dc6853c8afdcb47ec7518}{clear\+\_\+history} ()
+\item 
+subroutine \hyperlink{classmaterial__behavior_a246cae6f0d929f111e75dc73a5761f58}{form\+\_\+history} (ngauss, nem)
+\item 
+subroutine \hyperlink{classmaterial__behavior_a7f4afd7183cd41dff13fd4fcbd88a329}{update\+\_\+history} ()
+\item 
+subroutine \hyperlink{classmaterial__behavior_a0b99a8ea19770cbbe6a3b2256f8bec7c}{afc\+\_\+material\+\_\+properties} ()
+\item 
+subroutine \hyperlink{classmaterial__behavior_a14a187a01fadfd1f1bf2df5b193cfc6f}{material\+\_\+properties} ()
+\item 
+subroutine \hyperlink{classmaterial__behavior_a9f66b9f48be07bb1d7e9776ba84b53e4}{direction\+\_\+polarization} (pr\+\_\+vec, a\+\_\+direc)
+\item 
+real(iwp) function, dimension(\+:), allocatable \hyperlink{classmaterial__behavior_a16bd334e522c38a0ace29e64a0721669}{direction\+\_\+of\+\_\+vector} (\hyperlink{classmaterial__behavior_a7d56504ef4329ab65c4fc86cd108beb4}{a})
+\item 
+subroutine \hyperlink{classmaterial__behavior_a12b4c943b3e07e083350abd47cba20f8}{truss\+\_\+stress\+\_\+elect\+\_\+displacement} (ur, der, sigma)
+\item 
+subroutine \hyperlink{classmaterial__behavior_a344f7d5811ee5c48e0589c47ecc694ee}{truss\+\_\+shape\+\_\+change\+\_\+stress} (\hyperlink{classmaterial__behavior_a1deebdb156ef27ce0d628eeadc3ea304}{el\+\_\+center\+\_\+coord}, ur, sigma\+\_\+shape)
+\item 
+subroutine \hyperlink{classmaterial__behavior_ad7a2d714724a76a76fb80054564aeecd}{truss\+\_\+material\+\_\+properties} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_ac8fb792bd4adb68e0363999ee04ce7ea}{k00}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_ae934e25b34ba7c6241ab81a13b9d4d9c}{k01}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a14638f0398619753351d332fbcfa685e}{lambda\+\_\+01}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a73beea5a2807ab8f6e15b990b7592486}{k\+\_\+elec\+\_\+00}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a0ea3e3331e781d97068a80fe41788aaf}{k\+\_\+elec\+\_\+01}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a2ac87e6361866b09f1c027d637477ae7}{lambda\+\_\+elec\+\_\+01}
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_ac66973ce0f7b60b348a950b3c4df80ed}{k00\+\_\+pzt} =1.\+00d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a6464410d3cb39865aa5f39b324a30380}{k01\+\_\+pzt} =0.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a211dd81ae27709e6027a897a00bc94f8}{lambda\+\_\+01\+\_\+pzt} =1.\+0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a94bfa8bcfa3df70aabe1615a9974c5a1}{k\+\_\+elec\+\_\+00\+\_\+pzt} =1.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_af2d3155f15083287aaa2bf064b90ca3c}{k\+\_\+elec\+\_\+01\+\_\+pzt} =-\/0.\+6d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a132fe5a8a83e1e18fa19e3c006520c52}{lambda\+\_\+elec\+\_\+01\+\_\+pzt} =1.\+5
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a97caf4b28ab3c5c68ccc7333ab2883f2}{k00\+\_\+epx} =1.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a2cdeac845e9ad00ce067bf8d97470328}{k01\+\_\+epx} =0.\+6d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a3884ad39ef0fb43d355789acc29c8c1a}{lambda\+\_\+01\+\_\+epx} =0.\+8
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_ae6627960fae7dc38934722c9097db8e1}{k\+\_\+elec\+\_\+00\+\_\+epx} =1.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a821416be28a36a49165c9c8a50556c81}{k\+\_\+elec\+\_\+01\+\_\+epx} =0.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a4d52ced459ab4f48c6c53abdf2e315d3}{lambda\+\_\+elec\+\_\+01\+\_\+epx} =1.\+0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_aba1ffb56b1ab0b9db9d3b8bab9babf69}{ec} =1
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a002007fbb0f53f0989500f268c5d68bd}{pr\+\_\+sat} =26e-\/2
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a86dd93cf767f5c49d0fb9ab7ad275a20}{eps\+\_\+s\+\_\+r} =1e-\/3
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a3d67223e37edfba954fbb0e15fd534f0}{c} =1.\+0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a104619662a09d0a702a9f20d7e79f0e8}{eta} =10e-\/2
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a485aff3d8ce94cb516029491df025096}{m} =2
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_adecdfb65aad0a27a4cfecf7a0a2e7405}{e33} = -\/14.\+52$\ast$1.\+3d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a41c97072565322765eab89326d043974}{e15} = -\/7.\+56$\ast$1.\+3d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_acdda737936afdd1e2f7fa95ac0ec1e47}{e31} = 6.\+15$\ast$1.\+3d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a81d04c6527efb7912c556fabb6e2bfe5}{eps\+\_\+11} = 4.\+0e-\/9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a0269e4c7b93fc3e0ec2123138e74735b}{eps\+\_\+33} = 2.\+0e-\/9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a5443aaa8c75e639c0e7e610db47365f4}{ey\+\_\+pzt} =60.\+6e9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_aa17e406d8f9854210f8715a752d70e43}{nu\+\_\+pzt} = 0.\+3
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_acecba1d59f399fc0b0aabea4bccee6ce}{ey\+\_\+epoxy} = 1.\+5e9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_abac50d1debac288be1148e878784e2eb}{nu\+\_\+epoxy} = 0.\+35
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a3fca8d5d93d69c99044b5df2cc3dbd17}{eps\+\_\+epoxy} = 8.\+854187e-\/9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a4805434bdd269ec40107f9347653f183}{ey\+\_\+aluminum} =69.\+0e9
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_ae5963b3890fba3ea39240613fe4a0557}{nu\+\_\+aluminum} = 0.\+33
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a87bcf8ea95320967838eb79ea1185bcf}{k\+\_\+00\+\_\+aluminum} =1.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_a3258f4bdb606bd94c11a8e59317d271d}{k\+\_\+01\+\_\+aluminum} =0.\+0d0
+\item 
+real(iwp), parameter \hyperlink{classmaterial__behavior_ab44dd2aa265378e895e462fde60b65c5}{lambda\+\_\+01\+\_\+aluminum} =4.\+0
+\item 
+logical \hyperlink{classmaterial__behavior_a0b1a41a3f90541df527571959e4c25b5}{is\+\_\+polarized}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a7d56504ef4329ab65c4fc86cd108beb4}{a}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a82e31798dc8d8eaa46a7fb9a11b95285}{direc\+\_\+a}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a9923e96c82dc6a2982a9f457a2573ee8}{element\+\_\+direction\+\_\+normal}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a29961cc059e7a441ade63d17635929e3}{lambda}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a035801a1d12c0fa9b5c2de3a2e86f63f}{mu}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a0cc1fdb0277dc79da5dfebd44dc2d0df}{alpha1}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a64f16b5401dd56a6ccfaaf8583574f6d}{alpha2}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a70c3b833853f5d5fc20f72c0bd0cee34}{alpha3}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a99816d6be4ed7244881e685956b7ac06}{beta1}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a91b0b1309a8dfde964d4e497a0d1dcfe}{beta2}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a5c660e2829ac287aeb8d6dd0614da6c1}{beta3}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_a43433da9364d24eb86457ce7d5117774}{gamma1}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_af9b472629aed862a5eb7ecd36d27a236}{gamma2}
+\item 
+real(iwp), dimension(dimen, dimen, dimen) \hyperlink{classmaterial__behavior_a7594fd35fa481baa3f66778c4bcc7e3e}{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t}
+\item 
+real(iwp), dimension(dimen, dimen, dimen) \hyperlink{classmaterial__behavior_a50600c5b8a42a94a1fcf054767620811}{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p}
+\item 
+real(iwp), dimension(dimen, dimen, dimen, dimen) \hyperlink{classmaterial__behavior_a09bea0d09d129357d5ddd0c3173b5810}{b\+\_\+tilt}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a1deebdb156ef27ce0d628eeadc3ea304}{el\+\_\+center\+\_\+coord}
+\item 
+real(iwp), dimension(dimen, dimen) \hyperlink{classmaterial__behavior_af2aa779e399f21ed79a6c1d2beea23b2}{qtransform}
+\item 
+real(iwp), dimension(dimen, dimen, dimen, dimen) \hyperlink{classmaterial__behavior_a2d91ec36eec7e8c7c5f24cca84e5a214}{ctens}
+\item 
+real(iwp), dimension(dimen, dimen, dimen) \hyperlink{classmaterial__behavior_a7f7127af0d37db9dbe5fefca8a895e0f}{epz}
+\item 
+real(iwp), dimension(dimen, dimen) \hyperlink{classmaterial__behavior_ad71dfe377781d970157d3ff0d60053b3}{ktense}
+\item 
+real(iwp), dimension(2) \hyperlink{classmaterial__behavior_a4a0c3fd6ab8dc8bc3b46d051187e0fde}{time}
+\item 
+real(iwp) \hyperlink{classmaterial__behavior_af87866e16be751fbdc71dbf8043fd325}{dtime}
+\item 
+integer \hyperlink{classmaterial__behavior_a465c3fa1041a65365ebd4e25a80906ba}{ntime}
+\item 
+integer \hyperlink{classmaterial__behavior_ad096e0a9ad0e078537fd2436057d862a}{itime}
+\item 
+integer \hyperlink{classmaterial__behavior_a5149a02e7e855d7d7379e213b8b54139}{noelem}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a12dffbc2d241c20b84ecfbc0f7671da3}{remanent\+\_\+polarization\+\_\+vector}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a292b2148c95dcd0530b28d6194f0e958}{hist\+\_\+polarization\+\_\+function}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a8da5847f13b86fec4992e70561abade6}{curn\+\_\+polarization\+\_\+function}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_aaf2c43c6b05c402cd986502f7fe39514}{mechanical\+\_\+hist\+\_\+curentt}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a187ecf1250fa732fcb1bb1c3695ed4b1}{mechanical\+\_\+hist\+\_\+previus}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_aebe24210c537401c01e43330ad9dd536}{mechanical\+\_\+hist\+\_\+beforep}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a9395e93dd51a72249b887c2b1aa70cb9}{sigma\+\_\+el\+\_\+hist\+\_\+curentt}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_ad3264258813ff10e3c1f1ba6a633583b}{sigma\+\_\+el\+\_\+hist\+\_\+previus}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a33ac63029fccc3bac68d829d695848cf}{sigma\+\_\+el\+\_\+hist\+\_\+beforep}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_abf8d440513a914e5f94a1d82de20d4ed}{displ\+\_\+el\+\_\+hist\+\_\+curentt}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_af359146083f70a15b20a14395fa383f6}{displ\+\_\+el\+\_\+hist\+\_\+previus}
+\item 
+real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_ab3e2b38e175ef5341037213c49d1d38e}{displ\+\_\+el\+\_\+hist\+\_\+beforep}
+\item 
+real(iwp), dimension(\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a28bf20ae2381645c69a355195406bc98}{mechanical\+\_\+strain\+\_\+curentt}
+\item 
+real(iwp), dimension(\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_ae927078b97fc1a3c225f69f105075674}{mechanical\+\_\+strain\+\_\+previus}
+\item 
+real(iwp), dimension(\+:,\+:,\+:), allocatable \hyperlink{classmaterial__behavior_ab3c89f08605d36b4bd0c2fdf4c9fd477}{mechanical\+\_\+strain\+\_\+beforep}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_ace02b6745ed2cee2b79ed543372bf0ff}{hist\+\_\+electric\+\_\+field}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a35226defc9e95a951812134717beecf5}{curn\+\_\+electric\+\_\+field}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_aca4c7b3ca3838cec6677f204faccabfd}{hist\+\_\+electric\+\_\+displ}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_abd37805114cdc4a1f45c3b92bdda99cd}{curn\+\_\+electric\+\_\+displ}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_ace487f4e09f47f8f9cf484ca0ad22b69}{total\+\_\+displacement}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a52ff28207d80e56f256a5430e2179f3d}{total\+\_\+polarization}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a5e5bf5daab57f78f3551c9998660db4c}{pr}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_a21b3e10af3e83d240da32039cbbdadd8}{elements\+\_\+electric\+\_\+field}
+\item 
+real(iwp), dimension(\+:,\+:), allocatable \hyperlink{classmaterial__behavior_aa7c6508ed369f2f37762ce9b6c39c800}{elements\+\_\+electric\+\_\+polar}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a3ade0d21c66ab32510bf21daeb7fc6a8}{electric\+\_\+field}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a49ab2ce38e4c0c8efd718655af3ff7df}{electric\+\_\+field\+\_\+p}
+\item 
+real(iwp), dimension(dimen) \hyperlink{classmaterial__behavior_a05e1e699be346a40a312263aed02b288}{electric\+\_\+field\+\_\+b}
+\end{DoxyCompactItemize}
+
+
+\subsection{Member Function/\+Subroutine Documentation}
+\hypertarget{classmaterial__behavior_a0b99a8ea19770cbbe6a3b2256f8bec7c}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!afc\+\_\+material\+\_\+properties@{afc\+\_\+material\+\_\+properties}}
+\index{afc\+\_\+material\+\_\+properties@{afc\+\_\+material\+\_\+properties}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{afc\+\_\+material\+\_\+properties}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::afc\+\_\+material\+\_\+properties (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a0b99a8ea19770cbbe6a3b2256f8bec7c}
+\hypertarget{classmaterial__behavior_aeb0d82a9f31dc6853c8afdcb47ec7518}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!clear\+\_\+history@{clear\+\_\+history}}
+\index{clear\+\_\+history@{clear\+\_\+history}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{clear\+\_\+history}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::clear\+\_\+history (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_aeb0d82a9f31dc6853c8afdcb47ec7518}
+\hypertarget{classmaterial__behavior_a16bd334e522c38a0ace29e64a0721669}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!direction\+\_\+of\+\_\+vector@{direction\+\_\+of\+\_\+vector}}
+\index{direction\+\_\+of\+\_\+vector@{direction\+\_\+of\+\_\+vector}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{direction\+\_\+of\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) function, dimension(\+:), allocatable material\+\_\+behavior\+::direction\+\_\+of\+\_\+vector (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:)}]{a}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a16bd334e522c38a0ace29e64a0721669}
+\hypertarget{classmaterial__behavior_a9f66b9f48be07bb1d7e9776ba84b53e4}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!direction\+\_\+polarization@{direction\+\_\+polarization}}
+\index{direction\+\_\+polarization@{direction\+\_\+polarization}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{direction\+\_\+polarization}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::direction\+\_\+polarization (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(dimen)}]{pr\+\_\+vec, }
+\item[{real(iwp), dimension(dimen)}]{a\+\_\+direc}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a9f66b9f48be07bb1d7e9776ba84b53e4}
+\hypertarget{classmaterial__behavior_a246cae6f0d929f111e75dc73a5761f58}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!form\+\_\+history@{form\+\_\+history}}
+\index{form\+\_\+history@{form\+\_\+history}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{form\+\_\+history}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::form\+\_\+history (
+\begin{DoxyParamCaption}
+\item[{integer}]{ngauss, }
+\item[{integer}]{nem}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a246cae6f0d929f111e75dc73a5761f58}
+\hypertarget{classmaterial__behavior_a14a187a01fadfd1f1bf2df5b193cfc6f}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!material\+\_\+properties@{material\+\_\+properties}}
+\index{material\+\_\+properties@{material\+\_\+properties}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{material\+\_\+properties}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::material\+\_\+properties (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a14a187a01fadfd1f1bf2df5b193cfc6f}
+\hypertarget{classmaterial__behavior_abe39c2fed400468bdf0c24cfab63c47e}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!remanent\+\_\+polarization@{remanent\+\_\+polarization}}
+\index{remanent\+\_\+polarization@{remanent\+\_\+polarization}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{remanent\+\_\+polarization}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::remanent\+\_\+polarization (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(3)}]{d\+\_\+electric\+\_\+field, }
+\item[{real(iwp), dimension(3)}]{electric\+\_\+field}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_abe39c2fed400468bdf0c24cfab63c47e}
+\hypertarget{classmaterial__behavior_a5afdfd92d3c4415fb168bc0c7fe1efa3}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!stress\+\_\+elect\+\_\+displacement@{stress\+\_\+elect\+\_\+displacement}}
+\index{stress\+\_\+elect\+\_\+displacement@{stress\+\_\+elect\+\_\+displacement}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{stress\+\_\+elect\+\_\+displacement}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::stress\+\_\+elect\+\_\+displacement (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ur, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{up, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ub, }
+\item[{real(iwp), dimension(\+:)}]{der, }
+\item[{real(iwp), dimension(\+:,\+:)}]{sigma}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a5afdfd92d3c4415fb168bc0c7fe1efa3}
+\hypertarget{classmaterial__behavior_ad7a2d714724a76a76fb80054564aeecd}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!truss\+\_\+material\+\_\+properties@{truss\+\_\+material\+\_\+properties}}
+\index{truss\+\_\+material\+\_\+properties@{truss\+\_\+material\+\_\+properties}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{truss\+\_\+material\+\_\+properties}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::truss\+\_\+material\+\_\+properties (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_ad7a2d714724a76a76fb80054564aeecd}
+\hypertarget{classmaterial__behavior_a344f7d5811ee5c48e0589c47ecc694ee}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!truss\+\_\+shape\+\_\+change\+\_\+stress@{truss\+\_\+shape\+\_\+change\+\_\+stress}}
+\index{truss\+\_\+shape\+\_\+change\+\_\+stress@{truss\+\_\+shape\+\_\+change\+\_\+stress}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{truss\+\_\+shape\+\_\+change\+\_\+stress}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::truss\+\_\+shape\+\_\+change\+\_\+stress (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:), intent(in)}]{el\+\_\+center\+\_\+coord, }
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ur, }
+\item[{real(iwp), dimension(dimen,dimen), intent(out)}]{sigma\+\_\+shape}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a344f7d5811ee5c48e0589c47ecc694ee}
+\hypertarget{classmaterial__behavior_a12b4c943b3e07e083350abd47cba20f8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!truss\+\_\+stress\+\_\+elect\+\_\+displacement@{truss\+\_\+stress\+\_\+elect\+\_\+displacement}}
+\index{truss\+\_\+stress\+\_\+elect\+\_\+displacement@{truss\+\_\+stress\+\_\+elect\+\_\+displacement}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{truss\+\_\+stress\+\_\+elect\+\_\+displacement}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::truss\+\_\+stress\+\_\+elect\+\_\+displacement (
+\begin{DoxyParamCaption}
+\item[{real(iwp), dimension(\+:,\+:), intent(in)}]{ur, }
+\item[{real(iwp), dimension(\+:)}]{der, }
+\item[{real(iwp), dimension(\+:,\+:)}]{sigma}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a12b4c943b3e07e083350abd47cba20f8}
+\hypertarget{classmaterial__behavior_a7f4afd7183cd41dff13fd4fcbd88a329}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!update\+\_\+history@{update\+\_\+history}}
+\index{update\+\_\+history@{update\+\_\+history}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{update\+\_\+history}]{\setlength{\rightskip}{0pt plus 5cm}subroutine material\+\_\+behavior\+::update\+\_\+history (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\label{classmaterial__behavior_a7f4afd7183cd41dff13fd4fcbd88a329}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classmaterial__behavior_a7d56504ef4329ab65c4fc86cd108beb4}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!a@{a}}
+\index{a@{a}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{a}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::a}\label{classmaterial__behavior_a7d56504ef4329ab65c4fc86cd108beb4}
+\hypertarget{classmaterial__behavior_a0cc1fdb0277dc79da5dfebd44dc2d0df}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!alpha1@{alpha1}}
+\index{alpha1@{alpha1}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{alpha1}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::alpha1}\label{classmaterial__behavior_a0cc1fdb0277dc79da5dfebd44dc2d0df}
+\hypertarget{classmaterial__behavior_a64f16b5401dd56a6ccfaaf8583574f6d}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!alpha2@{alpha2}}
+\index{alpha2@{alpha2}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{alpha2}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::alpha2}\label{classmaterial__behavior_a64f16b5401dd56a6ccfaaf8583574f6d}
+\hypertarget{classmaterial__behavior_a70c3b833853f5d5fc20f72c0bd0cee34}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!alpha3@{alpha3}}
+\index{alpha3@{alpha3}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{alpha3}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::alpha3}\label{classmaterial__behavior_a70c3b833853f5d5fc20f72c0bd0cee34}
+\hypertarget{classmaterial__behavior_a09bea0d09d129357d5ddd0c3173b5810}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!b\+\_\+tilt@{b\+\_\+tilt}}
+\index{b\+\_\+tilt@{b\+\_\+tilt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{b\+\_\+tilt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen,dimen,dimen) material\+\_\+behavior\+::b\+\_\+tilt}\label{classmaterial__behavior_a09bea0d09d129357d5ddd0c3173b5810}
+\hypertarget{classmaterial__behavior_a99816d6be4ed7244881e685956b7ac06}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!beta1@{beta1}}
+\index{beta1@{beta1}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{beta1}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::beta1}\label{classmaterial__behavior_a99816d6be4ed7244881e685956b7ac06}
+\hypertarget{classmaterial__behavior_a91b0b1309a8dfde964d4e497a0d1dcfe}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!beta2@{beta2}}
+\index{beta2@{beta2}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{beta2}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::beta2}\label{classmaterial__behavior_a91b0b1309a8dfde964d4e497a0d1dcfe}
+\hypertarget{classmaterial__behavior_a5c660e2829ac287aeb8d6dd0614da6c1}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!beta3@{beta3}}
+\index{beta3@{beta3}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{beta3}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::beta3}\label{classmaterial__behavior_a5c660e2829ac287aeb8d6dd0614da6c1}
+\hypertarget{classmaterial__behavior_a3d67223e37edfba954fbb0e15fd534f0}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!c@{c}}
+\index{c@{c}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{c}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::c =1.\+0}\label{classmaterial__behavior_a3d67223e37edfba954fbb0e15fd534f0}
+\hypertarget{classmaterial__behavior_a2d91ec36eec7e8c7c5f24cca84e5a214}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ctens@{ctens}}
+\index{ctens@{ctens}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ctens}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen,dimen,dimen) material\+\_\+behavior\+::ctens}\label{classmaterial__behavior_a2d91ec36eec7e8c7c5f24cca84e5a214}
+\hypertarget{classmaterial__behavior_abd37805114cdc4a1f45c3b92bdda99cd}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!curn\+\_\+electric\+\_\+displ@{curn\+\_\+electric\+\_\+displ}}
+\index{curn\+\_\+electric\+\_\+displ@{curn\+\_\+electric\+\_\+displ}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{curn\+\_\+electric\+\_\+displ}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::curn\+\_\+electric\+\_\+displ}\label{classmaterial__behavior_abd37805114cdc4a1f45c3b92bdda99cd}
+\hypertarget{classmaterial__behavior_a35226defc9e95a951812134717beecf5}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!curn\+\_\+electric\+\_\+field@{curn\+\_\+electric\+\_\+field}}
+\index{curn\+\_\+electric\+\_\+field@{curn\+\_\+electric\+\_\+field}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{curn\+\_\+electric\+\_\+field}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::curn\+\_\+electric\+\_\+field}\label{classmaterial__behavior_a35226defc9e95a951812134717beecf5}
+\hypertarget{classmaterial__behavior_a8da5847f13b86fec4992e70561abade6}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!curn\+\_\+polarization\+\_\+function@{curn\+\_\+polarization\+\_\+function}}
+\index{curn\+\_\+polarization\+\_\+function@{curn\+\_\+polarization\+\_\+function}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{curn\+\_\+polarization\+\_\+function}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::curn\+\_\+polarization\+\_\+function}\label{classmaterial__behavior_a8da5847f13b86fec4992e70561abade6}
+\hypertarget{classmaterial__behavior_a82e31798dc8d8eaa46a7fb9a11b95285}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!direc\+\_\+a@{direc\+\_\+a}}
+\index{direc\+\_\+a@{direc\+\_\+a}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{direc\+\_\+a}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::direc\+\_\+a}\label{classmaterial__behavior_a82e31798dc8d8eaa46a7fb9a11b95285}
+\hypertarget{classmaterial__behavior_ab3e2b38e175ef5341037213c49d1d38e}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!displ\+\_\+el\+\_\+hist\+\_\+beforep@{displ\+\_\+el\+\_\+hist\+\_\+beforep}}
+\index{displ\+\_\+el\+\_\+hist\+\_\+beforep@{displ\+\_\+el\+\_\+hist\+\_\+beforep}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{displ\+\_\+el\+\_\+hist\+\_\+beforep}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::displ\+\_\+el\+\_\+hist\+\_\+beforep}\label{classmaterial__behavior_ab3e2b38e175ef5341037213c49d1d38e}
+\hypertarget{classmaterial__behavior_abf8d440513a914e5f94a1d82de20d4ed}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!displ\+\_\+el\+\_\+hist\+\_\+curentt@{displ\+\_\+el\+\_\+hist\+\_\+curentt}}
+\index{displ\+\_\+el\+\_\+hist\+\_\+curentt@{displ\+\_\+el\+\_\+hist\+\_\+curentt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{displ\+\_\+el\+\_\+hist\+\_\+curentt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::displ\+\_\+el\+\_\+hist\+\_\+curentt}\label{classmaterial__behavior_abf8d440513a914e5f94a1d82de20d4ed}
+\hypertarget{classmaterial__behavior_af359146083f70a15b20a14395fa383f6}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!displ\+\_\+el\+\_\+hist\+\_\+previus@{displ\+\_\+el\+\_\+hist\+\_\+previus}}
+\index{displ\+\_\+el\+\_\+hist\+\_\+previus@{displ\+\_\+el\+\_\+hist\+\_\+previus}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{displ\+\_\+el\+\_\+hist\+\_\+previus}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::displ\+\_\+el\+\_\+hist\+\_\+previus}\label{classmaterial__behavior_af359146083f70a15b20a14395fa383f6}
+\hypertarget{classmaterial__behavior_af87866e16be751fbdc71dbf8043fd325}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!dtime@{dtime}}
+\index{dtime@{dtime}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{dtime}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::dtime}\label{classmaterial__behavior_af87866e16be751fbdc71dbf8043fd325}
+\hypertarget{classmaterial__behavior_a41c97072565322765eab89326d043974}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!e15@{e15}}
+\index{e15@{e15}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{e15}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::e15 = -\/7.\+56$\ast$1.\+3d0}\label{classmaterial__behavior_a41c97072565322765eab89326d043974}
+\hypertarget{classmaterial__behavior_acdda737936afdd1e2f7fa95ac0ec1e47}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!e31@{e31}}
+\index{e31@{e31}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{e31}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::e31 = 6.\+15$\ast$1.\+3d0}\label{classmaterial__behavior_acdda737936afdd1e2f7fa95ac0ec1e47}
+\hypertarget{classmaterial__behavior_adecdfb65aad0a27a4cfecf7a0a2e7405}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!e33@{e33}}
+\index{e33@{e33}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{e33}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::e33 = -\/14.\+52$\ast$1.\+3d0}\label{classmaterial__behavior_adecdfb65aad0a27a4cfecf7a0a2e7405}
+\hypertarget{classmaterial__behavior_aba1ffb56b1ab0b9db9d3b8bab9babf69}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ec@{ec}}
+\index{ec@{ec}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ec}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::ec =1}\label{classmaterial__behavior_aba1ffb56b1ab0b9db9d3b8bab9babf69}
+\hypertarget{classmaterial__behavior_a1deebdb156ef27ce0d628eeadc3ea304}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!el\+\_\+center\+\_\+coord@{el\+\_\+center\+\_\+coord}}
+\index{el\+\_\+center\+\_\+coord@{el\+\_\+center\+\_\+coord}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{el\+\_\+center\+\_\+coord}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::el\+\_\+center\+\_\+coord}\label{classmaterial__behavior_a1deebdb156ef27ce0d628eeadc3ea304}
+\hypertarget{classmaterial__behavior_a3ade0d21c66ab32510bf21daeb7fc6a8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!electric\+\_\+field@{electric\+\_\+field}}
+\index{electric\+\_\+field@{electric\+\_\+field}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{electric\+\_\+field}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::electric\+\_\+field}\label{classmaterial__behavior_a3ade0d21c66ab32510bf21daeb7fc6a8}
+\hypertarget{classmaterial__behavior_a05e1e699be346a40a312263aed02b288}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!electric\+\_\+field\+\_\+b@{electric\+\_\+field\+\_\+b}}
+\index{electric\+\_\+field\+\_\+b@{electric\+\_\+field\+\_\+b}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{electric\+\_\+field\+\_\+b}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::electric\+\_\+field\+\_\+b}\label{classmaterial__behavior_a05e1e699be346a40a312263aed02b288}
+\hypertarget{classmaterial__behavior_a49ab2ce38e4c0c8efd718655af3ff7df}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!electric\+\_\+field\+\_\+p@{electric\+\_\+field\+\_\+p}}
+\index{electric\+\_\+field\+\_\+p@{electric\+\_\+field\+\_\+p}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{electric\+\_\+field\+\_\+p}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::electric\+\_\+field\+\_\+p}\label{classmaterial__behavior_a49ab2ce38e4c0c8efd718655af3ff7df}
+\hypertarget{classmaterial__behavior_a9923e96c82dc6a2982a9f457a2573ee8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!element\+\_\+direction\+\_\+normal@{element\+\_\+direction\+\_\+normal}}
+\index{element\+\_\+direction\+\_\+normal@{element\+\_\+direction\+\_\+normal}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{element\+\_\+direction\+\_\+normal}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::element\+\_\+direction\+\_\+normal}\label{classmaterial__behavior_a9923e96c82dc6a2982a9f457a2573ee8}
+\hypertarget{classmaterial__behavior_a21b3e10af3e83d240da32039cbbdadd8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!elements\+\_\+electric\+\_\+field@{elements\+\_\+electric\+\_\+field}}
+\index{elements\+\_\+electric\+\_\+field@{elements\+\_\+electric\+\_\+field}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{elements\+\_\+electric\+\_\+field}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::elements\+\_\+electric\+\_\+field}\label{classmaterial__behavior_a21b3e10af3e83d240da32039cbbdadd8}
+\hypertarget{classmaterial__behavior_aa7c6508ed369f2f37762ce9b6c39c800}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!elements\+\_\+electric\+\_\+polar@{elements\+\_\+electric\+\_\+polar}}
+\index{elements\+\_\+electric\+\_\+polar@{elements\+\_\+electric\+\_\+polar}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{elements\+\_\+electric\+\_\+polar}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::elements\+\_\+electric\+\_\+polar}\label{classmaterial__behavior_aa7c6508ed369f2f37762ce9b6c39c800}
+\hypertarget{classmaterial__behavior_a81d04c6527efb7912c556fabb6e2bfe5}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!eps\+\_\+11@{eps\+\_\+11}}
+\index{eps\+\_\+11@{eps\+\_\+11}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{eps\+\_\+11}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::eps\+\_\+11 = 4.\+0e-\/9}\label{classmaterial__behavior_a81d04c6527efb7912c556fabb6e2bfe5}
+\hypertarget{classmaterial__behavior_a0269e4c7b93fc3e0ec2123138e74735b}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!eps\+\_\+33@{eps\+\_\+33}}
+\index{eps\+\_\+33@{eps\+\_\+33}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{eps\+\_\+33}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::eps\+\_\+33 = 2.\+0e-\/9}\label{classmaterial__behavior_a0269e4c7b93fc3e0ec2123138e74735b}
+\hypertarget{classmaterial__behavior_a3fca8d5d93d69c99044b5df2cc3dbd17}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!eps\+\_\+epoxy@{eps\+\_\+epoxy}}
+\index{eps\+\_\+epoxy@{eps\+\_\+epoxy}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{eps\+\_\+epoxy}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::eps\+\_\+epoxy = 8.\+854187e-\/9}\label{classmaterial__behavior_a3fca8d5d93d69c99044b5df2cc3dbd17}
+\hypertarget{classmaterial__behavior_a86dd93cf767f5c49d0fb9ab7ad275a20}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!eps\+\_\+s\+\_\+r@{eps\+\_\+s\+\_\+r}}
+\index{eps\+\_\+s\+\_\+r@{eps\+\_\+s\+\_\+r}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{eps\+\_\+s\+\_\+r}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::eps\+\_\+s\+\_\+r =1e-\/3}\label{classmaterial__behavior_a86dd93cf767f5c49d0fb9ab7ad275a20}
+\hypertarget{classmaterial__behavior_a7f7127af0d37db9dbe5fefca8a895e0f}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!epz@{epz}}
+\index{epz@{epz}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{epz}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen,dimen) material\+\_\+behavior\+::epz}\label{classmaterial__behavior_a7f7127af0d37db9dbe5fefca8a895e0f}
+\hypertarget{classmaterial__behavior_a104619662a09d0a702a9f20d7e79f0e8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!eta@{eta}}
+\index{eta@{eta}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{eta}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::eta =10e-\/2}\label{classmaterial__behavior_a104619662a09d0a702a9f20d7e79f0e8}
+\hypertarget{classmaterial__behavior_a4805434bdd269ec40107f9347653f183}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ey\+\_\+aluminum@{ey\+\_\+aluminum}}
+\index{ey\+\_\+aluminum@{ey\+\_\+aluminum}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ey\+\_\+aluminum}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::ey\+\_\+aluminum =69.\+0e9}\label{classmaterial__behavior_a4805434bdd269ec40107f9347653f183}
+\hypertarget{classmaterial__behavior_acecba1d59f399fc0b0aabea4bccee6ce}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ey\+\_\+epoxy@{ey\+\_\+epoxy}}
+\index{ey\+\_\+epoxy@{ey\+\_\+epoxy}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ey\+\_\+epoxy}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::ey\+\_\+epoxy = 1.\+5e9}\label{classmaterial__behavior_acecba1d59f399fc0b0aabea4bccee6ce}
+\hypertarget{classmaterial__behavior_a5443aaa8c75e639c0e7e610db47365f4}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ey\+\_\+pzt@{ey\+\_\+pzt}}
+\index{ey\+\_\+pzt@{ey\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ey\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::ey\+\_\+pzt =60.\+6e9}\label{classmaterial__behavior_a5443aaa8c75e639c0e7e610db47365f4}
+\hypertarget{classmaterial__behavior_a43433da9364d24eb86457ce7d5117774}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!gamma1@{gamma1}}
+\index{gamma1@{gamma1}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{gamma1}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::gamma1}\label{classmaterial__behavior_a43433da9364d24eb86457ce7d5117774}
+\hypertarget{classmaterial__behavior_af9b472629aed862a5eb7ecd36d27a236}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!gamma2@{gamma2}}
+\index{gamma2@{gamma2}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{gamma2}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::gamma2}\label{classmaterial__behavior_af9b472629aed862a5eb7ecd36d27a236}
+\hypertarget{classmaterial__behavior_aca4c7b3ca3838cec6677f204faccabfd}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!hist\+\_\+electric\+\_\+displ@{hist\+\_\+electric\+\_\+displ}}
+\index{hist\+\_\+electric\+\_\+displ@{hist\+\_\+electric\+\_\+displ}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{hist\+\_\+electric\+\_\+displ}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::hist\+\_\+electric\+\_\+displ}\label{classmaterial__behavior_aca4c7b3ca3838cec6677f204faccabfd}
+\hypertarget{classmaterial__behavior_ace02b6745ed2cee2b79ed543372bf0ff}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!hist\+\_\+electric\+\_\+field@{hist\+\_\+electric\+\_\+field}}
+\index{hist\+\_\+electric\+\_\+field@{hist\+\_\+electric\+\_\+field}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{hist\+\_\+electric\+\_\+field}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::hist\+\_\+electric\+\_\+field}\label{classmaterial__behavior_ace02b6745ed2cee2b79ed543372bf0ff}
+\hypertarget{classmaterial__behavior_a292b2148c95dcd0530b28d6194f0e958}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!hist\+\_\+polarization\+\_\+function@{hist\+\_\+polarization\+\_\+function}}
+\index{hist\+\_\+polarization\+\_\+function@{hist\+\_\+polarization\+\_\+function}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{hist\+\_\+polarization\+\_\+function}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::hist\+\_\+polarization\+\_\+function}\label{classmaterial__behavior_a292b2148c95dcd0530b28d6194f0e958}
+\hypertarget{classmaterial__behavior_a0b1a41a3f90541df527571959e4c25b5}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!is\+\_\+polarized@{is\+\_\+polarized}}
+\index{is\+\_\+polarized@{is\+\_\+polarized}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{is\+\_\+polarized}]{\setlength{\rightskip}{0pt plus 5cm}logical material\+\_\+behavior\+::is\+\_\+polarized}\label{classmaterial__behavior_a0b1a41a3f90541df527571959e4c25b5}
+\hypertarget{classmaterial__behavior_ad096e0a9ad0e078537fd2436057d862a}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!itime@{itime}}
+\index{itime@{itime}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{itime}]{\setlength{\rightskip}{0pt plus 5cm}integer material\+\_\+behavior\+::itime}\label{classmaterial__behavior_ad096e0a9ad0e078537fd2436057d862a}
+\hypertarget{classmaterial__behavior_ac8fb792bd4adb68e0363999ee04ce7ea}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k00@{k00}}
+\index{k00@{k00}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k00}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::k00}\label{classmaterial__behavior_ac8fb792bd4adb68e0363999ee04ce7ea}
+\hypertarget{classmaterial__behavior_a97caf4b28ab3c5c68ccc7333ab2883f2}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k00\+\_\+epx@{k00\+\_\+epx}}
+\index{k00\+\_\+epx@{k00\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k00\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k00\+\_\+epx =1.\+0d0}\label{classmaterial__behavior_a97caf4b28ab3c5c68ccc7333ab2883f2}
+\hypertarget{classmaterial__behavior_ac66973ce0f7b60b348a950b3c4df80ed}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k00\+\_\+pzt@{k00\+\_\+pzt}}
+\index{k00\+\_\+pzt@{k00\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k00\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k00\+\_\+pzt =1.\+00d0}\label{classmaterial__behavior_ac66973ce0f7b60b348a950b3c4df80ed}
+\hypertarget{classmaterial__behavior_ae934e25b34ba7c6241ab81a13b9d4d9c}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k01@{k01}}
+\index{k01@{k01}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k01}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::k01}\label{classmaterial__behavior_ae934e25b34ba7c6241ab81a13b9d4d9c}
+\hypertarget{classmaterial__behavior_a2cdeac845e9ad00ce067bf8d97470328}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k01\+\_\+epx@{k01\+\_\+epx}}
+\index{k01\+\_\+epx@{k01\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k01\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k01\+\_\+epx =0.\+6d0}\label{classmaterial__behavior_a2cdeac845e9ad00ce067bf8d97470328}
+\hypertarget{classmaterial__behavior_a6464410d3cb39865aa5f39b324a30380}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k01\+\_\+pzt@{k01\+\_\+pzt}}
+\index{k01\+\_\+pzt@{k01\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k01\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k01\+\_\+pzt =0.\+0d0}\label{classmaterial__behavior_a6464410d3cb39865aa5f39b324a30380}
+\hypertarget{classmaterial__behavior_a87bcf8ea95320967838eb79ea1185bcf}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+00\+\_\+aluminum@{k\+\_\+00\+\_\+aluminum}}
+\index{k\+\_\+00\+\_\+aluminum@{k\+\_\+00\+\_\+aluminum}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+00\+\_\+aluminum}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+00\+\_\+aluminum =1.\+0d0}\label{classmaterial__behavior_a87bcf8ea95320967838eb79ea1185bcf}
+\hypertarget{classmaterial__behavior_a3258f4bdb606bd94c11a8e59317d271d}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+01\+\_\+aluminum@{k\+\_\+01\+\_\+aluminum}}
+\index{k\+\_\+01\+\_\+aluminum@{k\+\_\+01\+\_\+aluminum}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+01\+\_\+aluminum}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+01\+\_\+aluminum =0.\+0d0}\label{classmaterial__behavior_a3258f4bdb606bd94c11a8e59317d271d}
+\hypertarget{classmaterial__behavior_a73beea5a2807ab8f6e15b990b7592486}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+00@{k\+\_\+elec\+\_\+00}}
+\index{k\+\_\+elec\+\_\+00@{k\+\_\+elec\+\_\+00}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+00}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::k\+\_\+elec\+\_\+00}\label{classmaterial__behavior_a73beea5a2807ab8f6e15b990b7592486}
+\hypertarget{classmaterial__behavior_ae6627960fae7dc38934722c9097db8e1}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+00\+\_\+epx@{k\+\_\+elec\+\_\+00\+\_\+epx}}
+\index{k\+\_\+elec\+\_\+00\+\_\+epx@{k\+\_\+elec\+\_\+00\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+00\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+elec\+\_\+00\+\_\+epx =1.\+0d0}\label{classmaterial__behavior_ae6627960fae7dc38934722c9097db8e1}
+\hypertarget{classmaterial__behavior_a94bfa8bcfa3df70aabe1615a9974c5a1}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+00\+\_\+pzt@{k\+\_\+elec\+\_\+00\+\_\+pzt}}
+\index{k\+\_\+elec\+\_\+00\+\_\+pzt@{k\+\_\+elec\+\_\+00\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+00\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+elec\+\_\+00\+\_\+pzt =1.\+0d0}\label{classmaterial__behavior_a94bfa8bcfa3df70aabe1615a9974c5a1}
+\hypertarget{classmaterial__behavior_a0ea3e3331e781d97068a80fe41788aaf}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+01@{k\+\_\+elec\+\_\+01}}
+\index{k\+\_\+elec\+\_\+01@{k\+\_\+elec\+\_\+01}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+01}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::k\+\_\+elec\+\_\+01}\label{classmaterial__behavior_a0ea3e3331e781d97068a80fe41788aaf}
+\hypertarget{classmaterial__behavior_a821416be28a36a49165c9c8a50556c81}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+01\+\_\+epx@{k\+\_\+elec\+\_\+01\+\_\+epx}}
+\index{k\+\_\+elec\+\_\+01\+\_\+epx@{k\+\_\+elec\+\_\+01\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+01\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+elec\+\_\+01\+\_\+epx =0.\+0d0}\label{classmaterial__behavior_a821416be28a36a49165c9c8a50556c81}
+\hypertarget{classmaterial__behavior_af2d3155f15083287aaa2bf064b90ca3c}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!k\+\_\+elec\+\_\+01\+\_\+pzt@{k\+\_\+elec\+\_\+01\+\_\+pzt}}
+\index{k\+\_\+elec\+\_\+01\+\_\+pzt@{k\+\_\+elec\+\_\+01\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{k\+\_\+elec\+\_\+01\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::k\+\_\+elec\+\_\+01\+\_\+pzt =-\/0.\+6d0}\label{classmaterial__behavior_af2d3155f15083287aaa2bf064b90ca3c}
+\hypertarget{classmaterial__behavior_ad71dfe377781d970157d3ff0d60053b3}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ktense@{ktense}}
+\index{ktense@{ktense}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ktense}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen) material\+\_\+behavior\+::ktense}\label{classmaterial__behavior_ad71dfe377781d970157d3ff0d60053b3}
+\hypertarget{classmaterial__behavior_a29961cc059e7a441ade63d17635929e3}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda@{lambda}}
+\index{lambda@{lambda}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::lambda}\label{classmaterial__behavior_a29961cc059e7a441ade63d17635929e3}
+\hypertarget{classmaterial__behavior_a14638f0398619753351d332fbcfa685e}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+01@{lambda\+\_\+01}}
+\index{lambda\+\_\+01@{lambda\+\_\+01}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+01}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::lambda\+\_\+01}\label{classmaterial__behavior_a14638f0398619753351d332fbcfa685e}
+\hypertarget{classmaterial__behavior_ab44dd2aa265378e895e462fde60b65c5}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+01\+\_\+aluminum@{lambda\+\_\+01\+\_\+aluminum}}
+\index{lambda\+\_\+01\+\_\+aluminum@{lambda\+\_\+01\+\_\+aluminum}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+01\+\_\+aluminum}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::lambda\+\_\+01\+\_\+aluminum =4.\+0}\label{classmaterial__behavior_ab44dd2aa265378e895e462fde60b65c5}
+\hypertarget{classmaterial__behavior_a3884ad39ef0fb43d355789acc29c8c1a}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+01\+\_\+epx@{lambda\+\_\+01\+\_\+epx}}
+\index{lambda\+\_\+01\+\_\+epx@{lambda\+\_\+01\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+01\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::lambda\+\_\+01\+\_\+epx =0.\+8}\label{classmaterial__behavior_a3884ad39ef0fb43d355789acc29c8c1a}
+\hypertarget{classmaterial__behavior_a211dd81ae27709e6027a897a00bc94f8}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+01\+\_\+pzt@{lambda\+\_\+01\+\_\+pzt}}
+\index{lambda\+\_\+01\+\_\+pzt@{lambda\+\_\+01\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+01\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::lambda\+\_\+01\+\_\+pzt =1.\+0}\label{classmaterial__behavior_a211dd81ae27709e6027a897a00bc94f8}
+\hypertarget{classmaterial__behavior_a2ac87e6361866b09f1c027d637477ae7}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+elec\+\_\+01@{lambda\+\_\+elec\+\_\+01}}
+\index{lambda\+\_\+elec\+\_\+01@{lambda\+\_\+elec\+\_\+01}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+elec\+\_\+01}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::lambda\+\_\+elec\+\_\+01}\label{classmaterial__behavior_a2ac87e6361866b09f1c027d637477ae7}
+\hypertarget{classmaterial__behavior_a4d52ced459ab4f48c6c53abdf2e315d3}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+elec\+\_\+01\+\_\+epx@{lambda\+\_\+elec\+\_\+01\+\_\+epx}}
+\index{lambda\+\_\+elec\+\_\+01\+\_\+epx@{lambda\+\_\+elec\+\_\+01\+\_\+epx}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+elec\+\_\+01\+\_\+epx}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::lambda\+\_\+elec\+\_\+01\+\_\+epx =1.\+0}\label{classmaterial__behavior_a4d52ced459ab4f48c6c53abdf2e315d3}
+\hypertarget{classmaterial__behavior_a132fe5a8a83e1e18fa19e3c006520c52}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!lambda\+\_\+elec\+\_\+01\+\_\+pzt@{lambda\+\_\+elec\+\_\+01\+\_\+pzt}}
+\index{lambda\+\_\+elec\+\_\+01\+\_\+pzt@{lambda\+\_\+elec\+\_\+01\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{lambda\+\_\+elec\+\_\+01\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::lambda\+\_\+elec\+\_\+01\+\_\+pzt =1.\+5}\label{classmaterial__behavior_a132fe5a8a83e1e18fa19e3c006520c52}
+\hypertarget{classmaterial__behavior_a485aff3d8ce94cb516029491df025096}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!m@{m}}
+\index{m@{m}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{m}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::m =2}\label{classmaterial__behavior_a485aff3d8ce94cb516029491df025096}
+\hypertarget{classmaterial__behavior_aebe24210c537401c01e43330ad9dd536}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+hist\+\_\+beforep@{mechanical\+\_\+hist\+\_\+beforep}}
+\index{mechanical\+\_\+hist\+\_\+beforep@{mechanical\+\_\+hist\+\_\+beforep}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+hist\+\_\+beforep}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+hist\+\_\+beforep}\label{classmaterial__behavior_aebe24210c537401c01e43330ad9dd536}
+\hypertarget{classmaterial__behavior_aaf2c43c6b05c402cd986502f7fe39514}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+hist\+\_\+curentt@{mechanical\+\_\+hist\+\_\+curentt}}
+\index{mechanical\+\_\+hist\+\_\+curentt@{mechanical\+\_\+hist\+\_\+curentt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+hist\+\_\+curentt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+hist\+\_\+curentt}\label{classmaterial__behavior_aaf2c43c6b05c402cd986502f7fe39514}
+\hypertarget{classmaterial__behavior_a187ecf1250fa732fcb1bb1c3695ed4b1}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+hist\+\_\+previus@{mechanical\+\_\+hist\+\_\+previus}}
+\index{mechanical\+\_\+hist\+\_\+previus@{mechanical\+\_\+hist\+\_\+previus}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+hist\+\_\+previus}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+hist\+\_\+previus}\label{classmaterial__behavior_a187ecf1250fa732fcb1bb1c3695ed4b1}
+\hypertarget{classmaterial__behavior_ab3c89f08605d36b4bd0c2fdf4c9fd477}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+strain\+\_\+beforep@{mechanical\+\_\+strain\+\_\+beforep}}
+\index{mechanical\+\_\+strain\+\_\+beforep@{mechanical\+\_\+strain\+\_\+beforep}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+strain\+\_\+beforep}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+strain\+\_\+beforep}\label{classmaterial__behavior_ab3c89f08605d36b4bd0c2fdf4c9fd477}
+\hypertarget{classmaterial__behavior_a28bf20ae2381645c69a355195406bc98}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+strain\+\_\+curentt@{mechanical\+\_\+strain\+\_\+curentt}}
+\index{mechanical\+\_\+strain\+\_\+curentt@{mechanical\+\_\+strain\+\_\+curentt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+strain\+\_\+curentt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+strain\+\_\+curentt}\label{classmaterial__behavior_a28bf20ae2381645c69a355195406bc98}
+\hypertarget{classmaterial__behavior_ae927078b97fc1a3c225f69f105075674}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mechanical\+\_\+strain\+\_\+previus@{mechanical\+\_\+strain\+\_\+previus}}
+\index{mechanical\+\_\+strain\+\_\+previus@{mechanical\+\_\+strain\+\_\+previus}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mechanical\+\_\+strain\+\_\+previus}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:), allocatable material\+\_\+behavior\+::mechanical\+\_\+strain\+\_\+previus}\label{classmaterial__behavior_ae927078b97fc1a3c225f69f105075674}
+\hypertarget{classmaterial__behavior_a035801a1d12c0fa9b5c2de3a2e86f63f}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!mu@{mu}}
+\index{mu@{mu}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{mu}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp) material\+\_\+behavior\+::mu}\label{classmaterial__behavior_a035801a1d12c0fa9b5c2de3a2e86f63f}
+\hypertarget{classmaterial__behavior_a5149a02e7e855d7d7379e213b8b54139}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!noelem@{noelem}}
+\index{noelem@{noelem}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{noelem}]{\setlength{\rightskip}{0pt plus 5cm}integer material\+\_\+behavior\+::noelem}\label{classmaterial__behavior_a5149a02e7e855d7d7379e213b8b54139}
+\hypertarget{classmaterial__behavior_a465c3fa1041a65365ebd4e25a80906ba}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!ntime@{ntime}}
+\index{ntime@{ntime}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{ntime}]{\setlength{\rightskip}{0pt plus 5cm}integer material\+\_\+behavior\+::ntime}\label{classmaterial__behavior_a465c3fa1041a65365ebd4e25a80906ba}
+\hypertarget{classmaterial__behavior_ae5963b3890fba3ea39240613fe4a0557}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!nu\+\_\+aluminum@{nu\+\_\+aluminum}}
+\index{nu\+\_\+aluminum@{nu\+\_\+aluminum}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{nu\+\_\+aluminum}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::nu\+\_\+aluminum = 0.\+33}\label{classmaterial__behavior_ae5963b3890fba3ea39240613fe4a0557}
+\hypertarget{classmaterial__behavior_abac50d1debac288be1148e878784e2eb}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!nu\+\_\+epoxy@{nu\+\_\+epoxy}}
+\index{nu\+\_\+epoxy@{nu\+\_\+epoxy}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{nu\+\_\+epoxy}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::nu\+\_\+epoxy = 0.\+35}\label{classmaterial__behavior_abac50d1debac288be1148e878784e2eb}
+\hypertarget{classmaterial__behavior_aa17e406d8f9854210f8715a752d70e43}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!nu\+\_\+pzt@{nu\+\_\+pzt}}
+\index{nu\+\_\+pzt@{nu\+\_\+pzt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{nu\+\_\+pzt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::nu\+\_\+pzt = 0.\+3}\label{classmaterial__behavior_aa17e406d8f9854210f8715a752d70e43}
+\hypertarget{classmaterial__behavior_a50600c5b8a42a94a1fcf054767620811}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p@{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p}}
+\index{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p@{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen,dimen) material\+\_\+behavior\+::partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+p}\label{classmaterial__behavior_a50600c5b8a42a94a1fcf054767620811}
+\hypertarget{classmaterial__behavior_a7594fd35fa481baa3f66778c4bcc7e3e}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t@{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t}}
+\index{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t@{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen,dimen) material\+\_\+behavior\+::partial\+\_\+sigma\+\_\+to\+\_\+partial\+\_\+elec\+\_\+t}\label{classmaterial__behavior_a7594fd35fa481baa3f66778c4bcc7e3e}
+\hypertarget{classmaterial__behavior_a5e5bf5daab57f78f3551c9998660db4c}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!pr@{pr}}
+\index{pr@{pr}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{pr}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::pr}\label{classmaterial__behavior_a5e5bf5daab57f78f3551c9998660db4c}
+\hypertarget{classmaterial__behavior_a002007fbb0f53f0989500f268c5d68bd}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!pr\+\_\+sat@{pr\+\_\+sat}}
+\index{pr\+\_\+sat@{pr\+\_\+sat}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{pr\+\_\+sat}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), parameter material\+\_\+behavior\+::pr\+\_\+sat =26e-\/2}\label{classmaterial__behavior_a002007fbb0f53f0989500f268c5d68bd}
+\hypertarget{classmaterial__behavior_af2aa779e399f21ed79a6c1d2beea23b2}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!qtransform@{qtransform}}
+\index{qtransform@{qtransform}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{qtransform}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen,dimen) material\+\_\+behavior\+::qtransform}\label{classmaterial__behavior_af2aa779e399f21ed79a6c1d2beea23b2}
+\hypertarget{classmaterial__behavior_a12dffbc2d241c20b84ecfbc0f7671da3}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!remanent\+\_\+polarization\+\_\+vector@{remanent\+\_\+polarization\+\_\+vector}}
+\index{remanent\+\_\+polarization\+\_\+vector@{remanent\+\_\+polarization\+\_\+vector}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{remanent\+\_\+polarization\+\_\+vector}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:), allocatable material\+\_\+behavior\+::remanent\+\_\+polarization\+\_\+vector}\label{classmaterial__behavior_a12dffbc2d241c20b84ecfbc0f7671da3}
+\hypertarget{classmaterial__behavior_a33ac63029fccc3bac68d829d695848cf}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!sigma\+\_\+el\+\_\+hist\+\_\+beforep@{sigma\+\_\+el\+\_\+hist\+\_\+beforep}}
+\index{sigma\+\_\+el\+\_\+hist\+\_\+beforep@{sigma\+\_\+el\+\_\+hist\+\_\+beforep}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{sigma\+\_\+el\+\_\+hist\+\_\+beforep}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::sigma\+\_\+el\+\_\+hist\+\_\+beforep}\label{classmaterial__behavior_a33ac63029fccc3bac68d829d695848cf}
+\hypertarget{classmaterial__behavior_a9395e93dd51a72249b887c2b1aa70cb9}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!sigma\+\_\+el\+\_\+hist\+\_\+curentt@{sigma\+\_\+el\+\_\+hist\+\_\+curentt}}
+\index{sigma\+\_\+el\+\_\+hist\+\_\+curentt@{sigma\+\_\+el\+\_\+hist\+\_\+curentt}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{sigma\+\_\+el\+\_\+hist\+\_\+curentt}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::sigma\+\_\+el\+\_\+hist\+\_\+curentt}\label{classmaterial__behavior_a9395e93dd51a72249b887c2b1aa70cb9}
+\hypertarget{classmaterial__behavior_ad3264258813ff10e3c1f1ba6a633583b}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!sigma\+\_\+el\+\_\+hist\+\_\+previus@{sigma\+\_\+el\+\_\+hist\+\_\+previus}}
+\index{sigma\+\_\+el\+\_\+hist\+\_\+previus@{sigma\+\_\+el\+\_\+hist\+\_\+previus}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{sigma\+\_\+el\+\_\+hist\+\_\+previus}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(\+:,\+:,\+:,\+:), allocatable material\+\_\+behavior\+::sigma\+\_\+el\+\_\+hist\+\_\+previus}\label{classmaterial__behavior_ad3264258813ff10e3c1f1ba6a633583b}
+\hypertarget{classmaterial__behavior_a4a0c3fd6ab8dc8bc3b46d051187e0fde}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!time@{time}}
+\index{time@{time}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{time}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(2) material\+\_\+behavior\+::time}\label{classmaterial__behavior_a4a0c3fd6ab8dc8bc3b46d051187e0fde}
+\hypertarget{classmaterial__behavior_ace487f4e09f47f8f9cf484ca0ad22b69}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!total\+\_\+displacement@{total\+\_\+displacement}}
+\index{total\+\_\+displacement@{total\+\_\+displacement}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{total\+\_\+displacement}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::total\+\_\+displacement}\label{classmaterial__behavior_ace487f4e09f47f8f9cf484ca0ad22b69}
+\hypertarget{classmaterial__behavior_a52ff28207d80e56f256a5430e2179f3d}{}\index{material\+\_\+behavior@{material\+\_\+behavior}!total\+\_\+polarization@{total\+\_\+polarization}}
+\index{total\+\_\+polarization@{total\+\_\+polarization}!material\+\_\+behavior@{material\+\_\+behavior}}
+\subsubsection[{total\+\_\+polarization}]{\setlength{\rightskip}{0pt plus 5cm}real(iwp), dimension(dimen) material\+\_\+behavior\+::total\+\_\+polarization}\label{classmaterial__behavior_a52ff28207d80e56f256a5430e2179f3d}
+
+
+The documentation for this module was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Elec\+\_\+\+Mech\+\_\+\+F\+E\+M/src/\hyperlink{materialbehavior_8f90}{materialbehavior.\+f90}\end{DoxyCompactItemize}
