@@ -1,28 +1,17 @@
- !!  \brief     Electro Mechanical Finite Element Model
- !!  \author    Amir Sohrabi Mollayousef
- !!  \version   0.1a
- !!  \date      2011 - 2014
- !!  \copyright     This program is free software: you can redistribute it and/or modify
- !!    it under the terms of the GNU General Public License as published by
- !!    the Free Software Foundation, either version 3 of the License, or
- !!    (at your option) any later version.
- !!
- !!    This program is distributed in the hope that it will be useful,
- !!    but WITHOUT ANY WARRANTY; without even the implied warranty of
- !!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- !!    GNU General Public License for more details.
- !!
- !!    You should have received a copy of the GNU General Public License
- !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 module material_behavior
 use linearsolvers
+
+
+!> The time scaling variables
+real(iwp),parameter::gamma_e=1.75e-6;
+real(iwp)::a_electric_shift 
+
 ! ================================================================
 real(iwp)::k00
 real(iwp)::k01
 real(iwp)::lambda_01
 
-real(iwp)::k_elec_00
+real(iwp)::k_elec_00 
 real(iwp)::k_elec_01
 real(iwp)::lambda_elec_01
 
@@ -32,7 +21,7 @@ real(iwp),parameter::k01_pzt=0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.6d0
+real(iwp),parameter::k_elec_01_pzt=-0.3d0
 real(iwp),parameter::lambda_elec_01_pzt=1.5
 
 ! =============================epoxy
@@ -49,13 +38,11 @@ real(iwp),parameter::pr_sat=26e-2;
 real(iwp),parameter::eps_s_r=1e-3;
 real(iwp),parameter::c=1.0;
 real(iwp),parameter::eta=10e-2;
-real(iwp),parameter::m=2;
+real(iwp),parameter::m=2  ;
 ! ================================================================ pzt
-
-
-real(iwp),parameter::e33 = -14.52*1.3d0;
-real(iwp),parameter::e15 = -7.56*1.3d0;
-real(iwp),parameter::e31 = 6.15*1.3d0;
+real(iwp),parameter::e33 = -14.52 * 1.2
+real(iwp),parameter::e15 = - 7.56 * 1.2
+real(iwp),parameter::e31 =   6.15 * 1.2
 
 !real(iwp),parameter::e33 = -20.92*1.3d0;
 !real(iwp),parameter::e31 =  6.15*1.3d0;
@@ -112,7 +99,7 @@ real(iwp),dimension(dimen,dimen) ::ktense
 ! ================================================================
 !  time variables
 ! ================================================================
-real(iwp)::time(2),dtime
+real(iwp)::time(2),dtime,dtime_scaled
 integer::ntime,itime  ! time
 ! ================================================================
 integer::noelem
@@ -161,6 +148,135 @@ real(iwp),allocatable::elements_electric_polar(:,:) !(nem,dimen)
 real(iwp)::electric_field(dimen),electric_field_p(dimen),electric_field_b(dimen);
 
 contains
+
+!< This subroutine produces the stress in the truss that is necessary for its shape change !>
+!! @param el_center_coord the coordinate of cented of truss element
+!! @param sigma_shape the stress necessary to apply a certain shape in the truss
+!! @todo noting for now
+      subroutine shape_change_stress_beam_folding(el_center_coord,sigma_shape)
+      implicit none
+!     ================================================================
+!     input variables
+!     ================================================================
+      real(iwp), intent(in) :: el_center_coord(:)
+!     ================================================================
+!     output variables
+!     ================================================================
+      real(iwp),intent(out)::sigma_shape(dimen,dimen)
+!     ================================================================
+!     trivial variables
+!     =========================element center point
+      real(iwp)::x(dimen)
+!     =========================the stress field in the point
+      real(iwp)::lagrange_strain_global(dimen,dimen),e(dimen,dimen)
+      integer::i,j,k,l
+!     =========================geometrical variables
+      real(iwp)::lenght_beam
+      real(iwp)::pi
+      real(iwp)::radius_of_curvature,curvature_in_time
+      real(iwp)::x1,x2,x3,r,kappa,epsilon
+!     ================================================================
+      pi=datan(1.0d0)*4.0
+!     =========================lagrange green strain tensor
+      x=el_center_coord
+      lenght_beam=1.0d0
+
+
+      radius_of_curvature=lenght_beam /pi/2.0d0
+
+      x1=x(1)
+      x2=x(2)
+      x3=x(3)
+      r=radius_of_curvature
+
+       e=0.0d0
+!      e(1,1) = cos(X1 / R) ** 2 * X2 / R
+!      e(1,2) = -cos(X1 / R) * X2 / R * sin(X1 / R)
+!      e(2,1) = -cos(X1 / R) * X2 / R * sin(X1 / R)
+!      e(2,2) = sin(X1 / R) ** 2 * X2 / R
+
+!      e(2,2)=0.3
+!      e(2,2)=0.3
+
+!       e(3,2)=R
+!       e(2,3)=-e(3,2)
+
+      curvature_in_time=time(2)/r
+      kappa=curvature_in_time
+
+!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
+
+!if(abs(x3**2).lt.height_of_beam*0.01)then
+!e(1,1)=0
+!endif
+
+
+!e(1,1)=kappa*0.5
+!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
+!e(3,3)=epsilon
+
+!e(1,1) =epsilon+0.5d0*epsilon**2.0d0-x3*kappa-2*x3*kappa*epsilon-x3*kappa*epsilon**2.0d0+ &
+!        0.5d0*x3**2.0d0*kappa**2.0d0+x3**2.0d0*kappa**2.0d0*epsilon+ &
+!        0.5d0*x3**2.0d0*kappa**2.0d0*epsilon**2.0d0
+!e(2,2)=-e(1,1)
+!e(3,3)=-e(1,1)
+
+
+
+
+e(1,1)=x3*kappa
+!
+e(2,2)=-x3*kappa/2
+e(3,3)=-x3*kappa/2
+
+e=e+identity_matrix(dimen)*time(2)*0.5
+!e(2,2)=kappa
+!e(3,3)=kappa
+
+!each_truss_strain(noelem)=e(1,1)
+
+!e=e+identity_matrix(dimen)*kappa
+
+      lagrange_strain_global=e
+
+
+
+!      lagrange_strain_global=time(2)* &
+!      matmul( matmul( R_rotation_tensor ,e ), transpose(R_rotation_tensor))
+!!     =========================test for extension
+
+! call show_matrix(lagrange_strain_global,'lagrange_strain_global')
+
+sigma_shape=0.0d0
+do i=1,dimen;
+do j=1,dimen;
+do k=1,dimen;
+do l=1,dimen;
+sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*lagrange_strain_global(k,l)
+
+enddo;enddo;enddo;enddo;
+
+!each_truss_strain(noelem)=sigma_shape(1,1)
+
+
+
+end subroutine shape_change_stress_beam_folding
+
+
+!< This subroutine defines the time shift and reduced time factor!>
+!! @param electric_field this is the electric field vector
+!! @param a_electric_shift this is the electric shift vector
+!! @todo noting for now
+subroutine get_time_scale_factor()
+        implicit none
+        real(iwp)::electric_norm
+
+
+        electric_norm=norm_vect(electric_field)
+        ! a_electric_shift=exp(- gamma_e*(electric_norm-electric_field_o) /electric_field_o)
+        a_electric_shift=exp(- gamma_e * electric_norm)        
+
+end subroutine get_time_scale_factor
 
 
 subroutine stress_elect_displacement(ur,up,ub,der,sigma)
@@ -242,28 +358,28 @@ do j=1,dimen
 do k=1,dimen
 
 sigma_el_hist_curentt(gauss_point_number,i,j,k)= &
-sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
 (k_elec_01*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
+exp(-lambda_elec_01*dtime_scaled)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
                           +d_electric_field(k)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
 
 displ_el_hist_curentt(gauss_point_number,i,j,k)= &
-displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
 (k_elec_01*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
+exp(-lambda_elec_01*dtime_scaled)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
                            d_strain(i,j)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
 
 
 do l=1,dimen
 mechanical_hist_curentt(gauss_point_number,i,j,k,l)= &
-mechanical_hist_previus(gauss_point_number,i,j,k,l)*exp(-lambda_01*dtime)+ &
+mechanical_hist_previus(gauss_point_number,i,j,k,l)*exp(-lambda_01*dtime_scaled)+ &
 ctens(i,j,k,l)*(k01*0.5d0)* &
 (  &
-exp(-lambda_01*dtime)*d_strain_p(k,l)+d_strain(k,l) &
+exp(-lambda_01*dtime_scaled)*d_strain_p(k,l)+d_strain(k,l) &
 )
 end do;
 end do;
@@ -536,6 +652,7 @@ lambda_elec_01=lambda_elec_01_epx
 ! ================================================================
 !   E poxy
 ! ================================================================
+dtime_scaled=dtime
 mu=ey_epoxy/(1+nu_epoxy)/2.0
 lambda=ey_epoxy*nu_epoxy/(1+nu_epoxy)/(1-2.0*nu_epoxy)
 do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
@@ -553,6 +670,10 @@ partial_sigma_to_partial_elec_p=0
 !   pzt
 ! ================================================================
 if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336>noelem>127
+
+dtime_scaled=dtime
+call get_time_scale_factor()
+dtime_scaled=dtime/a_electric_shift
 
 beta1   =-e31;
 beta2   =-e33+2.0d0*e15+e31;
@@ -592,7 +713,7 @@ ktense(3,3)=eps_33 ;
 
 
 b_tilt=0.0d0
-b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
+! b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
 
 !b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
 !b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
@@ -618,6 +739,7 @@ endif !if(noelem.ge.127.and.le.336)then !it is pzt if 336>noelem>127
 !   aluminum
 ! ================================================================
 if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
+dtime_scaled=dtime
 
 k00=k_00_aluminum
 k01=k_01_aluminum
