@@ -16,12 +16,10 @@ exec_file= ./bin/run.exe
 module_files= src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 
 driver_file = driver/elec_mech_fem.f90
 compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
-output_files=*.mod *.txt *.vtu fort.* ./gnuplot/*.gnu ./excel/*.csv
+output_files=*.mod *.txt *.vtu fort.* ./gnuplot/*.gnu ./excel/*.csv ./vtu/*.vtu
 output_files_heavy=*.mod *.txt
 
-
 library_files_intel=-mkl -lmkl_lapack95_lp64
-
 
 library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
 gnu_plot_command_file = ./gnuplot/gnu_plotter.txt
