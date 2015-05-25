@@ -8,9 +8,9 @@
  set key left box 
  set datafile separator ","
    
- plot "./gnuplot/afc0001.gnu" using 3:4 title "Electric Field is 1" with line, \
-      "./gnuplot/afc0002.gnu" using 3:4 title "Electric Field is 7" with line, \
-      "./gnuplot/xp_gnu_afc_hysteresis_0_1_mvm.csv" using 1:2 title "XP",\
-      "./gnuplot/xp_gnu_afc_hysteresis_0_7_mvm.csv" using 1:2 title "XP"
+ plot "./gnuplot/afc0001.gnu" using 3:4 title "Finite Element Model" with line, \
+      "./gnuplot/afc0002.gnu" using 3:4 title "Finite Element Model" with line, \
+      "./gnuplot/xp_gnu_afc_hysteresis_0_1_mvm.csv" using 1:2 title "Experiment",\
+      "./gnuplot/xp_gnu_afc_hysteresis_0_7_mvm.csv" using 1:2 title "Experiment"
 
 

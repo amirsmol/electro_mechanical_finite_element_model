@@ -21,10 +21,11 @@ gnuplot ./gnuplot/gnu_plotter.txt
 
 sleep 1m
 
+
+
 mkdir        $PBS_O_WORKDIR/../$PBS_JOBID ;
-cp -r ./*.*  $PBS_O_WORKDIR/../$PBS_JOBID ;
-cp -r ./*    $PBS_O_WORKDIR/../$PBS_JOBID ;
-cd $PBS_O_WORKDIR/../$PBS_JOBID ;
+cp -r ./*.pdf  $PBS_O_WORKDIR/../$PBS_JOBID ;
+cp -r ./src/materialbehavior.f90    $PBS_O_WORKDIR/../$PBS_JOBID ;
 
 
 echo "*** ACTIVATED NODES: $PBS_NODEFILE ***\n" 

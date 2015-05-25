@@ -740,7 +740,7 @@ end subroutine k_gen
     end subroutine symmetric_primary_bounday
 
 subroutine result_printer(iter,glu,loadfactor)
-  real(iwp),INTENT(IN)::glu(:),loadfactor;
+  real(iwp),intent(in)::glu(:),loadfactor;
   integer::iter;
 !     ================================================================
 !  trivial variables
@@ -780,10 +780,10 @@ endif
 write(out,910);write(out,*)'time',time
 write(out,910);write(out,910);write(out,670);write(out,910)
 
-do i=1,nnm
-  pdf=(i-1)*ndf
-  write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
-enddo
+! do i=1,nnm
+!   pdf=(i-1)*ndf
+!   write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
+! enddo
 
 ! write(*,*)'curved_node',curved_node
 

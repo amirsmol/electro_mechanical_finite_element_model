@@ -65,6 +65,7 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
+	  real(iwp)::numberof_hystersis_rotation
 !     ================================================================
 !                      time variables
 !     ================================================================
@@ -80,7 +81,7 @@ implicit none
 !     =======================trivial meshing arrays the meshing seed parameters
       integer :: neldirectional(dimen)
       real(iwp) :: length(dimen)
-            real(iwp):: load_factors(2)
+      real(iwp):: load_factors(2)
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -135,12 +136,19 @@ implicit none
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      freq=1.0d0;
-      max_time_numb= int(2.0e0/dtime)
+      max_time_numb=200
+	  numberof_hystersis_rotation=2.0
+	  freq=2.0;
+	  dtime=numberof_hystersis_rotation/freq/max_time_numb
+	  
+! 	  freq=1.0;
+! 	  dtime=0.01/freq;      
+!     max_time_numb= int(2.0e0/dtime)
 !     ===============================================================
     write(*,*)'number of time steps',max_time_numb
     load_factors(1)=83.0
     load_factors(2)=375.0
+	
      do i_calibration=1,2
      do time_step_number=0, max_time_numb
      call cpu_time(timer_begin)

@@ -490,7 +490,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 !     ===============================================================
       integer :: i,cell_types
       character(len=5)::x1
-      character(len=20) :: fmt,filename ! format descriptor
+      character(len=35) :: fmt,filename ! format descriptor
       integer::inode,inem
       real(iwp)::scale
       real(iwp) :: each_truss_voltage(nem)
@@ -534,7 +534,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 !      forall(i=1:nnm) coords_deformed([1,2,3],i)=coordst([1,2,3],i)+glu((i-1)*ndf+[1,2,3])
 
-      filename='outpar'//trim(x1)//'.vtu'
+      filename='praraview_out'//trim(x1)//'.vtu'
       write(*,*)filename
       !write(*,*)nnm
       open (vtu,file=filename)
@@ -1378,22 +1378,17 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !  ===============================================================
         integer :: i,cell_types
         character(len=5)::x1
-        character(len=20) :: fmt,filename ! format descriptor
+        character(len=30) :: fmt,filename ! format descriptor
         integer::inode,inem
         real(iwp)::scale
         !  ===============================================================
         fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
         !  ===============================================================
 
-
-
-
         allocate(coords_deformed(nnm,dimen),coordst(nnm,dimen))
-
 
         if(npe.eq.20)cell_types= 25
         if(npe.eq.8)cell_types= 12
-
 
         counter=counter+1
         write(x1,fmt)counter
@@ -1407,9 +1402,9 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !forall(i=1:nnm) coords_deformed(i,j)=coordst(i,j)+glu((i-1)*ndf+j)
         !enddo
 
-! filename='gnuplot/afc'//trim(x1)//'.gnu'
+! 		filename='gnuplot/afc'//trim(x1)//'.gnu'
 
-        filename='vtu/geom_test'//trim(x1)//'.vtu'
+        filename='vtu/paraview_file'//trim(x1)//'.vtu'
         write(*,*)filename
         open (vtu,file=filename)
 

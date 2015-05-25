@@ -38,13 +38,11 @@ real(iwp),parameter::pr_sat=26e-2;
 real(iwp),parameter::eps_s_r=1e-3;
 real(iwp),parameter::c=1.0;
 real(iwp),parameter::eta=10e-2;
-real(iwp),parameter::m=2;
+real(iwp),parameter::m=2  ;
 ! ================================================================ pzt
-
-
-real(iwp),parameter::e33 = -14.52*1.3d0;
-real(iwp),parameter::e15 = -7.56*1.3d0;
-real(iwp),parameter::e31 = 6.15*1.3d0;
+real(iwp),parameter::e33 = -14.52 * 1.2
+real(iwp),parameter::e15 = - 7.56 * 1.2
+real(iwp),parameter::e31 =   6.15 * 1.2
 
 !real(iwp),parameter::e33 = -20.92*1.3d0;
 !real(iwp),parameter::e31 =  6.15*1.3d0;
