@@ -1,5 +1,21 @@
+ !!  \brief     Electro Mechanical Finite Element Model
+ !!  \author    Amir Sohrabi Mollayousef
+ !!  \version   0.1a
+ !!  \date      2011 - 2014
+ !!  \copyright     This program is free software: you can redistribute it and/or modify
+ !!    it under the terms of the GNU General Public License as published by
+ !!    the Free Software Foundation, either version 3 of the License, or
+ !!    (at your option) any later version.
+ !!
+ !!    This program is distributed in the hope that it will be useful,
+ !!    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ !!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ !!    GNU General Public License for more details.
+ !!
+ !!    You should have received a copy of the GNU General Public License
+ !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 module fem_geometry
- use linearsolvers
+ use fem_functions_and_parameters
     implicit none
     integer::npe !<number of nodes in each element
     integer::nem !<number of elements in the domain
@@ -47,49 +63,163 @@ module fem_geometry
 
 contains
 
-subroutine linear_truss_bending_boundary()
-implicit none
-integer::i
-
-nspv=nnm+3; !number of nodes, number of elements
-nssv=1
-
-allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
-allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
-
-ispv(1:nnm,1)=(/(i, i=1, nnm)/)
-ispv(1:nnm,2)=2
-
-ispv(nnm+1,:)=[1,1]
-ispv(nnm+2,:)=[1,3]
-ispv(nnm+3,:)=[nnm,3]
+subroutine truss_tetrahedral_space_filler(neldirectional,length,num_tetra_units)
+        implicit none
+        !     ================================================================
+        !                           the variables
+        !     ================================================================
+        integer,parameter:: one=1,two=2,three=3 !number of points in the element
+        real(iwp),parameter::  pi = 3.14159265 !the pie number
+        !     ================================================================
+        real(iwp)  ::length(dimen)
+        integer::neldirectional(dimen)
 
 
+        !     ============================geometrical variables
+        real(iwp)::side_lenght
+        real(iwp),dimension(3)::v1,v2,v3,vhnormal,planecenterpont, nextpoint
 
-issv(1,:)=[1,1]
+        real(iwp),dimension(3)::basecoodinate_1,basecoodinate_2 ,basecoodinate_3
+        integer::base_node_num(4)
+        integer,dimension(3)::base_elem,side_elem
+        integer,dimension(4,3)::surface_nodes
+        integer,dimension(6,2)::vertex_nodes
+        integer::num_tetra_units,index_tetra_units
 
-vspv=0.0d0
-vssv=0.0d0
+        !     =========================first and last node
+        real(iwp),dimension(3)::firspoint,lastpoint
+        real(iwp)::lenght_beam
+        real(iwp),allocatable::coords_refed(:,:),total_coords(:,:),qtran(:,:)
+        integer::ix,iy,iz
+        integer::nx,ny,nz
+        integer::i,j,k
 
-vspvt=vspv
-vssvt=vssv
+        integer::ine
+        integer::i_firstnode,i_secondnode
 
-    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
-    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+  integer :: numrows
+  integer :: numcols
 
-    do np=1,nspv
-        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
-        bnd_va_pr_vec(np)=vspv(np)
-        bnd_no_pr_vec(np)=nb
-    enddo
+  integer, dimension(:,:), allocatable :: arraya
+  logical, dimension(:) ,  allocatable ::  mask
+  integer, dimension(:,:), allocatable :: arrayb
+!  integer :: ix
+  integer, dimension(:), allocatable :: index_vector
 
-    do np=1,nssv
-        nb=(issv(np,1)-1)*ndf+issv(np,2)
-        bnd_va_se_vec(np)=vssv(np)
-        bnd_no_se_vec(np)=nb
-    enddo
 
-end subroutine linear_truss_bending_boundary
+        !     ================================================================
+        common/geometry_beam/firspoint,lastpoint
+        !     ================================================================
+       nem=3
+       nnm=3
+       npe=2
+
+
+
+nx=7
+ny=5
+nz=3
+
+nnm=nx*ny*nz
+
+allocate(coords(nnm,dimen))
+
+        coords=0.0d0
+        do iz=0,nz-1
+        do iy=0,ny-1
+        do ix=0,nx-1
+        coords(1+ix+iy*(nx)+iz*(ny*nx),:)=[length(1)*ix,length(1)*2.0d0*sqrt(3.0d0/4.0d0)*iy,length(1)*iz]
+        end do
+        end do
+        end do
+
+
+!!>fomring the total coordinate array
+
+allocate( total_coords(nnm*2,dimen) )
+
+total_coords(1:nnm,:)=coords(:,:)
+
+FORALL(i=nnm+1:2*nnm) total_coords(i,:)=coords(i-nnm,:)+[length(1)*0.5d0,length(1)*sqrt(3.0d0/4.0d0),0.0d0]
+
+deallocate(coords)
+coords=total_coords
+call show_matrix(total_coords,"total_coords")
+
+nnm=2*nnm
+
+nem=0
+do i_firstnode=1,nnm
+do i_secondnode=1,nnm
+if ( (sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))-length(1) ).le.length(1)*default_smallest_pivot) then
+nem=nem+1
+endif
+end do
+end do
+
+write(*,*)nem
+
+!nem=nem/2
+allocate(nod(nem,npe))
+
+
+ine=0
+do i_firstnode=1,nnm
+    do i_secondnode=1,nnm
+        if ( (sqrt(norm_vect( coords(i_firstnode,:) -coords(i_secondnode,:) ))-length(1) ).le.length(1)*default_smallest_pivot) then
+            ine=ine+1
+            nod(ine,:)=[i_firstnode,i_secondnode]
+        endif
+    end do
+end do
+
+
+do ine=1,nem
+    call sort(nod(ine,:))
+end do
+
+
+arraya=nod
+
+numcols=size(arraya,dim=1)
+numrows=size(arraya,dim=2)
+
+ALLOCATE(mask(numcols))
+mask = .TRUE.
+
+
+arrayb=nod
+arrayb=0
+arrayb(1,:)=nod(1,:)
+
+!mask=( arrayb(:,1)== nod(:,1) )
+
+
+!write(*,*)
+  ! make an index vector
+!  allocate(index_vector, ountmask))
+!
+!  ! now copy the unique elements of a into b
+!  allocate(arrayb, source=arraya(:,index_vector))
+
+arrayb(1,:) = nod(1,:)
+k = 1
+  outer: do i=2,nem
+     do j=1,k
+        if ( arrayb(j,1) == nod(i,1).and.arrayb(j,2) == nod(i,2)) then
+           cycle outer
+        end if
+     end do
+     ! No match found so add it to the output
+     k = k + 1
+     arrayb(k,:) = nod(i,:)
+  end do outer
+
+deallocate(nod)
+allocate(nod(k,npe))
+nod=arrayb(1:k,:)
+
+end subroutine truss_tetrahedral_space_filler
 
 
 
@@ -241,7 +371,7 @@ do i=1,dimen; coords(:,i)=coords(:,i)-corner_point(i);enddo
 do i=1,dimen; length_1(i)=maxval(coords(:,i))-minval(coords(:,i)); enddo
 do i=1,dimen; coords(:,i)= coords(:,i)-0.5*length_1(i);  enddo
 
-     end subroutine truss_3d_space_filler_connectivity
+end subroutine truss_3d_space_filler_connectivity
 
 
 
@@ -252,6 +382,121 @@ do i=1,dimen; coords(:,i)= coords(:,i)-0.5*length_1(i);  enddo
 !!        i boundary the number of boundary conditions and ispv(i boundady,1) is the node number
 !!        i boundary the number of boundary conditions and ispv(i boundady,2) is the degree of freedom number
 !! @todo apply the periodic boundary conditions
+subroutine truss_3d_space_filler_boundary_z_eq_xy(length)
+real(iwp)::length(dimen)
+integer::corner_node
+integer::inode,ibond
+
+corner_node=0
+!!< the space filler truss is going to be bounded
+!! if x_1=0,x_2=0,x_3=-L_3/2 then u_1=0, u_2=0, u_3=0, this will restrain it from movment in x_1, x_2, x_3
+!! if x_1=0,x_2=0,x_3=+L_3/2 then u_1=0, u_2=0,  this will restrain it from rotation around x_1, x_2 axis
+!! if x_1=0,x_2=L_2/2,x_3=+L_3/2 then u_1=0, this will restrain it from rotation around x_3 axis
+
+
+nspv=6
+
+! write(*,*) nspv
+!
+!write(*,*)'nspv'
+!write(*,*)nspv
+!
+!write(*,*)'ispv'
+!write(*,*)ispv
+
+!!< Manually forming the bounrary condition index arrays
+!!  this will rotate trhough all the nodes and if the nodes
+!!  matches the bounday condition
+!!  it will add it to the index arrays and assigns values to the
+!!  boundary condition
+
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+vspv=0.0d0
+vssv=0.0d0
+
+ibond=0
+do inode=1,nnm
+
+!! pinning the x_1=-l/2 direction
+
+if(coords(inode,1)==0 .and. coords(inode,2)==0 .and.coords(inode,3)==-0.5*length(3) )then
+ ibond=ibond+1;
+
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+
+ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=2;
+
+ ibond=ibond+1;
+
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=3;
+
+endif
+
+
+if(coords(inode,1)==0 .and. coords(inode,2)==0 .and.coords(inode,3)==0.5*length(3) )then
+
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=2;
+
+endif
+
+
+if(coords(inode,1)==0.and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==-0.5*length(3))then
+ ibond=ibond+1;
+ ispv(ibond,1)=inode;
+ ispv(ibond,2)=1;
+endif
+
+if(coords(inode,1)==0.5*length(1).and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==0.5*length(3))then
+corner_node=inode
+endif
+
+enddo
+
+call show_matrix_int((ispv),'ispv')
+
+!! // issv(1,:)=[node number , degree of freedom number];
+
+issv(1,:)=[corner_node,3];
+vssv(1)=0.0e0
+
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+
+    enddo
+
+
+
+end subroutine truss_3d_space_filler_boundary_z_eq_xy
+
+
 subroutine truss_3d_space_filler_boundary(length)
 real(iwp)::length(dimen)
 integer::corner_node
@@ -266,18 +511,23 @@ corner_node=0
 
 nspv=count(coords(:,1)==-0.5*length(1))+ &
      count(coords(:,2)==-0.5*length(2)) + &
-     count((coords(:,1)==-0.5*length(1)).and.(coords(:,3)==-0.5*length(3))) +&
+     count((coords(:,1)==-0.5*length(1)).and.(coords(:,3)==-0.5*length(3))) + &
      nnm
 
+! write(*,*) nspv
+!
+!write(*,*)'nspv'
 !write(*,*)nspv
+!
+!write(*,*)'ispv'
+!write(*,*)ispv
 
+!!< Manually forming the bounrary condition index arrays
+!!  this will rotate trhough all the nodes and if the nodes
+!!  matches the bounday condition
+!!  it will add it to the index arrays and assigns values to the
+!!  boundary condition
 
-
-!!<manually forming the bounrary condition index arrays
-!! this will rotate trhough all the nodes and if the nodes
-!! matches the bounday condition
-!! it will add it to the index arrays and assigns values to the
-!! boundary condition
 nssv=1
 
 allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
@@ -334,6 +584,9 @@ enddo
 
 
 
+
+!write(*,*)ispv
+!! // issv(1,:)=[node number , degree of freedom number];
 
 issv(1,:)=[corner_node,3];
 vssv(1)=0.0e0
@@ -533,7 +786,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 !     ===============================================================
       integer :: i,cell_types
       character(len=5)::x1
-      character(len=40) :: fmt,filename ! format descriptor
+      character(len=20) :: fmt,filename ! format descriptor
       integer::inode,inem
       real(iwp)::scale
       real(iwp) :: each_truss_voltage(nem)
@@ -577,7 +830,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
 !      forall(i=1:nnm) coords_deformed([1,2,3],i)=coordst([1,2,3],i)+glu((i-1)*ndf+[1,2,3])
 
-      filename='vtu/geom_test'//trim(x1)//'.vtu'
+      filename='vtu/outpar'//trim(x1)//'.vtu'
       write(*,*)filename
       !write(*,*)nnm
       open (vtu,file=filename)
@@ -646,7 +899,7 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 subroutine truss_tetra_hedral_bounday()
 
 nspv=6; !number of nodes, number of elements
-nssv=2
+nssv=0
 
 allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
 allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
@@ -656,8 +909,54 @@ ispv(4,2)=1
 ispv(5,2)=2
 ispv(6,2)=1
 
-issv(1,:)=[nnm,2]
-issv(2,:)=[nnm,1]
+
+
+
+vspv=0.0d0
+vssv=0.0d0
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+    enddo
+
+!write(*,*)bnd_va_pr_vec
+!write(*,*)vssv
+
+end subroutine truss_tetra_hedral_bounday
+
+
+subroutine linear_truss_bending_boundary()
+integer::i
+
+nspv=nnm+3; !number of nodes, number of elements
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+ispv(1:nnm,1)=(/(i, i=1, nnm)/)
+ispv(1:nnm,2)=2
+
+ispv(nnm+1,:)=[1,1]
+ispv(nnm+2,:)=[1,3]
+ispv(nnm+3,:)=[nnm,3]
+
+
+
+issv(1,:)=[1,1]
 
 vspv=0.0d0
 vssv=0.0d0
@@ -683,11 +982,65 @@ vssvt=vssv
 !write(*,*)bnd_va_pr_vec
 !write(*,*)vssv
 
-end subroutine truss_tetra_hedral_bounday
+end subroutine linear_truss_bending_boundary
+
+
+
+subroutine linear_truss_bending_boundary_2()
+integer::i
+
+nspv=10; !number of nodes, number of elements
+nssv=1
+
+allocate(ispv(nspv,2),vspv(nspv),vspvt(nspv))
+allocate(issv(nssv,2),vssv(nssv),vssvt(nssv))
+
+
+ispv(1,:)=[1,1]
+ispv(2,:)=[1,2]
+ispv(3,:)=[1,3]
+ispv(4,:)=[2,1]
+ispv(5,:)=[2,2]
+ispv(6,:)=[2,3]
+
+
+ispv(7,:)=[nnm,2]
+ispv(8,:)=[nnm,3]
+
+ispv(9,:)=[nnm-1,2]
+ispv(10,:)=[nnm-1,3]
 
 
 
 
+
+issv(1,:)=[1,1]
+
+vspv=0.0d0
+vssv=0.0d0
+
+vspvt=vspv
+vssvt=vssv
+
+    allocate(bnd_va_pr_vec(nspv),bnd_no_pr_vec(nspv))
+    allocate(bnd_va_se_vec(nssv),bnd_no_se_vec(nssv))
+
+    do np=1,nspv
+        nb=(ispv(np,1)-1)*ndf+ispv(np,2)
+        bnd_va_pr_vec(np)=vspv(np)
+        bnd_no_pr_vec(np)=nb
+    enddo
+
+    do np=1,nssv
+        nb=(issv(np,1)-1)*ndf+issv(np,2)
+        bnd_va_se_vec(np)=vssv(np)
+        bnd_no_se_vec(np)=nb
+    enddo
+
+!write(*,*)bnd_va_pr_vec
+!write(*,*)vssv
+
+end subroutine linear_truss_bending_boundary_2
 
 subroutine truss_tetra_hedral_displacement_control()
 integer::i
@@ -1002,7 +1355,7 @@ do np=1,nssv
   bnd_va_se_vec(np)=vssv(np)
   bnd_no_se_vec(np)=nb
 enddo
-! write(1,*)'vspv',vspv
+write(1,*)'vspv',vspv
 end subroutine bimorph_beam_boundary
 
 
@@ -1421,17 +1774,22 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !  ===============================================================
         integer :: i,cell_types
         character(len=5)::x1
-        character(len=30) :: fmt,filename ! format descriptor
+        character(len=40) :: fmt,filename ! format descriptor
         integer::inode,inem
         real(iwp)::scale
         !  ===============================================================
         fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
         !  ===============================================================
 
+
+
+
         allocate(coords_deformed(nnm,dimen),coordst(nnm,dimen))
+
 
         if(npe.eq.20)cell_types= 25
         if(npe.eq.8)cell_types= 12
+
 
         counter=counter+1
         write(x1,fmt)counter
@@ -1445,9 +1803,8 @@ subroutine linear_c3d8_3d_fem_geometry(neldirectional,length)
         !forall(i=1:nnm) coords_deformed(i,j)=coordst(i,j)+glu((i-1)*ndf+j)
         !enddo
 
-! 		filename='gnuplot/afc'//trim(x1)//'.gnu'
 
-        filename='vtu/paraview_file'//trim(x1)//'.vtu'
+        filename='vtu/geom_test'//trim(x1)//'.vtu'
         write(*,*)filename
         open (vtu,file=filename)
 
@@ -1519,22 +1876,18 @@ integer,save::counter
 !  ===============================================================
 integer :: i,cell_types
 character(len=5)::x1
-character(len=20) :: fmt,filename ! format descriptor
+character(len=52) :: fmt,filename ! format descriptor
 integer::inode,inem
 real(iwp)::scale
+
 !  ===============================================================
 fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 !  ===============================================================
 
-
-
-
 allocate(coords_deformed(nnm,dimen),coordst(nnm,dimen))
-
 
 if(npe.eq.20)cell_types= 25
 if(npe.eq.8)cell_types= 12
-
 
 counter=counter+1
 write(x1,fmt)counter
@@ -1544,12 +1897,13 @@ scale=1.0
 
 coordst=coords
 coords_deformed=coords
+
 !do j=1,dimen
 !forall(i=1:nnm) coords_deformed(i,j)=coordst(i,j)+glu((i-1)*ndf+j)
 !enddo
 
 
-filename='outpar'//trim(x1)//'.vtu'
+filename='./vtu/paraview_output_'//trim(x1)//'.vtu'
 write(*,*)filename
 open (vtu,file=filename)
 
@@ -1783,7 +2137,7 @@ end subroutine crawley_boundary
 !! Number of essential boundary conditions are substracted from number of column
 !! Then rows related to the zero or fixed boundary conditions are put to zero
 
-subroutine form_constraint()
+subroutine afc_form_constraint()
 
 real(iwp),allocatable::constraint_x(:,:),constraint_y(:,:),constraint_z(:,:) !<the constraint matrix
 real(iwp),allocatable::full_constraint(:,:)
@@ -1797,8 +2151,8 @@ integer::i_boundary
 n_fixed_boundary=count(vspv(:)==0)
 fixed_boundary_mask=vspv(:)==0
 write(*,*)'n_fixed_boundary',n_fixed_boundary
-! write(1,*)'vspv',vspv
-! write(1,*)'fixed_boundary_mask',fixed_boundary_mask
+write(1,*)'vspv',vspv
+write(1,*)'fixed_boundary_mask',fixed_boundary_mask
 
 n_constraint=size(afc_boundary_x_periodic,dim=1)+  &
              size(afc_boundary_y_periodic,dim=1)+  &
@@ -1876,7 +2230,7 @@ if (   sum(  full_constraint(:,j_const) ) .gt. 0 ) then
 endif
 enddo
 
-end subroutine form_constraint
+end subroutine afc_form_constraint
 
 
 !  ================================================================
@@ -2406,6 +2760,7 @@ end subroutine pull_z_boundary
 ! ================================================================
 !! This subroutine reads mesh file containing geometry of unit cell.
 !! @param constraint
+
 subroutine afc_mesh_file_reader()
 
 !the variables
@@ -2804,4 +3159,5 @@ do np=1,nssv
 enddo
 
 end subroutine afc_boundary_full_electrode
+
 end module fem_geometry
