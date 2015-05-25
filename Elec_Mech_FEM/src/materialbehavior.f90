@@ -17,6 +17,17 @@
 
 module material_behavior
 use linearsolvers
+use fem_geometry
+use fem_functions_and_parameters
+!! ==========================truss parameters
+
+real(iwp),parameter::k00_truss=1.00
+real(iwp),parameter::k01_truss=-0.6
+real(iwp),parameter::lambda_01_truss=1.2
+
+real(iwp),parameter::d31_00=0.340E-9
+real(iwp),parameter::d31_11=0.02E-15
+real(iwp),parameter::d31_22=0.0
 ! ================================================================
 real(iwp)::k00
 real(iwp)::k01
@@ -80,9 +91,9 @@ real(iwp),parameter::k_01_aluminum=0.0d0
 real(iwp),parameter::lambda_01_aluminum=4.0
 ! ================================================================ aluminum
 
-logical::is_polarized
-real(iwp)::a
-real(iwp)::direc_a(dimen)
+logical::    is_polarized
+real(iwp)::  a
+real(iwp)::  direc_a(dimen)
 real(iwp) :: element_direction_normal(dimen)
 
 
@@ -146,6 +157,10 @@ real(iwp),allocatable::curn_electric_field(:,:)
 
 real(iwp),allocatable::hist_electric_displ(:,:)
 real(iwp),allocatable::curn_electric_displ(:,:)
+
+
+real(iwp),allocatable::hist_truss_actuation(:,:)
+real(iwp),allocatable::curn_truss_actuation(:,:)
 
 real(iwp)::total_displacement(dimen)
 real(iwp)::total_polarization(dimen)
@@ -523,6 +538,15 @@ allocate(hist_back_electric_field(ngauss,dimen) , &
 hist_back_electric_field=0.0d0
 curn_back_electric_field=0.0d0
 
+allocate( each_truss_strain(nem) )
+each_truss_strain=0.0d0
+
+
+allocate( hist_truss_actuation(ngauss,dimen) , &
+          curn_truss_actuation(ngauss,dimen)  )
+
+hist_truss_actuation=0.0d0
+curn_truss_actuation=0.0d0
 
 end subroutine  form_history
 
@@ -550,6 +574,8 @@ mechanical_strain_beforep=mechanical_strain_previus
 mechanical_strain_previus=mechanical_strain_curentt
 
 hist_back_electric_field=curn_back_electric_field
+
+hist_truss_actuation=curn_truss_actuation
 
 end subroutine  update_history
 
@@ -627,41 +653,119 @@ end subroutine material_properties
 !     ================================================================
 !     finding stress due to shape change
 !     ================================================================
-subroutine truss_stress_elect_displacement(ur,der,sigma)
+subroutine truss_stress_elect_displacement(ur,up,ub,der,sigma)
 !     ================================================================
 !                          input variables
 !     ================================================================
-real(iwp),intent(in) :: ur(:,:)! global coefficient
-!     ================================================================
-!                         output variables
-!     ================================================================
-integer :: i,j,k,l !integer counters
+real(iwp),intent(in) :: ur(:,:),up(:,:),ub(:,:) ! values of field function n point
+! ================================================================
+! output variables
+! ================================================================
+integer :: i , j, k , l !integer counters
 real(iwp)  :: der(:),sigma(:,:)
+integer::eye(dimen,dimen)
+! ================================================================
+real(iwp)::strain(dimen,dimen),strain_p(dimen,dimen),strain_b(dimen,dimen);
+real(iwp)::d_strain(dimen,dimen),d_strain_p(dimen,dimen)
+real(iwp)::d_electric_field(3),d_electric_field_p(3)
+real(iwp)::strain_r(dimen,dimen),strain_elastic(dimen,dimen);
 !     ================================================================
-real(iwp)::strain(3,3);
-real(iwp)::electric_feild(3);
-!     ================================================================
-strain=0.0d0;electric_feild=0.0d0;
-strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+      &
-                              matmul(  transpose(   ur(1:dimen,:)  ),ur(1:dimen,:))    );
+! ================================================================
+eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
+! ================================================================
+strain=0.0d0;electric_field=0.0d0;
+strain_p=0.0d0;electric_field_p=0.0d0;
+strain_b=0.0d0;electric_field_b=0.0d0;
 
-electric_feild(1:dimen)=-ur(dimen+1,:)
+strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+  &
+matmul(  transpose(   ur(1:dimen,:)  ),ur(1:dimen,:)));
 
-!write(1,*)'strain=',strain(1,1)
-!write(1,*)'electric_feild=',electric_feild(1)
+strain_p(1:dimen,1:dimen)=0.5d0*(   up(1:dimen,:)+transpose(up(1:dimen,:))+  &
+matmul(  transpose(   up(1:dimen,:)  ),up(1:dimen,:)));
+
+strain_b(1:dimen,1:dimen)=0.5d0*(   ub(1:dimen,:)+transpose(ub(1:dimen,:))+  &
+matmul(  transpose(   ub(1:dimen,:)  ),ub(1:dimen,:)));
+
+electric_field(1:dimen)=-ur(dimen+1,:)
+electric_field_p(1:dimen)=-up(dimen+1,:)
+electric_field_b(1:dimen)=-ub(dimen+1,:)
+
+d_electric_field=electric_field-electric_field_p
+d_electric_field_p=electric_field_p-electric_field_b
+! ================================================================
+curn_electric_field(gauss_point_number,:)=electric_field
+hist_electric_field(gauss_point_number,:)=electric_field_p
+! ================================================================
+!curn_polarization_function=0.0d0
 
 sigma =  0.0d0 ;
 der   =  0.0d0 ;
 
 call truss_material_properties()
 
+
+strain_r=0.0d0
+
+
+strain_elastic=strain-strain_r
+! ==============================================increment in strain
+mechanical_strain_curentt(gauss_point_number,:,:)=strain_elastic
+d_strain=mechanical_strain_curentt(gauss_point_number,:,:)-mechanical_strain_previus(gauss_point_number,:,:)
+d_strain_p=mechanical_strain_previus(gauss_point_number,:,:)-mechanical_strain_beforep(gauss_point_number,:,:)
+
+!!> derivative of stress with respect to electric field.
+! ==============================the history variable
+do i=1,dimen
+do j=1,dimen
+do k=1,dimen
+
+sigma_el_hist_curentt(gauss_point_number,i,j,k)= &
+sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+(k_elec_01*0.5d0)* &
+(  &
+exp(-lambda_elec_01*dtime)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
+                          +d_electric_field(k)  *partial_sigma_to_partial_elec_t(k,i,j) &
+)
+
+displ_el_hist_curentt(gauss_point_number,i,j,k)= &
+displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
+(k_elec_01*0.5d0)* &
+(  &
+exp(-lambda_elec_01*dtime)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
+                           d_strain(i,j)  *partial_sigma_to_partial_elec_t(k,i,j) &
+)
+
+
+do l=1,dimen
+mechanical_hist_curentt(gauss_point_number,i,j,k,l)= &
+mechanical_hist_previus(gauss_point_number,i,j,k,l)*exp(-lambda_01*dtime)+ &
+ctens(i,j,k,l)*(k01*0.5d0)* &
+(  &
+exp(-lambda_01*dtime)*d_strain_p(k,l)+d_strain(k,l) &
+)
+end do;
+end do;
+end do;
+end do;
+
+
+!write(10,*)time
+!call show_matrix(d_strain_p,'d_strain_p')
+!call show_matrix(d_strain,'d_strain')
+
+sigma =  0.0d0 ;
+der   =  0.0d0 ;
+
+!write(10,*)mechanical_hist_curentt(gauss_point_number,:,:,:,:)
+
 do i=1,dimen; do j=1,dimen;
-der(i)=der(i)+ktense(i,j)*electric_feild(j)
+der(i)=der(i)+ktense(i,j)*electric_field(j)
 do k=1,dimen;
-sigma(i,j)=sigma(i,j)-epz(i,j,k)*electric_feild(k)
+sigma(i,j)=sigma(i,j)-epz(i,j,k)*electric_field(k)
 der(k)=der(k)+epz(i,j,k)*strain(i,j)
 do l=1,dimen
-sigma(i,j)=sigma(i,j)+ctens(i,j,k,l)*strain(k,l)
+sigma(i,j)=sigma(i,j)+k00*ctens(i,j,k,l)*strain_elastic(k,l) &
+         + mechanical_hist_curentt(gauss_point_number,i,j,k,l)
 enddo;enddo;enddo;enddo;
 
 der=0.0d0
@@ -691,19 +795,7 @@ end subroutine truss_stress_elect_displacement
       real(iwp)::pi
       real(iwp)::radius_of_curvature,curvature_in_time
       real(iwp)::x1,x2,x3,r,kappa,epsilon
-real(iwp)::strain(3,3);
-real(iwp)::electric_feild(3);
-real(iwp)::volumetric_stress
-!     ================================================================
-strain=0.0d0;electric_feild=0.0d0;
-strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+      &
-                              matmul(  transpose(   ur(1:dimen,:)  ),ur(1:dimen,:)) );
-
-electric_feild(1:dimen)=-ur(dimen+1,:)
-volumetric_stress=strain(1,1)+strain(2,2)+strain(3,3)
-
-!call show_matrix(strain,'strain')
-!write(1,*)volumetric_stress
+      real(iwp)::normal_strain_in_truss
 !     ================================================================
       pi=datan(1.0d0)*4.0
 !     =========================lagrange green strain tensor
@@ -728,10 +820,6 @@ e=e-identity_matrix(dimen)*time(2)/12.0
 !lagrange_strain_global=e
 
 
-call truss_material_properties()
-
-!write(10,*)'time',time
-!call show_matrix(e,'e')
 
 sigma_shape=0.0d0
 do i=1,dimen;
@@ -781,13 +869,30 @@ end subroutine truss_shape_change_stress_bending
       real(iwp)::pi
       real(iwp)::radius_of_curvature,curvature_in_time
       real(iwp)::x1,x2,x3,r,kappa,epsilon
+
+!     =============================constitutive equation variables
+      real(iwp)::desired_normal_strain_in_truss
+      real(iwp)::applied_normal_strain_in_truss
+
+      real(iwp)::applied_electric_field_in_truss_element
+      real(iwp)::e3_t0,e3_t1
+      real(iwp)::d_e3_t0,d_e3_t1
+      real(iwp)::epsilon_t0,epsilon_t1
+      real(iwp)::d_epsilon_t0,d_epsilon_t1
+
+    real(iwp)::delta_time
+    real(iwp)::d_eps_r_d_e3
+    real(iwp)::q_history_t
+    real(iwp)::ta1
+
+
+
+
 !     ================================================================
       pi=datan(1.0d0)*4.0
 !     =========================lagrange green strain tensor
       x=el_center_coord
       lenght_beam=1.0d0
-
-
       radius_of_curvature=lenght_beam /pi/2.0d0
 
       x1=x(1)
@@ -796,78 +901,77 @@ end subroutine truss_shape_change_stress_bending
       r=radius_of_curvature
 
        e=0.0d0
-!      e(1,1) = cos(X1 / R) ** 2 * X2 / R
-!      e(1,2) = -cos(X1 / R) * X2 / R * sin(X1 / R)
-!      e(2,1) = -cos(X1 / R) * X2 / R * sin(X1 / R)
-!      e(2,2) = sin(X1 / R) ** 2 * X2 / R
-
-!      e(2,2)=0.3
-!      e(2,2)=0.3
-
-!       e(3,2)=R
-!       e(2,3)=-e(3,2)
-
-      curvature_in_time=time(2)/r
-      kappa=curvature_in_time
-
-!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
-
-!if(abs(x3**2).lt.height_of_beam*0.01)then
-!e(1,1)=0
-!endif
+       e(1,1)=x3*loadfactor/r
 
 
-!e(1,1)=kappa*0.5
-!e(1,1)=-x3*kappa+0.5*x3*x3*kappa*kappa
-!e(3,3)=epsilon
+desired_normal_strain_in_truss=0
+do i=1,dimen;
+do j=1,dimen;
+desired_normal_strain_in_truss=desired_normal_strain_in_truss+&
+element_direction_normal(i)*element_direction_normal(j)* &
+e(i,j)
+enddo;enddo
 
-!e(1,1) =epsilon+0.5d0*epsilon**2.0d0-x3*kappa-2*x3*kappa*epsilon-x3*kappa*epsilon**2.0d0+ &
-!        0.5d0*x3**2.0d0*kappa**2.0d0+x3**2.0d0*kappa**2.0d0*epsilon+ &
-!        0.5d0*x3**2.0d0*kappa**2.0d0*epsilon**2.0d0
-!e(2,2)=-e(1,1)
-!e(3,3)=-e(1,1)
+call truss_material_properties()
+applied_electric_field_in_truss_element=desired_normal_strain_in_truss/d31_00
+!     =================================nonlinear time dependent constitutive equation for truss
 
 
 
+    e3_t1   =applied_electric_field_in_truss_element
 
-e(1,1)=x3*kappa
-!
-e(2,2)=-x3*kappa/2
-e(3,3)=-x3*kappa/2
+    e3_t0   =hist_truss_actuation(gauss_point_number,1)
+    d_e3_t0 =hist_truss_actuation(gauss_point_number,2)
+    q_history_t=hist_truss_actuation(gauss_point_number,3)
+! write(25,*)
+! write(25,*)gauss_point_number
+! write(25,*)hist_truss_actuation(gauss_point_number,3)
 
-e=e+identity_matrix(dimen)*time(2)*0.5
-!e(2,2)=kappa
-!e(3,3)=kappa
+    d_e3_t1=e3_t1-e3_t0
+    delta_time=time(1)
 
-!each_truss_strain(noelem)=e(1,1)
+ta1=lambda_01_truss
 
-!e=e+identity_matrix(dimen)*kappa
-
-      lagrange_strain_global=e
-
+    q_history_t=exp(-delta_time/ta1) * q_history_t+k01_truss*0.5*delta_time*           &
+                         ( d_epsilon_r_over_d_e3(e3_t1)  * d_e3_t1/delta_time  +       &
+    exp(-delta_time/ta1) * d_epsilon_r_over_d_e3(e3_t0)  * d_e3_t0/delta_time   )
 
 
-!      lagrange_strain_global=time(2)* &
-!      matmul( matmul( R_rotation_tensor ,e ), transpose(R_rotation_tensor))
-!!     =========================test for extension
 
-! call show_matrix(lagrange_strain_global,'lagrange_strain_global')
+applied_normal_strain_in_truss=k00_truss*epsilon_r(e3_t1)+q_history_t
+if(time(2).lt.delta_time)epsilon_t1=0*epsilon_r(e3_t1)
+
+curn_truss_actuation(gauss_point_number,1)=e3_t1
+curn_truss_actuation(gauss_point_number,2)=d_e3_t1
+curn_truss_actuation(gauss_point_number,3)=q_history_t
+
+! write(25,*)curn_truss_actuation(gauss_point_number,3)
+
+!     ================================================================
+!applied_normal_strain_in_truss=applied_electric_field_in_truss_element*d31_00
+
+
 
 sigma_shape=0.0d0
 do i=1,dimen;
 do j=1,dimen;
-do k=1,dimen;
-do l=1,dimen;
-sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*lagrange_strain_global(k,l)
-
-enddo;enddo;enddo;enddo;
-
-!each_truss_strain(noelem)=sigma_shape(1,1)
-
-
+sigma_shape(i,j)=applied_normal_strain_in_truss*&
+element_direction_normal(i)*element_direction_normal(j)
+enddo;enddo
 
 end subroutine shape_change_stress_beam_folding
 
+    function d_epsilon_r_over_d_e3(e3)
+    real*8::e3
+    real*8::d_epsilon_r_over_d_e3
+    d_epsilon_r_over_d_e3=d31_00+0.5*SIGN(d31_11,e3)*e3+0.5*d31_11*abs(e3)+3*d31_22*e3*e3
+    end function d_epsilon_r_over_d_e3
+
+    function epsilon_r(e3)
+    real*8::e3
+    real*8::epsilon_r
+    epsilon_r=d31_00*e3+0.5*d31_11*abs(e3)*e3+d31_22*e3*e3*e3
+    endfunction epsilon_r
 
       subroutine truss_shape_change_stress_z_eq_xy(el_center_coord,sigma_shape)
       implicit none
@@ -959,13 +1063,13 @@ ktense=0.0d0  ;ktense(1,1)=1;
                           element_direction_normal(i)*          &
                           element_direction_normal(j)*          &
                           element_direction_normal(k)*          &
-                          element_direction_normal(l)* ey_epoxy
+                          element_direction_normal(l)* 1.0
                   enddo;enddo;enddo;enddo;
 
 
 k00=1.0
 k01=0.0
-lambda_01=1.0
+lambda_01=0.01
 
 k_elec_00=1.0
 k_elec_01=0.0

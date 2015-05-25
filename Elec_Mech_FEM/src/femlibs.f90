@@ -198,7 +198,8 @@ subroutine truss_elmatrcs_3d(elu,elp,elb,elk,elq) !(elcrds,elu,elk,elq)
       real(iwp):: elb_tense(npe,ndf) !dof current time
       real(iwp)::coord(dimen) !the global coordinate of each node
       real(iwp)::xi(dimen)! transformed coordinates
-      real(iwp)::sf(npe),gdsf(dimen,npe),ur(ndf,dimen)
+      real(iwp)::sf(npe),gdsf(dimen,npe)
+      real(iwp)::ur(ndf,dimen),up(ndf,dimen),ub(ndf,dimen) !value of the function and its derivative
       real(iwp)::k_coef(ndf,ndf) ! the auxilary matrix for cuefficitne matr
       real(iwp)::res_vect(ndf)
       real(iwp)::cnst,det
@@ -239,8 +240,10 @@ subroutine truss_elmatrcs_3d(elu,elp,elb,elk,elq) !(elcrds,elu,elk,elq)
 !     ================================================================
           element_direction_normal=unit_vect(elcrds(2,:)-elcrds(1,:))
 !     ===============================================================
-do 200 ni = 1,ipdf
+          do 200 ni = 1,ipdf
           xi(1) = gauspt(ni,ipdf)
+          gauss_point_number=gauss_point_number+1
+
           call truss_3d_shape_3d_linea(elcrds,xi,det,sf,gdsf)
           cnst = det*gauswt(ni,ipdf)
           coord=0
@@ -252,9 +255,16 @@ do 200 ni = 1,ipdf
 !                       post process
 !     ===============================================================
           ur       =transpose(       matmul( gdsf,elu_tense     ) )
+          up       =transpose(       matmul( gdsf,elp_tense     ) )
+          ub       =transpose(       matmul( gdsf,elb_tense     ) )
           call truss_material_properties()
           call shape_change_stress_beam_folding(coord,sigma_shape)
-          call truss_stress_elect_displacement(ur,der,sigma)
+          call truss_stress_elect_displacement(ur,up,ub,der,sigma)
+
+     do ii=1,dimen;do jj=1,dimen;
+        each_truss_strain(noelem)=each_truss_strain(noelem)+ &
+        sigma_shape(ii,jj)*element_direction_normal(ii)*element_direction_normal(jj)
+     enddo;enddo
 
 
 !    call show_matrix(sigma_shape,'sigma_shape')
@@ -426,6 +436,7 @@ endif
 
       do 40 n=1,dimen;
 40    k_coef(k,l)=k_coef(k,l)+ctens(i,j,m,n)*bepsilonj(i,j,k)*bepsiloni(m,n,l)
+
       end subroutine truss_k_gen3d
 
 
@@ -942,8 +953,8 @@ end subroutine k_gen
 
     end subroutine symmetric_primary_bounday
 
-subroutine result_printer(iter,glu,loadfactor)
-real(iwp),INTENT(IN)::glu(:),loadfactor;
+subroutine result_printer(iter,glu)
+real(iwp),INTENT(IN)::glu(:)
 
 integer::iter;
 !     ================================================================
@@ -958,8 +969,11 @@ character(len=30) :: fmt,filename ! format descriptor
 fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 
 ! write(*,*)dimen
+!write(*,*)maxval(glu)
+!write(*,*)maxloc(glu)
 
-curved_node=nnm
+curved_node=78
+!curved_node=nnm
 counter=counter+1
 
 
@@ -969,7 +983,7 @@ if (time(2).eq.0)then
 
 open (out,file='out_data_outpu.txt')
 
-filename='gnuplot'//trim(x1)//'.gnu'
+filename='./gnuplot/gnuplot'//trim(x1)//'.gnu'
 open (gnuplot,file=filename)
 
 filename='./excel/results_'//trim(x1)//'.csv'
@@ -993,12 +1007,9 @@ enddo
 !write(*,*)'curved_node',curved_node
 pdf=(curved_node-1)*ndf
 
-write(csv,951)iter,time(2),loadfactor,glu(pdf+ndf-1),curn_polarization_function(3,:)
-!
-!write(gnuplot,951)iter,time(2),loadfactor,100*glu(pdf+ndf-1)/(750.0e-6)
+write(csv,951)iter,time(2),loadfactor,glu(pdf+ndf-1) ! ,curn_polarization_function(3,:)
+write(gnuplot,951)iter,time(2),loadfactor,glu(pdf+ndf-1) 
 
-!write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
-!write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
 write(out,*)
 !     ===============================================================
 !                                 formats

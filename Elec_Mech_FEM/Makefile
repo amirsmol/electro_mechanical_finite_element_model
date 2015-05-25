@@ -13,9 +13,9 @@ FORTRAN_COMPILER = gfortran
 FORTRAN_COMPILER_intel = ifort
 
 exec_file= ./bin/run.exe
-module_files= src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 src/fem_functions_and_parameters.f90
+module_files= src/fem_functions_and_parameters.f90 src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 
 driver_file = driver/elec_mech_fem.f90
-compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
+compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod fem_functions_and_parameters.mod
 output_files=*.mod *.txt *.vtu fort.* ./gnuplot/*.gnu ./excel/*.csv ./vtu/*.vtu
 output_files_heavy=*.mod *.txt
 

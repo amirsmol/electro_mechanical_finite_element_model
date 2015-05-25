@@ -86,6 +86,11 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
+
+      real(iwp)::freq
+
+
+
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -110,6 +115,7 @@ implicit none
 !     ===============================================================
 !     reading the boundary conditions
 !     ===============================================================
+      call form_history(ngauss,nem)
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;
 !!     ===============================================================
@@ -128,14 +134,18 @@ implicit none
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      ! freq=1.0d0;
-      max_time_numb= int(4.0/dtime)
+      dtime=0.01;     freq=1.0d0;
+      max_time_numb= int(2.0/dtime)
 !     ===============================================================
 do time_step_number=0, max_time_numb
+
      call cpu_time(timer_begin)
          time(1)=dtime;time(2)=time_step_number*dtime
 
-         vspv=time(2)*vspvt
+!        loadfactor=time(2)
+
+        loadfactor=0.5*sin(2*3.14515*freq*time(2))
+!         vspv=time(2)*vspvt
          glu(bnd_no_pr_vec)=0.0d0;
 !         glu=0.0d0;
 !!     ===============================================================
@@ -169,10 +179,10 @@ do time_step_number=0, max_time_numb
 !!                        updating the solution
 !!     ===============================================================
       error=norm_vect(glr)
-      normalforce=norm_vect(glp); if(normalforce==0) normalforce=1
+      normalforce=norm_vect(glu); if(normalforce.lt.1e-8) normalforce=1.0
       glu=glu+glr
 
-!      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      ! write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
 
       if (error.le.tolerance*(normalforce))then;
@@ -186,9 +196,15 @@ do time_step_number=0, max_time_numb
      stop
     endif
 
+!     write(22,*)'curn_truss_actuation',curn_truss_actuation(20,:)
+!     write(22,*)'hist_truss_actuation',hist_truss_actuation(20,:)
+!     write(22,*)
 
+    call update_history()
     glb=glp;glp=glu
     call truss_paraview_3d_vtu_xml_writer(glu)
+    call result_printer(iter,glu)
+
 
 !    write(*,*)'max_time_iteration',max_time_numb
 
