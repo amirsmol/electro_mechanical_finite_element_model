@@ -201,7 +201,10 @@ do time_step_number=0, max_time_numb
 !     write(22,*)
 
     call update_history()
-    glb=glp;glp=glu
+
+    glb=glp;
+    glp=glu;
+    
     call truss_paraview_3d_vtu_xml_writer(glu)
     call result_printer(iter,glu)
 

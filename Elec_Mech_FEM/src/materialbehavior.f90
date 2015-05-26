@@ -912,6 +912,12 @@ element_direction_normal(i)*element_direction_normal(j)* &
 e(i,j)
 enddo;enddo
 
+
+
+!!> This includes the limiting strain in the response of truss.
+
+if(abs(desired_normal_strain_in_truss).gt.(0.01))desired_normal_strain_in_truss=0.01*signum(desired_normal_strain_in_truss)
+
 call truss_material_properties()
 applied_electric_field_in_truss_element=desired_normal_strain_in_truss/d31_00
 !     =================================nonlinear time dependent constitutive equation for truss
