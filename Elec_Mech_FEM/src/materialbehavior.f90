@@ -1001,9 +1001,23 @@ end subroutine shape_change_stress_beam_folding
       real(iwp)::pi
       real(iwp)::radius_of_curvature,curvature_in_time
       real(iwp)::x1,x2,x3,r,kappa,epsilon
-real(iwp)::strain(3,3);
-real(iwp)::electric_feild(3);
-real(iwp)::volumetric_stress
+      real(iwp)::strain(3,3);
+      real(iwp)::electric_feild(3);
+      real(iwp)::volumetric_stress
+!     =============================constitutive equation variables
+      real(iwp)::desired_normal_strain_in_truss
+      real(iwp)::applied_normal_strain_in_truss
+
+      real(iwp)::applied_electric_field_in_truss_element
+      real(iwp)::e3_t0,e3_t1
+      real(iwp)::d_e3_t0,d_e3_t1
+      real(iwp)::epsilon_t0,epsilon_t1
+      real(iwp)::d_epsilon_t0,d_epsilon_t1
+
+    real(iwp)::delta_time
+    real(iwp)::d_eps_r_d_e3
+    real(iwp)::q_history_t
+    real(iwp)::ta1      
 !     ================================================================
 
 !     ================================================================
@@ -1013,31 +1027,90 @@ real(iwp)::volumetric_stress
 
       e=0.0d0
 
-      e(1,1) = x(2) ** 2 / 0.2d1
-      e(1,2) = x(1) * x(2) / 0.2d1
-      e(1,3) = x(2) / 0.2d1
-      e(2,1) = x(1) * x(2) / 0.2d1
-      e(2,2) = x(1) ** 2 / 0.2d1
-      e(2,3) = x(1) / 0.2d1
-      e(3,1) = x(2) / 0.2d1
-      e(3,2) = x(1) / 0.2d1
+      ! e(1,1) = x(2) ** 2 / 0.2d1
+      ! e(1,2) = x(1) * x(2) / 0.2d1
+      ! e(1,3) = x(2) / 0.2d1
+      ! e(2,1) = x(1) * x(2) / 0.2d1
+      ! e(2,2) = x(1) ** 2 / 0.2d1
+      ! e(2,3) = x(1) / 0.2d1
+      ! e(3,1) = x(2) / 0.2d1
+      ! e(3,2) = x(1) / 0.2d1
 
+      e(1,1) = 2*x(1)**2
+      e(1,2) = -2*x(1)*x(2)
+      e(1,3) = x(1)
+      e(2,1) = -2*x(1)*x(2)
+      e(2,2) = 2*x(2)**2
+      e(2,3) = -x(2)
+      e(3,1) = x(1)
+      e(3,2) = -x(2)
+      e(3,3) = 0
 
 e=e*time(2)
 
-!e=e+identity_matrix(dimen)*time(2)*0.001
+desired_normal_strain_in_truss=0
+do i=1,dimen;
+do j=1,dimen;
+desired_normal_strain_in_truss=desired_normal_strain_in_truss+&
+element_direction_normal(i)*element_direction_normal(j)* &
+e(i,j)
+enddo;enddo
+
+
+
+!!> This includes the limiting strain in the response of truss.
+
+! if(abs(desired_normal_strain_in_truss).gt.(0.01))desired_normal_strain_in_truss=0.01*signum(desired_normal_strain_in_truss)
 
 call truss_material_properties()
+
+applied_electric_field_in_truss_element=desired_normal_strain_in_truss/d31_00
+!     =================================nonlinear time dependent constitutive equation for truss
+
+
+
+!     e3_t1   =applied_electric_field_in_truss_element
+
+!     e3_t0   =hist_truss_actuation(gauss_point_number,1)
+!     d_e3_t0 =hist_truss_actuation(gauss_point_number,2)
+!     q_history_t=hist_truss_actuation(gauss_point_number,3)
+! ! write(25,*)
+! ! write(25,*)gauss_point_number
+! ! write(25,*)hist_truss_actuation(gauss_point_number,3)
+
+!     d_e3_t1=e3_t1-e3_t0
+!     delta_time=time(1)
+
+! ta1=lambda_01_truss
+
+!     q_history_t=exp(-delta_time/ta1) * q_history_t+k01_truss*0.5*delta_time*           &
+!                          ( d_epsilon_r_over_d_e3(e3_t1)  * d_e3_t1/delta_time  +       &
+!     exp(-delta_time/ta1) * d_epsilon_r_over_d_e3(e3_t0)  * d_e3_t0/delta_time   )
+
+
+
+! applied_normal_strain_in_truss=k00_truss*epsilon_r(e3_t1)+q_history_t
+
+! if(time(2).lt.delta_time)epsilon_t1=0*epsilon_r(e3_t1)
+
+! curn_truss_actuation(gauss_point_number,1)=e3_t1
+! curn_truss_actuation(gauss_point_number,2)=d_e3_t1
+! curn_truss_actuation(gauss_point_number,3)=q_history_t
+
+! write(25,*)curn_truss_actuation(gauss_point_number,3)
+
+!!> This give a linear response of the tire
+applied_normal_strain_in_truss=applied_electric_field_in_truss_element*d31_00
+
+each_truss_strain(noelem)=desired_normal_strain_in_truss
+
 
 sigma_shape=0.0d0
 do i=1,dimen;
 do j=1,dimen;
-do k=1,dimen;
-do l=1,dimen;
-sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*e(k,l)
-enddo;enddo;enddo;enddo;
-
-!if (abs(x(3)).le.0.001)sigma_shape=0.0d0
+sigma_shape(i,j)=applied_normal_strain_in_truss*&
+element_direction_normal(i)*element_direction_normal(j)
+enddo;enddo
 
 end subroutine truss_shape_change_stress_z_eq_xy
 

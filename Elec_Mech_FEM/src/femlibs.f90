@@ -258,13 +258,14 @@ subroutine truss_elmatrcs_3d(elu,elp,elb,elk,elq) !(elcrds,elu,elk,elq)
           up       =transpose(       matmul( gdsf,elp_tense     ) )
           ub       =transpose(       matmul( gdsf,elb_tense     ) )
           call truss_material_properties()
-          call shape_change_stress_beam_folding(coord,sigma_shape)
+          call truss_shape_change_stress_z_eq_xy(coord,sigma_shape)
+          ! call shape_change_stress_beam_folding(coord,sigma_shape)
           call truss_stress_elect_displacement(ur,up,ub,der,sigma)
 
-     do ii=1,dimen;do jj=1,dimen;
-        each_truss_strain(noelem)=each_truss_strain(noelem)+ &
-        sigma_shape(ii,jj)*element_direction_normal(ii)*element_direction_normal(jj)
-     enddo;enddo
+     ! do ii=1,dimen;do jj=1,dimen;
+     !    each_truss_strain(noelem)=each_truss_strain(noelem)+ &
+     !    sigma_shape(ii,jj)*element_direction_normal(ii)*element_direction_normal(jj)
+     ! enddo;enddo
 
 
 !    call show_matrix(sigma_shape,'sigma_shape')
@@ -1001,7 +1002,7 @@ write(out,910);write(out,*)'time',time
 write(out,910);write(out,910);write(out,670);write(out,910)
 do i=1,nnm
 pdf=(i-1)*ndf
-write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
+! write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
 enddo
 
 !write(*,*)'curved_node',curved_node

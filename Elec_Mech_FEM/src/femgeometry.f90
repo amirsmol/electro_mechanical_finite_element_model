@@ -378,11 +378,7 @@ end subroutine truss_3d_space_filler_connectivity
 
 
 !< This subroutine define and producd the boundary conditions for space filler tsuss !>
-!! @param nspv number of specified primary bounday conditions
-!! @param nsvv number of specified secondry bounday conditions
-!! @param ispv(i boundady,2) this array contains the information for the boundary conditions
-!!        i boundary the number of boundary conditions and ispv(i boundady,1) is the node number
-!!        i boundary the number of boundary conditions and ispv(i boundady,2) is the degree of freedom number
+!! @param length contains the lenght of the truss
 !! @todo apply the periodic boundary conditions
 subroutine truss_3d_space_filler_boundary_z_eq_xy(length)
 real(iwp)::length(dimen)
@@ -393,10 +389,8 @@ corner_node=0
 !!< the space filler truss is going to be bounded
 !! if x_1=0,x_2=0,x_3=-L_3/2 then u_1=0, u_2=0, u_3=0, this will restrain it from movment in x_1, x_2, x_3
 !! if x_1=0,x_2=0,x_3=+L_3/2 then u_1=0, u_2=0,  this will restrain it from rotation around x_1, x_2 axis
-!! if x_1=0,x_2=L_2/2,x_3=+L_3/2 then u_1=0, this will restrain it from rotation around x_3 axis
 
 
-nspv=6
 
 ! write(*,*) nspv
 !
@@ -411,6 +405,8 @@ nspv=6
 !!  matches the bounday condition
 !!  it will add it to the index arrays and assigns values to the
 !!  boundary condition
+nspv=5
+
 
 nssv=1
 
@@ -456,11 +452,17 @@ if(coords(inode,1)==0 .and. coords(inode,2)==0 .and.coords(inode,3)==0.5*length(
 endif
 
 
-if(coords(inode,1)==0.and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==-0.5*length(3))then
- ibond=ibond+1;
- ispv(ibond,1)=inode;
- ispv(ibond,2)=1;
-endif
+! if(coords(inode,1)==0.and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==-0.5*length(3))then
+!  ibond=ibond+1;
+!  ispv(ibond,1)=inode;
+!  ispv(ibond,2)=2;
+! endif
+
+! if(coords(inode,1)==0.and.coords(inode,2)==-0.5*length(2).and.coords(inode,3)==-0.5*length(3))then
+!  ibond=ibond+1;
+!  ispv(ibond,1)=inode;
+!  ispv(ibond,2)=2;
+! endif
 
 if(coords(inode,1)==0.5*length(1).and.coords(inode,2)==0.5*length(2).and.coords(inode,3)==0.5*length(3))then
 corner_node=inode
@@ -468,7 +470,7 @@ endif
 
 enddo
 
-call show_matrix_int((ispv),'ispv')
+! call show_matrix_int((ispv),'ispv')
 
 !! // issv(1,:)=[node number , degree of freedom number];
 
@@ -822,11 +824,11 @@ subroutine truss_actua_3d_connectivity(length,num_tetra_units)
 
       coordst=coords
 
-      do i=1,nnm
-      coords_deformed(i,:)=coords(i,:)+glu((i-1)*ndf+[1,2,3]);
-      enddo !i=1,nnm
+      ! do i=1,nnm
+      ! coords_deformed(i,:)=coords(i,:)+glu((i-1)*ndf+[1,2,3]);
+      ! enddo !i=1,nnm
 
-!      coords_deformed=coords;
+     coords_deformed=coords;
 
 !      coords_deformed
 

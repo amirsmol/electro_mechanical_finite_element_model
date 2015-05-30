@@ -22,7 +22,7 @@ output_files_heavy=*.mod *.txt
 library_files_intel=-mkl -lmkl_lapack95_lp64
 
 library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
-gnu_plot_command_file = ./gnuplot/gnu_plotter.txt
+gnu_plot_command_file = ./gnuplot/truss_gnu_plotter.txt
 
 #flags=-O1 -Wall -g -fcheck=all
 flags=-O3   
@@ -33,7 +33,7 @@ all:
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files)
 	$(exec_file)	
-# 	gnuplot $(gnu_plot_command_file) 
+	# gnuplot $(gnu_plot_command_file) 
 
 
 all_intel: 

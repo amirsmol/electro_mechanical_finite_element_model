@@ -81,6 +81,8 @@ implicit none
       integer::iteration_number
       integer::time_step_number
 
+      
+
       integer::max_iteration
       integer::max_time_numb
 
@@ -88,6 +90,7 @@ implicit none
       real(iwp)::normalforce
 
       real(iwp)::freq
+      real(iwp)::numberof_hystersis_rotation
 
 
 
@@ -98,12 +101,16 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-    length=1
+    length(1)=1
+    length(2)=1
+    length(3)=0.1
 
+    neldirectional(1)=20
+    neldirectional(2)=20
+    neldirectional(3)=1
 
-    num_tetra_units=150
-    call truss_actua_3d_connectivity(length,num_tetra_units)
-!     ===============================================================
+      call truss_3d_space_filler_connectivity(length,neldirectional) 
+!    ===============================================================
 !     define the solution parameters
 !     ===============================================================
       nnm=size(coords,dim=1)
@@ -119,7 +126,9 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;
 !!     ===============================================================
-    call linear_truss_bending_boundary()
+    ! call linear_truss_bending_boundary()
+    call truss_3d_space_filler_boundary_z_eq_xy(length)
+    ! call truss_3d_space_filler_boundary(length)
 !     ===============================================================
 !                        time increment starts here
 !     ===============================================================
@@ -134,20 +143,27 @@ implicit none
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;     freq=1.0d0;
-      max_time_numb= int(2.0/dtime)
+
+    ! freq=1.0;
+    ! max_time_numb=400
+    ! numberof_hystersis_rotation=2.0
+    ! dtime=numberof_hystersis_rotation/freq/max_time_numb
+
+
+       dtime=0.01;     freq=1.0d0;
+       max_time_numb= int(1.0/dtime)
 !     ===============================================================
-do time_step_number=0, max_time_numb
+do time_step_number=0,  max_time_numb
 
      call cpu_time(timer_begin)
          time(1)=dtime;time(2)=time_step_number*dtime
 
-!        loadfactor=time(2)
+        loadfactor=time(2)
 
-        loadfactor=0.5*sin(2*3.14515*freq*time(2))
+        ! loadfactor=0.5*sin(2*3.14515*freq*time(2))
 !         vspv=time(2)*vspvt
-         glu(bnd_no_pr_vec)=0.0d0;
-!         glu=0.0d0;
+        glu(bnd_no_pr_vec)=0.0d0;
+        glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
@@ -206,7 +222,7 @@ do time_step_number=0, max_time_numb
     glp=glu;
     
     call truss_paraview_3d_vtu_xml_writer(glu)
-    call result_printer(iter,glu)
+    ! call result_printer(iter,glu)
 
 
 !    write(*,*)'max_time_iteration',max_time_numb
