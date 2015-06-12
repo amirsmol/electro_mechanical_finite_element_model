@@ -6,17 +6,28 @@ real(iwp)::k01
 real(iwp)::lambda_01
 
 real(iwp)::k_elec_00
-real(iwp)::k_elec_01
-real(iwp)::lambda_elec_01
+real(iwp),allocatable::k_elec_01(:)
+real(iwp),allocatable::lambda_elec_01(:)
 
 ! =============================pzt
 real(iwp),parameter::k00_pzt=1.00d0
-real(iwp),parameter::k01_pzt=0.0d0
+real(iwp),parameter::k01_pzt=-0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.0d0
-real(iwp),parameter::lambda_elec_01_pzt=1.5
+
+integer,parameter::num_prony=4
+real(iwp),parameter::k_elec_01_pzt=-0.05
+real(iwp),parameter::lambda_elec_01_pzt=0.2 
+
+real(iwp),parameter::k_elec_02_pzt=-0.307692308
+real(iwp),parameter::lambda_elec_02_pzt=1.0 
+
+real(iwp),parameter::k_elec_03_pzt=-0.05
+real(iwp),parameter::lambda_elec_03_pzt=15. 
+
+real(iwp),parameter::k_elec_04_pzt=-0.358974359
+real(iwp),parameter::lambda_elec_04_pzt=60.0 
 
 ! =============================epoxy
 real(iwp),parameter::k00_epx=1.0d0
@@ -36,9 +47,9 @@ real(iwp),parameter::m=2;
 ! ================================================================ pzt
 
 
-real(iwp),parameter::e33 = -14.52*1.0d0;
-real(iwp),parameter::e15 = -7.56*1.0d0;
-real(iwp),parameter::e31 = 6.15*1.0d0;
+real(iwp),parameter::e33 = -14.52*2.0d0;
+real(iwp),parameter::e15 = -7.56*2.0d0;
+real(iwp),parameter::e31 = 6.15*2.0d0;
 
 real(iwp),parameter::eps_11 = 4.0e-9;
 real(iwp),parameter::eps_33 = 2.0e-9;
@@ -98,6 +109,8 @@ integer::noelem
 ! ================================================================
 !  history variables
 ! ================================================================
+
+
 real(iwp),allocatable::remanent_polarization_vector(:,:)
 
 real(iwp),allocatable::hist_polarization_function(:,:)
@@ -108,9 +121,9 @@ real(iwp),allocatable::mechanical_hist_previus(:,:,:,:,:)
 real(iwp),allocatable::mechanical_hist_beforep(:,:,:,:,:)
 
 
-real(iwp),allocatable::sigma_el_hist_curentt(:,:,:,:)
-real(iwp),allocatable::sigma_el_hist_previus(:,:,:,:)
-real(iwp),allocatable::sigma_el_hist_beforep(:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_curentt(:,:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_previus(:,:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_beforep(:,:,:,:,:)
 
 real(iwp),allocatable::displ_el_hist_curentt(:,:,:,:)
 real(iwp),allocatable::displ_el_hist_previus(:,:,:,:)
@@ -134,9 +147,6 @@ real(iwp)::pr(dimen)
 ! the output parameters
 real(iwp),allocatable::elements_electric_field(:,:) !(nem,dimen)
 real(iwp),allocatable::elements_electric_polar(:,:) !(nem,dimen)
-
-
-
 real(iwp)::electric_field(dimen),electric_field_p(dimen),electric_field_b(dimen);
 
 contains
@@ -220,19 +230,23 @@ do i=1,dimen
 do j=1,dimen
 do k=1,dimen
 
-sigma_el_hist_curentt(gauss_point_number,i,j,k)= &
-sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
-(k_elec_01*0.5d0)* &
+
+do l=1,num_prony
+
+sigma_el_hist_curentt(l,gauss_point_number,i,j,k)= &
+sigma_el_hist_previus(l,gauss_point_number,i,j,k)*exp(-lambda_elec_01(l)*dtime)+ &
+(k_elec_01(l)*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
+exp(-lambda_elec_01(l)*dtime)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
                           +d_electric_field(k)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
+end do ! l=1,num_prony
 
 displ_el_hist_curentt(gauss_point_number,i,j,k)= &
-displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime)+ &
-(k_elec_01*0.5d0)* &
+displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01(l)*dtime)+ &
+(k_elec_01(1)*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
+exp(-lambda_elec_01(1)*dtime)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
                            d_strain(i,j)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
 
@@ -261,8 +275,9 @@ do k=1,dimen
    der(k)  =  der(k)    +  k_elec_00*partial_sigma_to_partial_elec_t(k,i,j)*( strain_elastic(i,j) ) &
                         +  displ_el_hist_curentt(gauss_point_number,i,j,k)
 
-sigma(i,j) =  sigma(i,j)  -  k_elec_00*partial_sigma_to_partial_elec_t(k,i,j)*  electric_field(k) &
-                          -  sigma_el_hist_curentt(gauss_point_number,i,j,k)
+   sigma(i,j) =  sigma(i,j)  -  k_elec_00*partial_sigma_to_partial_elec_t(k,i,j)*  electric_field(k) &
+                             - sum( sigma_el_hist_curentt(:,gauss_point_number,i,j,k) ) 
+
 do l=1,dimen
 sigma(i,j)=sigma(i,j)+k00*ctens(i,j,k,l)*(  strain_elastic(k,l) )  &
          + mechanical_hist_curentt(gauss_point_number,i,j,k,l)
@@ -396,9 +411,11 @@ allocate(mechanical_hist_curentt(ngauss,dimen,dimen,dimen,dimen), &
  mechanical_hist_beforep(ngauss,dimen,dimen,dimen,dimen)  )
 
 
-allocate(sigma_el_hist_curentt(ngauss,dimen,dimen,dimen) ,&
-         sigma_el_hist_previus(ngauss,dimen,dimen,dimen) ,&
-         sigma_el_hist_beforep(ngauss,dimen,dimen,dimen) )
+allocate(sigma_el_hist_curentt(num_prony,ngauss,dimen,dimen,dimen) ,&
+         sigma_el_hist_previus(num_prony,ngauss,dimen,dimen,dimen) ,&
+         sigma_el_hist_beforep(num_prony,ngauss,dimen,dimen,dimen) )
+		 
+allocate(k_elec_01(num_prony),lambda_elec_01(num_prony)) 
 
 allocate(displ_el_hist_curentt(ngauss,dimen,dimen,dimen) ,&
          displ_el_hist_previus(ngauss,dimen,dimen,dimen) ,&
@@ -545,8 +562,8 @@ k01=k01_pzt
 lambda_01=lambda_01_pzt
 
 k_elec_00=k_elec_00_pzt
-k_elec_01=k_elec_01_pzt
-lambda_elec_01=lambda_elec_01_pzt
+k_elec_01=[k_elec_01_pzt,k_elec_02_pzt,k_elec_03_pzt,k_elec_04_pzt]
+lambda_elec_01=[lambda_elec_02_pzt,lambda_elec_01_pzt,lambda_elec_03_pzt,lambda_elec_04_pzt]
 
 ey=ey_pzt;
 nu=nu_pzt;
@@ -668,8 +685,8 @@ k01=k01_pzt
 lambda_01=lambda_01_pzt
 
 k_elec_00=k_elec_00_pzt
-k_elec_01=k_elec_01_pzt
-lambda_elec_01=lambda_elec_01_pzt
+k_elec_01=[k_elec_01_pzt,k_elec_02_pzt,k_elec_03_pzt,k_elec_04_pzt]
+lambda_elec_01=[lambda_elec_02_pzt,lambda_elec_01_pzt,lambda_elec_03_pzt,lambda_elec_04_pzt]
 
 ey=ey_pzt;
 nu=nu_pzt;

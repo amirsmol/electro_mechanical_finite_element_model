@@ -20,7 +20,7 @@ output_files=*.mod *.exe *.csv *.out *.txt fort.* *.vtu *.pdf *.eps *.gnu ./gnup
 library_files_windows=C:/lapack/liblapack.a C:/lapack/librefblas.a
 library_files_linux=/home/amir/lapack/liblapack.a /home/amir/lapack/librefblas.a
 
-gnu_plot_command_file=src/gnu_plotter.txt
+gnu_plot_command_file=gnuplot/gnu_plotter_afc_frequency.txt
 #flags=-O1 -Wall -g -fcheck=all
 
 flags=-O3   
@@ -30,7 +30,7 @@ all:
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files_windows)
 	./$(exec_file)
-#	gnuplot $(gnu_plot_command_file)  
+	gnuplot $(gnu_plot_command_file)  
 
 
 fullall: 

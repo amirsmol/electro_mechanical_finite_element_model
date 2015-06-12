@@ -77,6 +77,7 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
+      real(iwp)::numberof_hystersis_rotation      
 !     ================================================================
 !                      time variables
 !     ================================================================
@@ -92,7 +93,7 @@ implicit none
 !     =======================trivial meshing arrays the meshing seed parameters
       integer :: neldirectional(dimen)
       real(iwp) :: length(dimen)
-      real(iwp):: load_factors(2)
+      real(iwp) :: calibration_parameter(3)
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -100,7 +101,7 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-!       length=[1.4000001800000002E-004,1.7499999400000000E-004,7.4999988999999980E-004]
+!     length=[1.4000001800000002E-004,1.7499999400000000E-004,7.4999988999999980E-004]
       length=1 !< This defines a domain with dimension 1x1x1
       neldirectional=[1,1,1] !< This defines the number of elements in each direction 
       call linear_c3d8_3d_fem_geometry(neldirectional,length)
@@ -122,9 +123,7 @@ implicit none
 !!     ===============================================================
       ! call afc_boundary_full_electrode(length)
       call crawley_boundary(length)
-
       ! write(*,*)'length',length
-
       call afc_form_constraint()
       allocate( glk_constrain( size(constraint,dim=2), size(constraint,dim=2) ) )
       allocate( glr_constrain( size(constraint,dim=2) ) )
@@ -142,25 +141,28 @@ implicit none
 !!    reading iteration and convergence critria's
 !<
       tolerance=1.0e-3
-      max_iteration=30;
+      max_iteration=30; 
+
+      calibration_parameter=[0.2d0,1.0d0,5.0d0]
+    do i_calibration=1,3
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      freq=1.0d0;
-      max_time_numb= int(2.0e0/dtime)
+     max_time_numb=200
+     numberof_hystersis_rotation=2.0
+     freq=calibration_parameter(i_calibration);
+     dtime=numberof_hystersis_rotation/freq/max_time_numb
 !     ===============================================================
-    write(*,*)'number of time steps',max_time_numb
-    load_factors(1)=1.0
-     do i_calibration=1,1
-     do time_step_number=0, 1 ! max_time_numb
+     do time_step_number=0, max_time_numb
      call cpu_time(timer_begin)
 
 
-         time(1)=dtime;
-         time(2)=time_step_number*dtime
-         ! loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
+          time(1)=dtime;
+          time(2)=time_step_number*dtime
+          time(1)=dtime;time(2)=time_step_number*dtime
+       loadfactor=sin(2*3.1415*freq*time(2))*375.0*(0.6/0.75) 
 
-      loadfactor=1.0
+      ! loadfactor=1.0
 
 
       vspv=loadfactor*vspvt
@@ -176,7 +178,7 @@ implicit none
 !!     ===============================================================
 !!                        forming the global matrices
 !!     ===============================================================
-      glk=0.0d0;glq=0.0d0;!
+      glk=0.0d0;glq=0.0d0;
       call glbmatrcs(glu,glk,glq,glp,glb)
 !!     ===============================================================
 !!                             newton raphson sprocedure
@@ -193,7 +195,6 @@ implicit none
 !                        solving constrained system
 !     ===============================================================
 !     call cpu_time(timer_begin)
-
       aux_glk_constrain_t=lapack_matmul(transpose_constrain,glk)
       glk_constrain=lapack_matmul (aux_glk_constrain_t, constraint)
       glr_constrain=matmul(transpose_constrain,glr)
@@ -202,7 +203,6 @@ implicit none
 !     write(*,*)'size of the coefficient matrix=',size(glk_constrain,dim=1)
 
      call lapack_gesv(glk_constrain,glr_constrain)
-
 !     call cpu_time(timer_end); write(*,*)'time to solve linear system',timer_end- timer_begin
       glr=matmul (constraint,glr_constrain)
 !!     ===============================================================
@@ -213,6 +213,7 @@ implicit none
       ! write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       ! write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       ! write(*,*)'loadfactor amplitude=',load_factors(i_calibration)
+      
       write(*,*)
 
       if (error.le.tolerance*(normalforce))then;
@@ -231,7 +232,7 @@ implicit none
     glp=glu
 
    call result_printer(iter,glu,loadfactor)
-   call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
+   ! call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
 !    write(*,*)'max_time_iteration',max_time_numb
     enddo !itime=0,ntime
 

@@ -678,13 +678,13 @@ call material_properties()
 !     ================================================================
 
 ctens=(k00+0.5d0*k01)*ctens
-partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+0.5d0*k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*sum(k_elec_01))*partial_sigma_to_partial_elec_t
+epz=(k_elec_00+0.5d0*sum(k_elec_01))*epz
 
 if(time(2).lt.time(1))then;
 ctens=(k00+k01)*ctens;
-partial_sigma_to_partial_elec_t=(k_elec_00+k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+sum(k_elec_01))*partial_sigma_to_partial_elec_t
+epz=(k_elec_00+sum(k_elec_01))*epz
 endif
 !     ===========================componenst of tangent matrixe
 k_coef=0.0d0;
@@ -789,11 +789,11 @@ pdf=(curved_node-1)*ndf
 
 write(csv,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+write(gnuplot,951)iter,time(2),-1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+! write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 !write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
-write(out,*)
+! write(out,*)
 !     ===============================================================
 !                                 formats
 !     ===============================================================
