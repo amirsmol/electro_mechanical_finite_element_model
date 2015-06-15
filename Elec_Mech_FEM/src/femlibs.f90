@@ -680,13 +680,13 @@ call material_properties()
 !     ================================================================
 
 ctens=(k00+0.5d0*k01)*ctens
-partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+0.5d0*k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*sum(k_elec_01))*partial_sigma_to_partial_elec_t
+! epz=(k_elec_00+0.5d0*sum(k_elec_01))*epzS
 
 if(time(2).lt.time(1))then;
 ctens=(k00+k01)*ctens;
-partial_sigma_to_partial_elec_t=(k_elec_00+k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+sum(k_elec_01))*partial_sigma_to_partial_elec_t
+! epz=(k_elec_00+sum(k_elec_01))*epz
 endif
 !     ===========================componenst of tangent matrixe
 k_coef=0.0d0;

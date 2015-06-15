@@ -65,7 +65,7 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
-	  real(iwp)::numberof_hystersis_rotation
+    real(iwp)::numberof_hystersis_rotation
 !     ================================================================
 !                      time variables
 !     ================================================================
@@ -81,7 +81,7 @@ implicit none
 !     =======================trivial meshing arrays the meshing seed parameters
       integer :: neldirectional(dimen)
       real(iwp) :: length(dimen)
-      real(iwp):: load_factors(2)
+      real(iwp) :: calibration_parameter(3)
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -132,30 +132,24 @@ implicit none
 !!    reading iteration and convergence critria's
 !<
       tolerance=1.0e-3
-      max_iteration=30;
+      max_iteration=30; 
+
+      calibration_parameter=[0.2d0,1.0d0,5.0d0]
+    do i_calibration=1,1
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
       max_time_numb=200
-	  numberof_hystersis_rotation=2.0
-	  freq=2.0;
-	  dtime=numberof_hystersis_rotation/freq/max_time_numb
-	  
-! 	  freq=1.0;
-! 	  dtime=0.01/freq;      
-!     max_time_numb= int(2.0e0/dtime)
+    numberof_hystersis_rotation=2.0
+    freq=calibration_parameter(i_calibration);
+    dtime=numberof_hystersis_rotation/freq/max_time_numb
 !     ===============================================================
-    write(*,*)'number of time steps',max_time_numb
-    load_factors(1)=83.0
-    load_factors(2)=375.0
-	
-     do i_calibration=1,2
-     do time_step_number=0, max_time_numb
+     do time_step_number=0,max_time_numb
      call cpu_time(timer_begin)
 
 
          time(1)=dtime;time(2)=time_step_number*dtime
-                  loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
+                  loadfactor=sin(2*3.14515*freq*time(2))*375.0*(0.6/0.75) 
 !        loadfactor=-sin(2*3.14515*freq*time(2))*375
 !        loadfactor=375 !175.0d0
 !        loadfactor=time(2)
@@ -207,7 +201,7 @@ implicit none
 
       write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
       write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      write(*,*)'loadfactor amplitude=',load_factors(i_calibration)
+      write(*,*)'loadfactor amplitude=',calibration_parameter(i_calibration)
       write(*,*)
 
       if (error.le.tolerance*(normalforce))then;

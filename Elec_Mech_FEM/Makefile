@@ -24,7 +24,7 @@ library_files_intel=-mkl -lmkl_lapack95_lp64
 
 
 library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
-gnu_plot_command_file = ./gnuplot/gnu_plotter.txt
+gnu_plot_command_file = ./gnuplot/gnu_plotter_afc_frequency.txt
 
 #flags=-O1 -Wall -g -fcheck=all
 flags=-O3   
@@ -43,7 +43,7 @@ all_intel:
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files_intel)
 	$(exec_file)
-	gnuplot $(gnu_plot_command_file)  
+	 gnuplot $(gnu_plot_command_file)  
 
 light: 
 	rm $(output_files_heavy) $(exec_file) ;
