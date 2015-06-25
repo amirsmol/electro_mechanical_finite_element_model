@@ -135,7 +135,7 @@ implicit none
       max_iteration=30; 
 
       calibration_parameter=[0.2d0,1.0d0,5.0d0]
-    do i_calibration=1,1
+    do i_calibration=1,3
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================

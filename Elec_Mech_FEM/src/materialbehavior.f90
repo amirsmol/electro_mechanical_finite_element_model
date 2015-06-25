@@ -29,10 +29,10 @@ real(iwp),parameter::lambda_elec_01_pzt=0.2
 real(iwp),parameter::k_elec_02_pzt=-0.307692308
 real(iwp),parameter::lambda_elec_02_pzt=1.0 
 
-real(iwp),parameter::k_elec_03_pzt=-0.025641026
+real(iwp),parameter::k_elec_03_pzt=-0.1
 real(iwp),parameter::lambda_elec_03_pzt=10. 
 
-real(iwp),parameter::k_elec_04_pzt=-0.00
+real(iwp),parameter::k_elec_04_pzt=-0.26
 real(iwp),parameter::lambda_elec_04_pzt=60.0 
 
 ! =============================epoxy
@@ -51,9 +51,9 @@ real(iwp),parameter::c=1.0;
 real(iwp),parameter::eta=10e-2;
 real(iwp),parameter::m=2  ;
 ! ================================================================ pzt
-real(iwp),parameter::e33 = -14.52 * 1.0
-real(iwp),parameter::e15 = - 7.56 * 1.0
-real(iwp),parameter::e31 =   6.15 * 1.0
+real(iwp),parameter::e33 = -14.52 * 1.3*1.3
+real(iwp),parameter::e15 = - 7.56 * 1.3*1.3
+real(iwp),parameter::e31 =   6.15 * 1.3*1.3
 
 !real(iwp),parameter::e33 = -20.92*1.3d0;
 !real(iwp),parameter::e31 =  6.15*1.3d0;
