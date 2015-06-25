@@ -17,7 +17,6 @@ real(iwp),parameter::lambda_01_pzt=1.0
 real(iwp),parameter::k_elec_00_pzt=1.0d0
 real(iwp),parameter::k_elec_01_pzt=-0.4d0
 real(iwp),parameter::lambda_elec_01_pzt=1.5
-
 ! =============================epoxy
 real(iwp),parameter::k00_epx=1.0d0
 real(iwp),parameter::k01_epx=0.0d0
