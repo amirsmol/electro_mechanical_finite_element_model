@@ -144,7 +144,7 @@ implicit none
     freq=calibration_parameter(i_calibration);
     dtime=numberof_hystersis_rotation/freq/max_time_numb
 !     ===============================================================
-     do time_step_number=0,max_time_numb
+     do time_step_number=0,0 ! max_time_numb
      call cpu_time(timer_begin)
 
 
@@ -224,7 +224,7 @@ endif
     glb=glp;glp=glu
 
     call result_printer(iter,glu,loadfactor)
-!    call paraview_3d_vtu_xml_writer(glu)
+    call paraview_3d_vtu_xml_writer(glu)
 !    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
 !    write(*,*)'max_time_iteration',max_time_numb
     enddo !itime=0,ntime

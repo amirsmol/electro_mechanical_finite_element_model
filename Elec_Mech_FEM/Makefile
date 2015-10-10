@@ -16,7 +16,8 @@ exec_file= ./bin/run.exe
 module_files= src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 
 driver_file = driver/elec_mech_fem.f90
 compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
-output_files=*.mod *.txt *.vtu fort.* ./gnuplot/*.gnu ./excel/*.csv
+output_files=*.mod *.txt fort.* ./gnuplot/*.gnu ./excel/*.csv
+output_vtu=./vtu/*.vtu
 output_files_heavy=*.mod *.txt
 
 
@@ -57,7 +58,7 @@ fullall:
 #	gnuplot $(gnu_pl
 
 clean:
-	rm $(output_files) $(exec_file) ;
+	rm $(output_files) $(exec_file) $(output_vtu);
 	
 	
 run: 

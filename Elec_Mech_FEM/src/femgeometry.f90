@@ -1484,8 +1484,6 @@ fmt = '(i4.4)' ! an integer of width 5 with zeros at the left
 !  ===============================================================
 
 
-
-
 allocate(coords_deformed(nnm,dimen),coordst(nnm,dimen))
 
 
@@ -2362,7 +2360,8 @@ end subroutine pull_z_boundary
 
 ! ================================================================
 !! This subroutine reads mesh file containing geometry of unit cell.
-!! @param constraint
+!! @param nnm is the number of nodes in the geometry
+!! @param nem is the number of elements in the mesh
 subroutine afc_mesh_file_reader()
 
 !the variables
@@ -2378,25 +2377,37 @@ integer::ix,i_ele
  npe=8
  iel=1
 
-
+!!> Here we open the mesh file that is in the location here in 'meshes/3d_afc_mesh.msh'
+!! This file contains the nodes and connectivity matrix from abaqus input file.
 open (msh,file='meshes/3d_afc_mesh.msh')
+!! Here we read the node numbers 
+!! The file starts with these two numbers, and the connectivity matrix and coordinate matrix shouls be allocate 
+!! with respec to these numbers.
 read(msh,*)nnm,nem; !number of nodes, number of elements
+!! Here we allocate the coonectivity matrix "nod" and "coords"
 
 allocate(nod(nem,npe),coords(nnm,dimen))
+
+!! Here we initialize these two matrixes and fill them with zeros.
 nod=0
 coords=0
 
-do inode=1,nnm
-read(msh,*)ix,(coords(inode,i),i=1,dimen);enddo;
+!! The coordinate of nodes appear first in the mesh file and we read them first.
+do inode=1,nnm;read(msh,*)ix,(coords(inode,i),i=1,dimen);enddo;
 
 
-!  reading the connectivity array from the mesh file
- read(msh,*)
- do i=1,nem
-   read(msh,*)i_ele,(nod(i,j),j=1,npe);enddo
+!! There is line for element type in file in abaqus format, we need to disregard this line and go to the next
+read(msh,*)
+
+!! Here we read the connectivity matrix for the nodes
+do i=1,nem;read(msh,*)i_ele,(nod(i,j),j=1,npe);enddo
+
+!! Here we close the file that we open to avoid filling the memory.
+!! This concludes our mesh reading
 close(msh)
 
-
+!! Here we calculate some geometrical values for from the mesh we imported.
+!! Namely the dimension of the model is calculated here
 do i=1,dimen; corner_point(i)=minval(coords(:,i));enddo
 do i=1,dimen; coords(:,i)=coords(:,i)-corner_point(i);enddo
 do i=1,dimen; length_1(i)=maxval(coords(:,i))-minval(coords(:,i)); enddo
