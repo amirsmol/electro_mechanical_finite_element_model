@@ -10,13 +10,21 @@
 
 # Change this line if you are using a different Fortran compiler
 FORTRAN_COMPILER = gfortran
-exec_file= bin/run.exe
+FORTRAN_COMPILER_intel = ifort
+
+exec_file= ./bin/run.exe
 module_files= src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 
-driver_file = driver/elec_mech_fem.f90
+driver_file = driver/elec_mech_fem_diff_freq.f90
 compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
-output_files=*.mod *.txt *.vtu fort.* *.pdf ./gnuplot/*.gnu ./excel/*.csv
-library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
-gnu_plot_command_file = gnuplot/gnu_plotter.txt
+output_files=*.mod *.txt *.vtu fort.* ./gnuplot/*.gnu ./excel/*.csv *.png
+output_files_heavy=*.mod *.txt
+
+
+library_files_intel=-mkl -lmkl_lapack95_lp64
+
+
+library_files=/home/ubuntu/lapack/liblapack.a /home/ubuntu/lapack/librefblas.a
+gnu_plot_command_file = ./gnuplot/gnu_plotter.txt
 
 #flags=-O1 -Wall -g -fcheck=all
 flags=-O3   
@@ -25,19 +33,20 @@ all:
 #   del $(output_files) $(exec_file)
 	$(FORTRAN_COMPILER) $(flags) -o\
 	$(exec_file) \
-	$(module_files) $(driver_file) $(library_files)
+	$(module_files) $(driver_file) $(library_files_intel)
+	$(exec_file)	
+	gnuplot $(gnu_plot_command_file) 
+
+
+all_intel: 
+	$(FORTRAN_COMPILER_intel) $(flags) -o\
+	$(exec_file) \
+	$(module_files) $(driver_file) $(library_files_intel)
 	$(exec_file)
-	gnuplot $(gnu_plot_command_file) \
+	 gnuplot $(gnu_plot_command_file)  
 
-
-
-#all: 
-#	del $(output_files) $(exec_file)	
-#	$(FORTRAN_COMPILER) $(flags) -o\
-#	$(exec_file) \
-#	$(module_files) $(driver_file) $(library_files)
-#	$(exec_file)
-##	gnuplot $(gnu_plot_command_file)  
+light: 
+	rm $(output_files_heavy) $(exec_file) ;
 
 fullall: 
 	del $(output_files) $(exec_file)	
