@@ -14,9 +14,11 @@ exec_file= bin/run.exe
 module_files= src/linearsolvers.f90 src/femgeometry.f90 src/materialbehavior.f90 src/femlibs.f90 
 driver_file = driver/elec_mech_fem.f90
 compiled_module_files=fem_geometry.mod fem_libs.mod linearsolvers.mod material_behavior.mod
-output_files=*.mod *.txt *.vtu fort.* *.pdf ./gnuplot/*.gnu ./excel/*.csv
-library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
-gnu_plot_command_file = gnuplot/gnu_plotter.txt
+output_files=*.mod *.txt *.vtu fort.* *.pdf ./gnuplot/*.gnu ./excel/*.csv *.db
+# library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
+library_files=-llapack -lblas
+
+nu_plot_command_file = gnuplot/gnu_plotter.txt
 
 #flags=-O1 -Wall -g -fcheck=all
 flags=-O3   
@@ -27,14 +29,14 @@ all:
 	$(exec_file) \
 	$(module_files) $(driver_file) $(library_files)
 	$(exec_file)
-	gnuplot $(gnu_plot_command_file) \
+#	gnuplot $(gnu_plot_command_file) \
 
 
 
 #all: 
 #	del $(output_files) $(exec_file)	
 #	$(FORTRAN_COMPILER) $(flags) -o\
-#	$(exec_file) \
+#	$(exec_file) 
 #	$(module_files) $(driver_file) $(library_files)
 #	$(exec_file)
 ##	gnuplot $(gnu_plot_command_file)  
