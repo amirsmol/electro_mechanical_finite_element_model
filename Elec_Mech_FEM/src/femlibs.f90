@@ -9,9 +9,11 @@ implicit none
 real(iwp),allocatable:: elcrds(:,:) !the geometries of nodes of the element
 
 contains
+
 !     ================================================================
 !     forming the global martixes and vetors
 !     ================================================================
+
 subroutine glbmatrcs(glu,glk,glq,glp,glb)
 implicit none
 !     ================================================================
@@ -678,13 +680,13 @@ call material_properties()
 !     ================================================================
 
 ctens=(k00+0.5d0*k01)*ctens
-partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+0.5d0*k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+0.5d0*sum(k_elec_01))*partial_sigma_to_partial_elec_t
+epz=(k_elec_00+0.5d0*sum(k_elec_01))*epz
 
 if(time(2).lt.time(1))then;
 ctens=(k00+k01)*ctens;
-partial_sigma_to_partial_elec_t=(k_elec_00+k_elec_01)*partial_sigma_to_partial_elec_t
-epz=(k_elec_00+k_elec_01)*epz
+partial_sigma_to_partial_elec_t=(k_elec_00+sum(k_elec_01))*partial_sigma_to_partial_elec_t
+epz=(k_elec_00+sum(k_elec_01))*epz
 endif
 !     ===========================componenst of tangent matrixe
 k_coef=0.0d0;
@@ -738,7 +740,7 @@ end subroutine k_gen
     end subroutine symmetric_primary_bounday
 
 subroutine result_printer(iter,glu,loadfactor)
-  real(iwp),INTENT(IN)::glu(:),loadfactor;
+  real(iwp),intent(in)::glu(:),loadfactor;
   integer::iter;
 !     ================================================================
 !  trivial variables
@@ -778,21 +780,27 @@ endif
 write(out,910);write(out,*)'time',time
 write(out,910);write(out,910);write(out,670);write(out,910)
 
-do i=1,nnm
-  pdf=(i-1)*ndf
-  write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
-enddo
+! do i=1,nnm
+!   pdf=(i-1)*ndf
+!   write(out,950)i,(coords(i,j),j=1,dimen),(glu(pdf+k),k=1,ndf)
+! enddo
 
 ! write(*,*)'curved_node',curved_node
+
 pdf=(curved_node-1)*ndf
+
 write(csv,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
+
+
 
 ! write(gnuplot,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
 
-write(gnuplot,951)iter,time(2),loadfactor,glu(pdf+ndf-1)
+! write(gnuplot,951)iter,time(2),-loadfactor/9, glu(pdf+ndf-1)*12e6
 
 ! write(*,951)iter,time(2),1e-6*loadfactor/(0.5e-3),100*glu(pdf+ndf-1)/(750.0e-6)
-!write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
+! write(gnuplot,*)time(2),curn_electric_field(3,dimen),curn_polarization_function(3,dimen),vector_is_polarized (3) ! ,glu(pdf+ndf-1),glu(pdf+ndf)
+
 write(out,*)
 !     ===============================================================
 !                                 formats

@@ -1,13 +1,3 @@
-!!> ============================================================================
-!! Name        : Elec_Mech_FEM.f90
-!! Author      : Amir Sohrabi
-!! Version     : V0.00
-!! Copyright   : Electro Mechanical Finite Element Model Copyright (C) 2015  Amir Sohrabi <amirsmol@gmail.com>
-!!               This code is distributed under the GNU LGPL license.
-!! Description :
-!!> ============================================================================
-
-
 !>  \mainpage Finite Element Model for Active Fiber Composite
  !!
  !! \section intro_sec Introduction
@@ -21,24 +11,16 @@
  !!
  !!
 !>
- !!  \brief     Electro Mechanical Finite Element Model
- !!  \details   This is the driver file
+ !!  \brief     Finite Element Model for Active Fiber Composite
+ !!  \details   This class is used to demonstrate a number of section commands.
  !!  \author    Amir Sohrabi Mollayousef
  !!  \version   0.1a
  !!  \date      2011 - 2014
  !!  \pre       Pay attention to the mesh file.
- !!  \copyright     This program is free software: you can redistribute it and/or modify
- !!    it under the terms of the GNU General Public License as published by
- !!    the Free Software Foundation, either version 3 of the License, or
- !!    (at your option) any later version.
- !!
- !!    This program is distributed in the hope that it will be useful,
- !!    but WITHOUT ANY WARRANTY; without even the implied warranty of
- !!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- !!    GNU General Public License for more details.
- !!
- !!    You should have received a copy of the GNU General Public License
- !!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ !!  \bug       Not all memory is freed when deleting an object of this class.
+ !!  \warning   Improper use can crash your application
+ !!  \copyright This is free software; you can use it, redistribute
+ !! it, and/or modify it under the terms of the GNU Lesser General
 
 program fem_piezeo_3d_visco_polarization_switching
 use linearsolvers
@@ -83,6 +65,7 @@ implicit none
 
       real(iwp)::tolerance
       real(iwp)::normalforce
+      real(iwp)::numberof_hystersis_rotation
 !     ================================================================
 !                      time variables
 !     ================================================================
@@ -98,7 +81,7 @@ implicit none
 !     =======================trivial meshing arrays the meshing seed parameters
       integer :: neldirectional(dimen)
       real(iwp) :: length(dimen)
-      real(iwp):: load_factors(3)
+      real(iwp) :: calibration_parameter(3)
 !     ===============================================================
 !                       p r e p r o c e s s o r   u n i t
 !     ===============================================================
@@ -106,9 +89,11 @@ implicit none
       call cpu_time (beg_cpu_time)
       call timestamp()
 !     ===============================================================
-      length=1
-      neldirectional=[1,1,1]
-      call linear_c3d8_3d_fem_geometry(neldirectional,length)
+!       length=[1.4000001800000002E-004,1.7499999400000000E-004,7.4999988999999980E-004]
+!       length=1
+!       neldirectional=[1,1,1]
+!       call linear_c3d8_3d_fem_geometry(neldirectional,length)
+      call afc_mesh_file_reader()
 !     ===============================================================
 !     define the solution parameters
 !     ===============================================================
@@ -125,10 +110,12 @@ implicit none
       allocate(glk(neq,neq),glu(neq),glq(neq),glt(neq),glr(neq),glp(neq),glb(neq),glu_ref(neq))
       glu=0.0d0;glt=0.0d0;glr=0.0d0;glp=0.0d0;glb=0.0d0;glu_ref=0.0d0
 !!     ===============================================================
+      call afc_boundary_full_electrode(length)
+!      call crawley_boundary(length)
 
-     call crawley_boundary(length)
-     call form_constraint()
+      write(*,*)'length',length
 
+      call form_constraint()
       allocate( glk_constrain( size(constraint,dim=2), size(constraint,dim=2) ) )
       allocate( glr_constrain( size(constraint,dim=2) ) )
 !
@@ -145,37 +132,32 @@ implicit none
 !!    reading iteration and convergence critria's
 !<
       tolerance=1.0e-3
-      max_iteration=30;
+      max_iteration=30; 
+
+      calibration_parameter=[0.2d0,1.0d0,5.0d0]
+    do i_calibration=2,2
 !     ===============================================================
 !     reading time increment varibales
 !     ===============================================================
-      dtime=0.01;      freq=1.0d0;
-      max_time_numb= int (2.0e0/dtime)
+    max_time_numb=400
+    numberof_hystersis_rotation=2.0
+    freq=calibration_parameter(i_calibration);
+    dtime=numberof_hystersis_rotation/freq/max_time_numb
 !     ===============================================================
-     write(*,*)'number of time steps',max_time_numb
-     
-     load_factors(1)=1;
-     load_factors(2)=2;
-     load_factors(3)=3;
-
-     do i_calibration=1,3
-     do time_step_number=0, max_time_numb
+     do time_step_number=0,max_time_numb
      call cpu_time(timer_begin)
 
-         time(1)=dtime;time(2)=time_step_number*dtime
-         ! loadfactor=sin(2*3.14515*freq*time(2))*load_factors(i_calibration)
-         ! loadfactor=1.0d0 ! load_factors(i_calibration)
-         loadfactor=load_factors(i_calibration)*sin(2*3.14515*freq*time(2))
-         
-         vspv=loadfactor*vspvt
-         glu(bnd_no_pr_vec)=0.0d0;   
+
+      time(1)=dtime;time(2)=time_step_number*dtime
+      loadfactor=sin(2*3.14515*freq*time(2))*375.0*2.0
+      vspv=loadfactor*vspvt
+         glu(bnd_no_pr_vec)=0.0d0;
 !        glu=0.0d0;
 !!     ===============================================================
 !!                 nonlinear solution iteration starts here
 !!     ===============================================================
      normalforce=norm_vect(vspv)+norm_vect(vssv)
      converged=.false.
-
      do iteration_number=0,max_iteration
 !!     ===============================================================
 !!                        forming the global matrices
@@ -196,31 +178,28 @@ implicit none
 !     ===============================================================
 !                        solving constraint
 !     ===============================================================
-
 !     call cpu_time(timer_begin)
 
       aux_glk_constrain_t=lapack_matmul(transpose_constrain,glk)
       glk_constrain=lapack_matmul (aux_glk_constrain_t, constraint)
       glr_constrain=matmul(transpose_constrain,glr)
-      
 !     call cpu_time(timer_end); write(*,*)'time to apply constrainst',timer_end- timer_begin
 !     call cpu_time(timer_begin)
 !     write(*,*)'size of the coefficient matrix=',size(glk_constrain,dim=1)
 
      call lapack_gesv(glk_constrain,glr_constrain)
 
-!    call cpu_time(timer_end); write(*,*)'time to solve linear system',timer_end- timer_begin
-
+!     call cpu_time(timer_end); write(*,*)'time to solve linear system',timer_end- timer_begin
      glr=matmul (constraint,glr_constrain)
 !!     ===============================================================
 !!                        updating the solution
 !!     ===============================================================
       glu=glu+glr
 
-      ! write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      ! write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
-      ! write(*,*)'loadfactor amplitude=',load_factors(i_calibration)
-      ! write(*,*)
+      write(out,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      write(*,*)'iteration_number=', iteration_number, 'time=',time,'error=',error,'normalforce=',normalforce
+      write(*,*)'loadfactor amplitude=',calibration_parameter(i_calibration)
+      write(*,*)
 
       if (error.le.tolerance*(normalforce))then;
           converged=.true.;exit;
@@ -233,17 +212,18 @@ implicit none
      stop
     endif
 
-if(updated_lagrangian)then
-  glu_ref=glu+glu_ref
-  do j=1,dimen;forall(i=1:nnm) coords(i,j)=coords(i,j)+glu((i-1)*ndf+j);enddo
-endif
+! if(updated_lagrangian)then
+! glu_ref=glu+glu_ref
+! do j=1,dimen;forall(i=1:nnm) coords(i,j)=coords(i,j)+glu((i-1)*ndf+j);enddo
+! endif
 
     call update_history()
     glb=glp;glp=glu
 
     call result_printer(iter,glu,loadfactor)
-   ! call paraview_3d_vtu_xml_writer(glu)
-
+    call paraview_3d_vtu_xml_writer(glu)
+!    call paraview_3d_vtu_xml_writer_vector(glu,elements_electric_field,elements_electric_polar)
+!    write(*,*)'max_time_iteration',max_time_numb
     enddo !itime=0,ntime
 
     call clear_history()

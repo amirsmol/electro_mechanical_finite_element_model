@@ -24,12 +24,100 @@ module linearsolvers
    ! using the linearsolvers subroutines.  pivots smaller than this
    ! threshold will cause premature termination of the linear equation
    ! solver and return false as the return value of the function.
-
+   real(iwp), parameter :: zero = 1.0e-30
    real(iwp), parameter :: default_smallest_pivot = 1.0e-6
    integer::iter
 
 
 contains
+
+
+!< This function clear the vector of a very small terms that produced due to computational error and make them zero !>
+!! @x the vecror that is going to be cleaned
+!! @todo nothing
+subroutine clear_the_vector(x)
+real(iwp)::x(:),norm_x
+integer::i
+
+norm_x=norm_vect(x)
+!!>Lets clean up the electric field vector.
+
+do i=1,size(x,dim=1)
+if (abs(x(i)).le.(norm_x/1000.0))then
+    x(i)=0.0d0
+endif
+enddo
+end subroutine clear_the_vector
+
+function dyad_of_two_vector(x,y)
+real(iwp),allocatable::dyad_of_two_vector(:,:)
+real(iwp)::x(:),y(:)
+integer::i_size,j_size,i_counter,j_counter
+
+i_size=size(x,dim=1)
+j_size=size(y,dim=1)
+
+allocate(dyad_of_two_vector(i_size,j_size))
+
+do i_counter=1,i_size
+    do j_counter=1,i_size
+    dyad_of_two_vector(i_counter,j_counter)=x(i_counter)*y(j_counter)
+    enddo
+enddo
+
+if((norm_vect(x).lt.zero).or.(norm_vect(y).lt.zero))dyad_of_two_vector=0.0d0
+
+end function dyad_of_two_vector
+
+
+!!>This function finds the derivative of derivative of norm of a vector with respect to the vector
+
+function derivative_of_direction(x)
+real(iwp),allocatable::derivative_of_direction(:,:)
+real(iwp)::x(:)
+integer::i_size,i_counter,j_counter
+
+i_size=size(x,dim=1)
+allocate(derivative_of_direction(i_size,i_size))
+derivative_of_direction=0.0d0
+
+do i_counter=1,i_size
+    do j_counter=1,i_size
+    derivative_of_direction(i_counter,j_counter)=-x(i_counter)*x(j_counter)
+    enddo
+enddo
+
+
+
+derivative_of_direction=derivative_of_direction/(norm_vect(x)**3.0d0)
+
+
+! write(41,*)'inside_derivative'
+! write(41,*)derivative_of_direction
+
+
+    do j_counter=1,i_size
+    derivative_of_direction(j_counter,j_counter)=derivative_of_direction(j_counter,j_counter)+1.0d0/norm_vect(x)
+    enddo
+
+
+if(norm_vect(x).lt.zero)derivative_of_direction=0.0d0
+
+end function derivative_of_direction
+
+
+function identity_matrix(n_size)
+real(iwp),allocatable::identity_matrix(:,:)
+integer::n_size,i_counter
+
+allocate(identity_matrix(n_size,n_size))
+identity_matrix=0.0d0
+
+do i_counter=1,n_size
+    identity_matrix(i_counter,i_counter)=1.0d0
+enddo
+
+end function identity_matrix
 
 function absh(x)
 real(iwp)::x,absh

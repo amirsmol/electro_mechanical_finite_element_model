@@ -1,43 +1,63 @@
 module material_behavior
 use linearsolvers
+
+
+!> The time scaling variables
+real(iwp),parameter::gamma_e=0*1.75e-6;
+real(iwp)::a_electric_shift 
+
 ! ================================================================
 real(iwp)::k00
 real(iwp)::k01
 real(iwp)::lambda_01
 
 real(iwp)::k_elec_00
-real(iwp)::k_elec_01
-real(iwp)::lambda_elec_01
+real(iwp),allocatable::k_elec_01(:)
+real(iwp),allocatable::lambda_elec_01(:)
 
 ! =============================pzt
 real(iwp),parameter::k00_pzt=1.00d0
-real(iwp),parameter::k01_pzt=0.0d0
+real(iwp),parameter::k01_pzt=-0.0d0
 real(iwp),parameter::lambda_01_pzt=1.0
 
 real(iwp),parameter::k_elec_00_pzt=1.0d0
-real(iwp),parameter::k_elec_01_pzt=-0.4d0
-real(iwp),parameter::lambda_elec_01_pzt=1.5
+
+integer,parameter::num_prony=1 
+real(iwp),parameter::k_elec_01_pzt=-0.0
+real(iwp),parameter::lambda_elec_01_pzt=0.2 
+
+real(iwp),parameter::k_elec_02_pzt=-0.307692308
+real(iwp),parameter::lambda_elec_02_pzt=1.0 
+
+real(iwp),parameter::k_elec_03_pzt=-0.1
+real(iwp),parameter::lambda_elec_03_pzt=10. 
+
+real(iwp),parameter::k_elec_04_pzt=-0.26
+real(iwp),parameter::lambda_elec_04_pzt=60.0 
 ! =============================epoxy
 real(iwp),parameter::k00_epx=1.0d0
-real(iwp),parameter::k01_epx=0.0d0
+real(iwp),parameter::k01_epx=0.6d0
 real(iwp),parameter::lambda_01_epx=0.8
 
 real(iwp),parameter::k_elec_00_epx=1.0d0
 real(iwp),parameter::k_elec_01_epx=0.0d0
 real(iwp),parameter::lambda_elec_01_epx=1.0
 ! ================================================================
-real(iwp),parameter::ec=1;
+real(iwp),parameter::ec=0.7e6;
 real(iwp),parameter::pr_sat=26e-2;
 real(iwp),parameter::eps_s_r=1e-3;
-real(iwp),parameter::c=1.0;
+real(iwp),parameter::h0=2.0;
 real(iwp),parameter::eta=10e-2;
-real(iwp),parameter::m=2;
+real(iwp),parameter::m=2  ;
+
+! real(iwp),parameter::h0=2.0d0;
+! real(iwp),parameter::eta=0.010d0;
+! real(iwp),parameter::m=2.0d0;
+
 ! ================================================================ pzt
-
-
-real(iwp),parameter::e33 = -14.52 !*1.3d0;
-real(iwp),parameter::e15 = -7.56 ! *1.3d0;
-real(iwp),parameter::e31 = 6.15 ! *1.3d0;
+real(iwp),parameter::e33 = -14.52 * 1.3*1.3
+real(iwp),parameter::e15 = - 7.56 * 1.3*1.3
+real(iwp),parameter::e31 =   6.15 * 1.3*1.3
 
 !real(iwp),parameter::e33 = -20.92*1.3d0;
 !real(iwp),parameter::e31 =  6.15*1.3d0;
@@ -111,9 +131,9 @@ real(iwp),allocatable::mechanical_hist_previus(:,:,:,:,:)
 real(iwp),allocatable::mechanical_hist_beforep(:,:,:,:,:)
 
 
-real(iwp),allocatable::sigma_el_hist_curentt(:,:,:,:)
-real(iwp),allocatable::sigma_el_hist_previus(:,:,:,:)
-real(iwp),allocatable::sigma_el_hist_beforep(:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_curentt(:,:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_previus(:,:,:,:,:)
+real(iwp),allocatable::sigma_el_hist_beforep(:,:,:,:,:)
 
 real(iwp),allocatable::displ_el_hist_curentt(:,:,:,:)
 real(iwp),allocatable::displ_el_hist_previus(:,:,:,:)
@@ -129,6 +149,10 @@ real(iwp),allocatable::curn_electric_field(:,:)
 real(iwp),allocatable::hist_electric_displ(:,:)
 real(iwp),allocatable::curn_electric_displ(:,:)
 
+
+real(iwp),allocatable::hist_back_electric_field(:,:)
+real(iwp),allocatable::curn_back_electric_field(:,:)
+
 real(iwp)::total_displacement(dimen)
 real(iwp)::total_polarization(dimen)
 real(iwp)::pr(dimen)
@@ -143,6 +167,145 @@ real(iwp),allocatable::elements_electric_polar(:,:) !(nem,dimen)
 real(iwp)::electric_field(dimen),electric_field_p(dimen),electric_field_b(dimen);
 
 contains
+
+!< This subroutine this will find the polarization with the given state of material!>
+!! @param electric_field this is the electric field vector
+!! @param a_electric_shift this is the electric shift vector
+!! @todo test for afc
+subroutine remanent_polarization()
+implicit none
+real(iwp)::d_electric_field(3)
+real(iwp)::electric_field(3)
+real(iwp)::electric_drive(dimen)
+real(iwp)::electric_field_t(3)
+real(iwp)::electric_field_p(3)
+real(iwp)::back_electric_field_t(dimen)
+real(iwp)::back_electric_field_p(dimen)
+real(iwp)::normalized_polarization(dimen)
+
+!>newton raphson parameters
+real(iwp)::ktan_pol(6,6),del_u_n_pol(6)
+real(iwp)::r_n_pol(6),u_n_pol(6)
+real(iwp)::ktan_inv_pol(6,6)
+!!<Iteration parameters
+integer::polarization_iteration_number
+integer,parameter::max_iteration=50
+real(iwp),parameter::tolerance=1.0e-2
+logical::converged
+real(iwp):: polarization_error
+integer::i
+!>polarization parameters
+real(iwp):: electric_polarization_t(dimen)
+real(iwp):: electric_polarization_p(dimen)
+
+
+electric_field_t=curn_electric_field(gauss_point_number,:)
+electric_field_p=hist_electric_field(gauss_point_number,:)
+
+electric_polarization_p=hist_polarization_function(gauss_point_number,:)
+electric_polarization_t=curn_polarization_function(gauss_point_number,:)
+
+! write(23,*)electric_polarization_t(:)
+! write(24,*)electric_polarization_p(:)
+
+back_electric_field_p=hist_back_electric_field(gauss_point_number,:)
+back_electric_field_t=curn_back_electric_field(gauss_point_number,:)
+
+u_n_pol=[electric_polarization_p/pr_sat,back_electric_field_p]
+
+
+
+do polarization_iteration_number=1,max_iteration
+
+call show_vector(u_n_pol,"u_n_pol")
+
+back_electric_field_t=u_n_pol(4:6)
+normalized_polarization=u_n_pol(1:3)
+
+electric_drive=electric_field_t/ec-back_electric_field_t
+
+r_n_pol(1:3)=normalized_polarization- electric_polarization_p/pr_sat &
+-( dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m ) * &
+                                      unit_vect( electric_drive )
+r_n_pol(4:6)=back_electric_field_t &
+- h0*atanh( norm_vect( normalized_polarization ) )*unit_vect( normalized_polarization )
+
+polarization_error=norm_vect(r_n_pol)
+
+ktan_pol=identity_matrix(6)
+ktan_pol(1:3,4:6)=  &
+(m*dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 ) ) ** (m-1) ) &
+*dyad_of_two_vector( unit_vect( electric_drive ), &
+                     unit_vect( electric_drive ) ) &
++(dtime/eta)*( ( macaulay_brackets ( norm_vect(electric_drive ) -1 )  ) ** m )  &
+* derivative_of_direction(electric_drive )
+
+ktan_pol(4:6,1:3)=( h0 /(norm_vect( normalized_polarization )**2.0-1 ) ) &
+*dyad_of_two_vector( unit_vect( normalized_polarization ), &
+                     unit_vect( normalized_polarization ) ) &
++h0*atanh( norm_vect( normalized_polarization )) &
+*derivative_of_direction(normalized_polarization)
+
+
+! write(10,*)'time',time
+! write(10,*)'gauss pnt, iter No',gauss_point_number,polarization_iteration_number
+! call show_vector(u_n_pol,'u_n_pol')
+! call show_matrix(ktan_pol,'ktan_pol')
+
+call lapack_gesv(ktan_pol,r_n_pol);del_u_n_pol=r_n_pol
+u_n_pol=u_n_pol-del_u_n_pol
+
+
+! write(23,951)polarization_iteration_number,time(2),electric_field_t
+! write(22,951)polarization_iteration_number,time(2),u_n_pol,polarization_error
+
+         if (polarization_error.le.tolerance*ec)then
+             converged=.true.
+             exit
+         endif
+enddo ! iteration_number=1,max_iteration
+
+
+
+if(.not.converged)then
+
+write(*,*)'********************************************'
+write(*,*)'iteration for polarization switching did not converge at time',time(2)
+
+stop
+endif
+
+
+curn_polarization_function(gauss_point_number,:)=u_n_pol(1:3)*pr_sat
+curn_back_electric_field(gauss_point_number,:)=u_n_pol(4:6)
+
+! if(gauss_point_number.eq.1)then
+!   write(35,*)
+!   write(35,*)'time',time 
+!   ! write(35,*)'efie',electric_field_p,electric_field_t
+!   write(35,*)'epol',hist_polarization_function(gauss_point_number,:),curn_polarization_function(gauss_point_number,:)
+! end if
+    
+
+951   format(5x,i5,' , ',10 (e14.5,' , ') )
+end subroutine remanent_polarization
+
+
+
+!< This subroutine defines the time shift and reduced time factor!>
+!! @param electric_field this is the electric field vector
+!! @param a_electric_shift this is the electric shift vector
+!! @todo noting for now
+subroutine get_time_scale_factor()
+        implicit none
+        real(iwp)::electric_norm
+
+
+        electric_norm=norm_vect(electric_field)
+        ! a_electric_shift=exp(- gamma_e*(electric_norm-electric_field_o) /electric_field_o)
+        a_electric_shift=exp(- gamma_e * electric_norm)        
+
+end subroutine get_time_scale_factor
 
 
 subroutine stress_elect_displacement(ur,up,ub,der,sigma)
@@ -162,7 +325,6 @@ real(iwp)::strain(dimen,dimen),strain_p(dimen,dimen),strain_b(dimen,dimen);
 real(iwp)::d_strain(dimen,dimen),d_strain_p(dimen,dimen)
 real(iwp)::d_electric_field(3),d_electric_field_p(3)
 real(iwp)::strain_r(dimen,dimen),strain_elastic(dimen,dimen);
-real(iwp)::a_electric_shift
 
 ! ================================================================
 eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
@@ -184,77 +346,77 @@ electric_field(1:dimen)=-ur(dimen+1,:)
 electric_field_p(1:dimen)=-up(dimen+1,:)
 electric_field_b(1:dimen)=-ub(dimen+1,:)
 
+
+! !!>Lets clean up the electric field vector.
+
+! do i=1,size(electric_field,dim=1)
+! if (abs(electric_field(i)).le.(norm_vect(electric_field)/1000.0))then
+!     electric_field(i)=0.0d0
+! endif
+! enddo
+
+
+call clear_the_vector(electric_field)
+
 d_electric_field=electric_field-electric_field_p
 d_electric_field_p=electric_field_p-electric_field_b
 ! ================================================================
 curn_electric_field(gauss_point_number,:)=electric_field
 ! ================================================================
-curn_polarization_function=0.0d0
-!call remanent_polarization(d_electric_field,electric_field)
-!pr= curn_polarization_function(gauss_point_number,:)
-pr=0.0d0
-pr(3)=pr_sat
+
+call remanent_polarization()
+pr= curn_polarization_function(gauss_point_number,:)
+! pr=0.0d0
+! pr(3)=pr_sat
 call direction_polarization(pr,direc_a)
 call material_properties()
 
 
-! =================================== remanent strain
+! ===================================remanent strain
 strain_r=0.0d0
 
 
 do i=1,dimen
 do j=1,dimen
-   strain_r(i,j)=3.0d0*0.5d0*eps_s_r*(direc_a(i)*direc_a(j)-eye(i,j)/3.0d0)*norm_vect(pr)/pr_sat
+strain_r(i,j)=3.0d0*0.5d0*eps_s_r*(direc_a(i)*direc_a(j)-eye(i,j)/3.0d0)*norm_vect(pr)/pr_sat
 end do;
 end do;
 
-! write(1,*)strain_r
-
+!write(1,*)strain_r
 strain_r=0.0d0
 
 
 strain_elastic=strain-strain_r
 ! ==============================================increment in strain
-
 mechanical_strain_curentt(gauss_point_number,:,:)=strain_elastic
 d_strain=mechanical_strain_curentt(gauss_point_number,:,:)-mechanical_strain_previus(gauss_point_number,:,:)
 d_strain_p=mechanical_strain_previus(gauss_point_number,:,:)-mechanical_strain_beforep(gauss_point_number,:,:)
 
 !!> derivative of stress with respect to electric field.
 ! ==============================the history variable
-
-
-!>The material can respond faster or slower to change of electric field.
-!! We introduce the concepts of reduced time and time shift factor in analogy to 
-!!   definition of thermo rheologically simple materials definition.
-!! In order to capture the speed that piezoelectric material responds to the electric field
-!! The only difference here is that we assume that speed that material responds is related to the intensity of electric field.
-!! 
-
-dtime_scaled=dtime
-call get_time_scale_factor(electric_field,a_electric_shift)
-dtime_scaled=dtime/a_electric_shift
-
-
 do i=1,dimen
 do j=1,dimen
 do k=1,dimen
 
-sigma_el_hist_curentt(gauss_point_number,i,j,k)= &
-sigma_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
-(k_elec_01*0.5d0)* &
+do l=1,num_prony
+
+sigma_el_hist_curentt(l,gauss_point_number,i,j,k)= &
+sigma_el_hist_previus(l,gauss_point_number,i,j,k)*exp(-lambda_elec_01(l)*dtime_scaled)+ &
+(k_elec_01(l)*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime_scaled)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
+exp(-lambda_elec_01(l)*dtime_scaled)*d_electric_field_p(k)*partial_sigma_to_partial_elec_p(k,i,j) &
                           +d_electric_field(k)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
+end do ! l=1,num_prony
 
 displ_el_hist_curentt(gauss_point_number,i,j,k)= &
-displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01*dtime_scaled)+ &
-(k_elec_01*0.5d0)* &
+displ_el_hist_previus(gauss_point_number,i,j,k)*exp(-lambda_elec_01(1)*dtime_scaled)+ &
+(k_elec_01(1)*0.5d0)* &
 (  &
-exp(-lambda_elec_01*dtime_scaled)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
+exp(-lambda_elec_01(1)*dtime_scaled)*d_strain_p(i,j)*partial_sigma_to_partial_elec_p(k,i,j)+ &
                            d_strain(i,j)  *partial_sigma_to_partial_elec_t(k,i,j) &
 )
+
 
 
 do l=1,dimen
@@ -282,7 +444,7 @@ do k=1,dimen
                         +  displ_el_hist_curentt(gauss_point_number,i,j,k)
 
 sigma(i,j) =  sigma(i,j)  -  k_elec_00*partial_sigma_to_partial_elec_t(k,i,j)*  electric_field(k) &
-                          -  sigma_el_hist_curentt(gauss_point_number,i,j,k)
+                         - sum( sigma_el_hist_curentt(:,gauss_point_number,i,j,k) ) 
 do l=1,dimen
 sigma(i,j)=sigma(i,j)+k00*ctens(i,j,k,l)*(  strain_elastic(k,l) )  &
          + mechanical_hist_curentt(gauss_point_number,i,j,k,l)
@@ -297,30 +459,11 @@ end do;
 
 end subroutine stress_elect_displacement
 
-
-!< This subroutine defines the time shift and reduced time factor!>
-!! @param electric_field this is the electric field vector
-!! @param a_electric_shift this is the electric shift vector
-!! @todo noting for now
-        subroutine get_time_scale_factor(electric_field,a_electric_shift)
-        implicit none
-        real(iwp)::electric_field(3),electric_norm
-        real(iwp)::a_electric_shift
-        real(iwp)::gamma_e,electric_field_o
-
-        electric_field_o=1.0
-        gamma_e=2.0
-        electric_norm=norm_vect(electric_field)
-        a_electric_shift=exp(- gamma_e*(electric_norm-electric_field_o) /electric_field_o)
-
-        end subroutine get_time_scale_factor
-
-
 ! ================================================================
 !   polarization swithing function
 !this will find the polarization with the given state of material
 ! ================================================================
-subroutine remanent_polarization(d_electric_field,electric_field)
+subroutine remanent_polarization_tanh(d_electric_field,electric_field)
 implicit none
 real(iwp)::d_electric_field(3)
 real(iwp)::electric_field(3)
@@ -361,6 +504,8 @@ endif
 endif
 endif
 
+
+
 !if(norm_vect(electric_field).lt.ec)then
 !remanent_polarization_vector_1=hist_polarization_function(gauss_point_number,:)
 !endif
@@ -370,7 +515,7 @@ endif
 curn_polarization_function(gauss_point_number,:)=remanent_polarization_vector_1
 curn_electric_field(gauss_point_number,:)=electric_field
 
-end subroutine remanent_polarization
+end subroutine remanent_polarization_tanh
 
 
 ! ===============================================================
@@ -433,9 +578,15 @@ allocate(mechanical_hist_curentt(ngauss,dimen,dimen,dimen,dimen), &
  mechanical_hist_beforep(ngauss,dimen,dimen,dimen,dimen)  )
 
 
-allocate(sigma_el_hist_curentt(ngauss,dimen,dimen,dimen) ,&
-         sigma_el_hist_previus(ngauss,dimen,dimen,dimen) ,&
-         sigma_el_hist_beforep(ngauss,dimen,dimen,dimen) )
+
+allocate(hist_back_electric_field(ngauss,dimen) , &
+         curn_back_electric_field(ngauss,dimen)   )
+
+allocate(sigma_el_hist_curentt(num_prony,ngauss,dimen,dimen,dimen) ,&
+         sigma_el_hist_previus(num_prony,ngauss,dimen,dimen,dimen) ,&
+         sigma_el_hist_beforep(num_prony,ngauss,dimen,dimen,dimen) )
+         
+allocate(k_elec_01(num_prony),lambda_elec_01(num_prony)) 
 
 allocate(displ_el_hist_curentt(ngauss,dimen,dimen,dimen) ,&
          displ_el_hist_previus(ngauss,dimen,dimen,dimen) ,&
@@ -484,6 +635,8 @@ hist_electric_displ=0.0d0
 curn_electric_displ=0.0d0
 is_polarized=.false.
 
+hist_back_electric_field=0.0d0
+curn_back_electric_field=0.0d0
 
 end subroutine  form_history
 
@@ -491,6 +644,8 @@ end subroutine  form_history
 !   forming history variables
 ! ===============================================================
 subroutine  update_history()
+
+hist_back_electric_field=curn_back_electric_field
 
 
 hist_polarization_function=curn_polarization_function
@@ -545,111 +700,18 @@ k00=k00_epx
 k01=k01_epx
 lambda_01=lambda_01_epx
 
-k_elec_00=k_elec_00_epx
-k_elec_01=k_elec_01_epx
-lambda_elec_01=lambda_elec_01_epx
-!
-beta1   =-e31;
-beta2   =-e33+2.0d0*e15+e31;
-beta3   =-2.0d0*e15;
-gamma1  =-eps_11/2.0d0;
-gamma2  =(eps_11-eps_33)/2.0d0;
 
-
-k00=k00_pzt
-k01=k01_pzt
-lambda_01=lambda_01_pzt
-
-k_elec_00=k_elec_00_pzt
-k_elec_01=k_elec_01_pzt
-lambda_elec_01=lambda_elec_01_pzt
-
-ey=ey_pzt;
-nu=nu_pzt;
-
-mu=ey/(1+nu)/2.0
-lambda=ey*nu/(1+nu)/(1-2.0*nu)
-
-do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
-ctens(i,j,k,l)=lambda*eye(i,j)*eye(k,l)+ &
-   mu*( eye(i,k)*eye(j,l)+eye(i,l)*eye(j,k)  )
-enddo;enddo;enddo;enddo;
-
-do i = 1,dimen; do k = 1,dimen; do l = 1,dimen;
-epz(i,k,l)=( beta1*direc_a(i)*eye(k,l) &
-            + beta2*direc_a(i)*direc_a(k)*direc_a(l) &
-            + beta3*0.5d0*( eye(i,l)*direc_a(k) + eye(i,k)*direc_a(l) )  ) *norm_vect(pr)/pr_sat
-enddo;enddo;enddo;
-
-ktense(1,1)=eps_11
-ktense(2,2)=eps_11 ;
-ktense(3,3)=eps_33 ;
-
-
-b_tilt=0.0d0
-b_tilt(3,3,3,3)= 0 !  1.5 ! * 2.0;
-
-!b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
-!b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
-
-
-partial_sigma_to_partial_elec_t=0.0
-partial_sigma_to_partial_elec_p=0.0
-
-partial_sigma_to_partial_elec_t=epz
-partial_sigma_to_partial_elec_p=epz
-
-
-
-partial_sigma_to_partial_elec_t(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
-        +b_tilt(3,3,3,3)*( abs(  electric_field(3) ) )
-
-partial_sigma_to_partial_elec_p(3,3,3)=partial_sigma_to_partial_elec_t(3,3,3) &
-        +b_tilt(3,3,3,3)*( abs(  electric_field_p(3) ) )
-
-end subroutine material_properties
-
-
-! ===============================================================
-!   Material properties
-! ===============================================================
-subroutine afc_material_properties()
-implicit none
-! ================================================================
-!  material variables
-! ================================================================
-
-! ================================================================
-integer::eye(dimen,dimen)
-integer::i,j,k,l ! ,m,n
-real(iwp)::ey,nu
-! ================================================================
-! ================================================================
-! ================================================================
-
-eye = 0 ; do i = 1,dimen; eye(i,i) = 1;enddo
-!
-
-direc_a=direction_of_vector(pr)
-
-!3D formulation
-ctens=0;
-epz=0.0d0;
-b_tilt=0.0d0;
-ktense=0.0d0
-
-! ================================================================
-k00=k00_epx
-k01=k01_epx
-lambda_01=lambda_01_epx
+k_elec_01=0
+lambda_elec_01=0
 
 k_elec_00=k_elec_00_epx
-k_elec_01=k_elec_01_epx
-lambda_elec_01=lambda_elec_01_epx
+k_elec_01(1)=k_elec_01_epx
+lambda_elec_01(1)=lambda_elec_01_epx
 !
 ! ================================================================
 !   E poxy
 ! ================================================================
+dtime_scaled=dtime
 mu=ey_epoxy/(1+nu_epoxy)/2.0
 lambda=ey_epoxy*nu_epoxy/(1+nu_epoxy)/(1-2.0*nu_epoxy)
 do i = 1,dimen;do j = 1,dimen;do k = 1,dimen;do l = 1,dimen;
@@ -666,7 +728,11 @@ partial_sigma_to_partial_elec_p=0
 ! ================================================================
 !   pzt
 ! ================================================================
-if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336 > noelem > 127
+if((noelem.ge.127).and.(noelem.le.336))then !it is pzt if 336>noelem>127
+
+dtime_scaled=dtime
+call get_time_scale_factor()
+dtime_scaled=dtime/a_electric_shift
 
 beta1   =-e31;
 beta2   =-e33+2.0d0*e15+e31;
@@ -680,8 +746,9 @@ k01=k01_pzt
 lambda_01=lambda_01_pzt
 
 k_elec_00=k_elec_00_pzt
-k_elec_01=k_elec_01_pzt
-lambda_elec_01=lambda_elec_01_pzt
+k_elec_01=[k_elec_01_pzt,k_elec_02_pzt,k_elec_03_pzt,k_elec_04_pzt]
+lambda_elec_01=[lambda_elec_02_pzt,lambda_elec_01_pzt,lambda_elec_03_pzt,lambda_elec_04_pzt]
+
 
 ey=ey_pzt;
 nu=nu_pzt;
@@ -706,7 +773,7 @@ ktense(3,3)=eps_33 ;
 
 
 b_tilt=0.0d0
-b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
+! b_tilt(3,3,3,3)=  1.5e-5 ! * 2.0;
 
 !b_tilt(3,3,2,2)=  1.8e-5  !*2.0;
 !b_tilt(3,3,1,1)=  1.8e-5  !*2.0;
@@ -731,7 +798,8 @@ endif !if(noelem.ge.127.and.le.336)then !it is pzt if 336>noelem>127
 ! ================================================================
 !   aluminum
 ! ================================================================
-if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126 > noelem > 113
+if((noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
+dtime_scaled=dtime
 
 k00=k_00_aluminum
 k01=k_01_aluminum
@@ -758,18 +826,14 @@ partial_sigma_to_partial_elec_p=0
 
 endif ! (noelem.ge.113).and.(noelem.le.126))then !it is aluminum if 126>noelem>113
 
-end subroutine afc_material_properties
-
-
-
+end subroutine material_properties
 
 ! ================================================================
-!   polarization switching function
-!   this will find the polarization with the given state of material
+!   polarization swithing function
+!this will find the polarization with the given state of material
 ! ================================================================
 subroutine direction_polarization(pr_vec,a_direc)
 real(iwp)::a_direc(dimen),normed,pr_vec(dimen)
-
 a_direc=0.0d0
 normed=norm_vect(pr_vec)
 if (normed.gt.0.0d0)then
@@ -879,7 +943,7 @@ strain(1:dimen,1:dimen)=0.5d0*(   ur(1:dimen,:)+transpose(ur(1:dimen,:))+      &
 
 electric_feild(1:dimen)=-ur(dimen+1,:)
 volumetric_stress=strain(1,1)+strain(2,2)+strain(3,3)
-! write(1,*)volumetric_stress
+!write(1,*)volumetric_stress
 !     ================================================================
       pi=datan(1.0d0)*4.0
 !     =========================lagrange green strain tensor
@@ -924,9 +988,13 @@ do i=1,dimen;
 do j=1,dimen;
 do k=1,dimen;
 do l=1,dimen;
+  
 sigma_shape(i,j)=sigma_shape(i,j)+ctens(i,j,k,l)*lagrange_strain_global(k,l)
 
-enddo;enddo;enddo;enddo;
+enddo;
+enddo;
+enddo;
+enddo;
 
 !each_truss_strain(noelem)=sigma_shape(1,1)
 
@@ -960,13 +1028,14 @@ ktense=0.0d0  ;ktense(1,1)=1;
                           element_direction_normal(j)*          &
                           element_direction_normal(k)*          &
                           element_direction_normal(l)* 1.0d0
-                  enddo;enddo;enddo;enddo;
+                  enddo;
+                enddo;
+              enddo;
+            enddo;
 
 epz=0.0d0
 
       end subroutine truss_material_properties
-
-
 
 
 
