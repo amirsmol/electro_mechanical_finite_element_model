@@ -21,7 +21,7 @@ output_files_heavy=*.mod *.txt
 
 
 # library_files_intel=-mkl -lmkl_lapack95_lp64
-library_files_intel=-mkl -lmkl_lapack95_lp64
+# library_files_intel=-mkl -lmkl_lapack95_lp64
 
 
 library_files=c:/lapack/liblapack.a c:/lapack/librefblas.a
